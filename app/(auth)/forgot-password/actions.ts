@@ -1,13 +1,13 @@
 "use server";
 
-import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { sendPasswordResetEmail } from "@/lib/email/send";
+import { createPasswordSetupToken, buildPasswordSetupUrl } from "@/lib/auth/password-setup";
 
 const emailSchema = z.string().email().transform((v) => v.trim().toLowerCase());
-const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 export type SimpleFormState = { success: boolean; error?: string };
 
@@ -26,21 +26,10 @@ export async function requestPasswordReset(
   const user = await prisma.user.findUnique({ where: { email: parsed.data } });
 
   if (user) {
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
-
-    await prisma.verificationToken.create({
-      data: {
-        identifier: user.email,
-        token: hashedToken,
-        expires: new Date(Date.now() + RESET_TOKEN_TTL_MS),
-      },
-    });
-
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const rawToken = await createPasswordSetupToken(user.email);
     await sendPasswordResetEmail({
       to: user.email,
-      resetUrl: `${appUrl}/reset-password?token=${rawToken}&email=${encodeURIComponent(user.email)}`,
+      resetUrl: buildPasswordSetupUrl(user.email, rawToken),
     }).catch((err) => console.error("Password reset email failed:", err));
   }
 

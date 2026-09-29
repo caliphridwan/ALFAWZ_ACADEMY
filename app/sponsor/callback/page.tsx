@@ -37,9 +37,10 @@ export default function SponsorCallbackPage() {
           <CheckCircle2 className="text-brand mb-6" size={48} />
           <h1 className="text-2xl font-semibold mb-2">Jazakallahu Khairan</h1>
           <p className="text-muted-foreground mb-8">
-            Your sponsorship is now active. A confirmation email is on its
-            way, and your support will appear on our Sponsors page if you
-            opted in.
+            Your sponsorship is now active. Check your email for a
+            confirmation, plus a separate link to set up your sponsor
+            dashboard, and your support will appear on our Sponsors page if
+            you opted in.
           </p>
           <div className="flex gap-3">
             <Button asChild>

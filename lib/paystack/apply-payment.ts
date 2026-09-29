@@ -1,8 +1,9 @@
 import "server-only";
 import { prisma } from "@/lib/db/prisma";
 import { koboToNaira, type PaystackVerifyResponse } from "@/lib/paystack/client";
-import { sendPaymentConfirmationEmail } from "@/lib/email/send";
+import { sendPaymentConfirmationEmail, sendSponsorWelcomeEmail } from "@/lib/email/send";
 import { createNotification } from "@/lib/notifications";
+import { createPasswordSetupToken, buildPasswordSetupUrl } from "@/lib/auth/password-setup";
 
 type ApplyResult =
   | { outcome: "already_processed" }
@@ -83,7 +84,7 @@ export async function applyVerifiedPayment(
     await createNotification(
       payment.userId,
       "Sponsorship confirmed",
-      "Your sponsorship payment was received. Jazakumullahu khayra for supporting students."
+      "Your sponsorship payment was received. Jazakallahu khairan for supporting students."
     );
   }
 
@@ -96,6 +97,20 @@ export async function applyVerifiedPayment(
       currency: payment.currency,
       type: payment.type,
     }).catch((err) => console.error("Payment confirmation email failed:", err));
+
+    // First-time sponsor accounts are created at checkout with no password
+    // (Section 22/18). Rather than leave them with no way to discover their
+    // dashboard exists, send a one-time setup link right after their first
+    // successful payment. Only fires when there's genuinely no password yet,
+    // so it never re-fires on a returning sponsor's second sponsorship.
+    if (payment.type === "SPONSORSHIP" && !user.passwordHash) {
+      const rawToken = await createPasswordSetupToken(user.email);
+      await sendSponsorWelcomeEmail({
+        to: user.email,
+        name: user.name,
+        setupUrl: buildPasswordSetupUrl(user.email, rawToken),
+      }).catch((err) => console.error("Sponsor welcome email failed:", err));
+    }
   }
 
   return { outcome: "applied", type: payment.type };

@@ -60,7 +60,7 @@ export async function sendPaymentConfirmationEmail(params: {
     params.to,
     "Payment confirmed — AlFawz Academy",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>We've received your ${label} of ${params.currency} ${params.amount.toLocaleString()}. Jazakumullahu khairan.</p>`
+     <p>We've received your ${label} of ${params.currency} ${params.amount.toLocaleString()}. Jazakallahu khairan.</p>`
   );
 }
 
@@ -69,7 +69,7 @@ export async function sendAlumniApprovedEmail(params: { to: string; name: string
     params.to,
     "Your AlFawz Academy alumni profile is live",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>Your alumni registration has been approved and now appears on the AlFawz Academy Alumni page. Jazakumullahu khairan for sharing your story and we are happy to have you back to where you belong.</p>`
+     <p>Your alumni registration has been approved and now appears on the AlFawz Academy Alumni page. Jazakallahu khairan for sharing your story.</p>`
   );
 }
 
@@ -79,6 +79,28 @@ export async function sendPasswordResetEmail(params: { to: string; resetUrl: str
     "Reset your AlFawz Academy password",
     `<p>Click the link below to reset your password. This link expires in 1 hour.</p>
      <p><a href="${params.resetUrl}">${params.resetUrl}</a></p>`
+  );
+}
+
+/**
+ * Sent once, right after a sponsor's first successful sponsorship payment —
+ * their account is created automatically at checkout but has no password
+ * yet, so this is how they find out an account exists at all and get set
+ * up to log in and see their sponsor dashboard.
+ */
+export async function sendSponsorWelcomeEmail(params: {
+  to: string;
+  name: string;
+  setupUrl: string;
+}) {
+  await send(
+    params.to,
+    "Welcome to AlFawz Academy — set up your sponsor dashboard",
+    `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
+     <p>Jazakallahu khairan for your sponsorship. An account has been created for you so you can track your impact, view receipts, and manage future sponsorships.</p>
+     <p>Set a password to access it (this link expires in 1 hour):</p>
+     <p><a href="${params.setupUrl}">${params.setupUrl}</a></p>
+     <p>Once set, log in any time at the link above's domain using this email address.</p>`
   );
 }
 

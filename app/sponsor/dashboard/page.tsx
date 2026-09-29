@@ -25,7 +25,7 @@ export default async function SponsorDashboardPage() {
         Assalamu Alaikum, {session!.user.name?.split(" ")[0]}
       </h1>
       <p className="text-muted-foreground mb-8">
-        Your generosity is making Islamic education accessible. Jazakallahu khairan.
+        Your generosity is making Islamic education accessible. Jazakumullahu khairan.
       </p>
 
       <div className="rounded-xl bg-brand text-brand-foreground p-8 mb-10">
