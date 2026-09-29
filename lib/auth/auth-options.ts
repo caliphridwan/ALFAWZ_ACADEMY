@@ -1,4 +1,5 @@
 import { type NextAuthOptions } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
@@ -11,7 +12,12 @@ import { loginSchema } from "@/lib/validations/schemas";
  * on every request; the token is re-synced from the DB on each sign-in.
  */
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // @auth/prisma-adapter's types are written against the newer Auth.js v5
+  // core Adapter shape, which isn't structurally identical to next-auth v4's
+  // own Adapter type (a `createUser` parameter type changed between them).
+  // The object itself works correctly at runtime with next-auth v4 — this
+  // cast only bridges the two type definitions so the build doesn't fail.
+  adapter: PrismaAdapter(prisma) as unknown as Adapter,
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 days
   pages: {
     signIn: "/login",
