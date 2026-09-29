@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Design tokens — Section 3 & 4 of the spec.
+  Edit these to re-theme the entire platform without touching component code.
+  Values below are HSL triplets (no hsl() wrapper) so Tailwind's hsl(var(--x)) works.
+*/
+:root {
+  --background: 60 33% 97%;        /* #F8F5EC cream */
+  --foreground: 100 12% 11%;       /* #17201B charcoal text */
+
+  --brand: 217 78% 32%;             /* #1B4F91 primary blue */
+  --brand-dark: 220 70% 20%;        /* #10305A dark navy */
+  --brand-foreground: 60 33% 97%;
+
+  --gold: 45 68% 47%;              /* #C9A227 warm gold */
+  --gold-foreground: 100 12% 11%;
+
+  --cream: 60 33% 97%;
+  --charcoal: 100 12% 11%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 100 12% 11%;
+
+  --muted: 60 15% 92%;
+  --muted-foreground: 100 8% 35%;
+
+  --border: 60 10% 87%;
+  --input: 60 10% 87%;
+  --ring: 217 78% 32%;
+
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 152 30% 6%;
+  --foreground: 60 20% 94%;
+  --card: 152 25% 9%;
+  --card-foreground: 60 20% 94%;
+  --muted: 152 15% 14%;
+  --muted-foreground: 60 10% 70%;
+  --border: 152 15% 18%;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+/* Arabic text blocks — Section 4: careful RTL typography */
+.arabic-text {
+  @apply font-arabic;
+  direction: rtl;
+  line-height: 2.1;
+  font-size: 1.35rem;
+  letter-spacing: 0;
+}
+
+/* Subtle Islamic geometric divider — used sparingly per Section 50 */
+.geo-divider {
+  height: 3px;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--gold)) 20%,
+    hsl(var(--gold)) 80%,
+    transparent
+  );
+  opacity: 0.6;
+}

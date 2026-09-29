@@ -1,0 +1,360 @@
+// AlFawz Academy — database schema
+// Mirrors Section 40 of the project spec, plus the tables NextAuth needs.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  STUDENT
+  SPONSOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNSPECIFIED
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentType {
+  COURSE
+  SPONSORSHIP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+enum SponsorshipStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum AlumniStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+// ---------- NextAuth (Auth.js) required tables ----------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Core domain models ----------
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String?
+  role         Role      @default(STUDENT)
+  phone        String?
+  country      String?
+  address      String?
+  dateOfBirth  DateTime?
+  gender       Gender?   @default(UNSPECIFIED)
+  profileImage String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Student-specific relations
+  guardian     Guardian?
+  enrollments  Enrollment[]
+  payments     Payment[]
+
+  // Sponsor-specific relations
+  sponsorProfile SponsorProfile?
+  sponsorships   Sponsorship[]
+
+  accounts Account[]
+  sessions Session[]
+
+  notifications Notification[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model Guardian {
+  id           String   @id @default(cuid())
+  studentId    String   @unique
+  student      User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  name         String
+  email        String
+  phone        String
+  relationship String
+  createdAt    DateTime @default(now())
+}
+
+model Course {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  description      String   @db.Text
+  shortDescription String
+  image            String?
+  price            Decimal  @db.Decimal(10, 2)
+  currency         String   @default("NGN")
+  duration         String
+  schedule         String?
+  level            String
+  ageGroup         String
+  category         String?
+  instructorId     String?
+  instructor       Teacher? @relation(fields: [instructorId], references: [id])
+  curriculum       Json?
+  requirements     Json?
+  faqs             Json?
+  active           Boolean  @default(true)
+  enrollmentOpen   Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  enrollments Enrollment[]
+  payments    Payment[]
+
+  @@index([slug])
+  @@index([active])
+}
+
+model Enrollment {
+  id         String           @id @default(cuid())
+  studentId  String
+  student    User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  status     EnrollmentStatus @default(PENDING)
+  enrolledAt DateTime         @default(now())
+  expiresAt  DateTime?
+
+  @@unique([studentId, courseId])
+  @@index([status])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           PaymentType
+  amount         Decimal       @db.Decimal(10, 2)
+  currency       String        @default("NGN")
+  reference      String        @unique
+  status         PaymentStatus @default(PENDING)
+  provider       String        @default("paystack")
+  courseId       String?
+  course         Course?       @relation(fields: [courseId], references: [id])
+  sponsorshipId  String?
+  sponsorship    Sponsorship?  @relation(fields: [sponsorshipId], references: [id])
+  metadata       Json?
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+
+  @@index([reference])
+  @@index([status])
+  @@index([userId])
+}
+
+model Sponsorship {
+  id               String            @id @default(cuid())
+  sponsorId        String
+  sponsor          User              @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  numberOfStudents Int
+  amountPerStudent Decimal           @db.Decimal(10, 2)
+  totalAmount      Decimal           @db.Decimal(10, 2)
+  currency         String            @default("NGN")
+  duration         String
+  status           SponsorshipStatus @default(PENDING)
+  showPublicly     Boolean           @default(false)
+  publicName       String?
+  message          String?
+  createdAt        DateTime          @default(now())
+  expiresAt        DateTime?
+
+  payments Payment[]
+
+  @@index([status])
+  @@index([showPublicly])
+}
+
+model SponsorProfile {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationName String?
+  publicName       String?
+  showPublicly     Boolean @default(false)
+}
+
+model Teacher {
+  id             String   @id @default(cuid())
+  name           String
+  photo          String?
+  qualification  String?
+  specialization String?
+  biography      String?  @db.Text
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  courses Course[]
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  country   String?
+  content   String   @db.Text
+  image     String?
+  course    String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// Public alumni showcase + directory. "featured" pins a graduate to the top
+// of the public page; "published" controls visibility, same pattern as
+// Testimonial and Event.
+model Alumnus {
+  id             String   @id @default(cuid())
+  name           String
+  photo          String?
+  graduationYear Int
+  program        String
+  currentRole    String?
+  location       String?
+  story          String   @db.Text
+  linkedinUrl    String?
+  featured       Boolean  @default(false)
+  published      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  // Self-registration workflow. Admin-created rows default to APPROVED;
+  // public submissions start PENDING and unpublished. "email" is private:
+  // it is only for admin verification and is never shown publicly.
+  status           AlumniStatus @default(APPROVED)
+  email            String?
+  consentToDisplay Boolean      @default(false)
+  selfSubmitted    Boolean      @default(false)
+
+  @@index([status])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  date        DateTime
+  time        String
+  location    String
+  speaker     String?
+  image       String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String        @db.Text
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+}
+
+// Singleton row (id fixed to "singleton") holding admin-editable global config.
+// Section 17/29/64: sponsorship price, currency and contact details must never
+// be hardcoded in the frontend.
+model SiteSettings {
+  id                 String   @id @default("singleton")
+  sponsorshipPrice   Decimal  @db.Decimal(10, 2) @default(30000)
+  currency           String   @default("NGN")
+  currencySymbol     String   @default("₦")
+  minSponsorStudents Int      @default(1)
+  maxSponsorStudents Int      @default(100)
+  whatsappNumber     String?
+  contactEmail       String?
+  phoneNumber        String?
+  facebookUrl        String?
+  instagramUrl       String?
+  youtubeUrl         String?
+  studentsCount      Int      @default(0)
+  countriesCount     Int      @default(0)
+  classesDelivered   Int      @default(0)
+  updatedAt          DateTime @updatedAt
+}
+
+// In-app notifications (spec section 47). Created server-side when real
+// events happen (e.g. a payment is verified) and shown at /dashboard/notifications.
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
