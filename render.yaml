@@ -40,3 +40,12 @@ services:
 
       - key: NEXT_PUBLIC_WHATSAPP_NUMBER
         sync: false
+
+  - key: CLOUDINARY_CLOUD_NAME
+    sync: false
+
+  - key: CLOUDINARY_API_KEY
+    sync: false
+
+  - key: CLOUDINARY_API_SECRET
+    sync: false
