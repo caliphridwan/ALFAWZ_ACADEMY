@@ -16,11 +16,31 @@ import { z } from "zod";
 export const imagePathSchema = z
   .string()
   .trim()
-  .regex(
-    /^\/images\/[A-Za-z0-9_\-./]+\.(jpe?g|png|webp|avif|gif|svg)$/i,
-    "Use a path like /images/courses/name.jpg (file must be in public/images)"
+  .refine(
+    (value) => {
+      if (value === "") return true;
+
+      // Allow local images from public/images
+      if (value.startsWith("/images/")) {
+        return /^\/images\/[A-Za-z0-9_\-./]+\.(jpe?g|png|webp|avif|gif|svg)$/i.test(
+          value
+        ) && !value.includes("..");
+      }
+
+      // Allow Cloudinary images
+      try {
+        const url = new URL(value);
+
+        return (
+          url.protocol === "https:" &&
+          url.hostname === "res.cloudinary.com"
+           );
+      } catch {
+        return false;
+      }
+    },
+    "Use a valid local image path or a Cloudinary HTTPS URL"
   )
-  .refine((v) => !v.includes(".."), "Path cannot contain '..'")
   .optional()
   .or(z.literal(""));
 
