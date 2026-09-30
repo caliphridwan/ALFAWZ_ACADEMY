@@ -14,11 +14,29 @@ services:
       - key: DATABASE_URL
         sync: false
 
-      - key: NEXTAUTH_SECRET
+      - key: AUTH_SECRET
         sync: false
 
       - key: NEXTAUTH_URL
         sync: false
 
       - key: RESEND_API_KEY
+        sync: false
+
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+
+      - key: NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
+        sync: false
+
+      - key: EMAIL_API_KEY
+        sync: false
+
+      - key: EMAIL_FROM
+        sync: false
+
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+
+      - key: NEXT_PUBLIC_WHATSAPP_NUMBER
         sync: false
