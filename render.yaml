@@ -1,51 +1,86 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# This mirrors the manual Web Service setup already configured in the Render
+# dashboard. Using this file is optional: it's only needed if you want to
+# recreate this environment from scratch (e.g. a staging copy) via
+# "New > Blueprint" instead of clicking through the dashboard again.
+#
+# This assumes you're keeping your existing external Postgres (e.g. Neon) —
+# DATABASE_URL is marked sync: false so you paste it in the dashboard rather
+# than having Render provision its own database. If you'd rather have Render
+# manage Postgres too, see the commented-out `databases:` block at the
+# bottom of this file.
+
 services:
   - type: web
-    name: alfawz-academy
     runtime: node
-    plan: free
-
-    buildCommand: npm ci && npx prisma generate && npm run build
-    startCommand: npm start
-
+    name: alfawz-academy
+    plan: starter # change to "free" to match a free-tier Web Service
+    region: oregon
+    branch: main
+    buildCommand: npm install && npm run build
+    preDeployCommand: npx prisma migrate deploy
+    startCommand: npm run start
+    healthCheckPath: /
+    autoDeploy: true
     envVars:
-      - key: NODE_VERSION
-        value: 20
-
+      # --- Database ---
       - key: DATABASE_URL
-        sync: false
+        sync: false # paste your Neon (or other Postgres) connection string
 
+      # --- Auth.js ---
       - key: AUTH_SECRET
-        sync: false
-
+        generateValue: true # Render generates a strong random value for you
       - key: NEXTAUTH_URL
-        sync: false
+        sync: false # set to your Render URL, e.g. https://alfawz-academy.onrender.com
 
-      - key: RESEND_API_KEY
-        sync: false
-
+      # --- Paystack ---
       - key: PAYSTACK_SECRET_KEY
-        sync: false
-
+        sync: false # use your LIVE secret key here, never paste it into this file
       - key: NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
         sync: false
 
+      # --- Email (Resend) ---
       - key: EMAIL_API_KEY
         sync: false
-
       - key: EMAIL_FROM
-        sync: false
+        value: "AlFawz Academy <onboarding@resend.dev>"
 
+      # --- App ---
       - key: NEXT_PUBLIC_APP_URL
-        sync: false
-
+        sync: false # same value as NEXTAUTH_URL above
       - key: NEXT_PUBLIC_WHATSAPP_NUMBER
         sync: false
 
-  - key: CLOUDINARY_CLOUD_NAME
-    sync: false
+      - key: NODE_VERSION
+        value: "20"
 
-  - key: CLOUDINARY_API_KEY
-    sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
 
-  - key: CLOUDINARY_API_SECRET
-    sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+# Uncomment this block instead if you'd rather have Render provision and
+# manage Postgres for you, then change DATABASE_URL above to:
+#   - key: DATABASE_URL
+#     fromDatabase:
+#       name: alfawz-academy-db
+#       property: connectionString
+#
+# databases:
+#   - name: alfawz-academy-db
+#     plan: starter
+#     region: oregon
+
+
+# key: CLOUDINARY_CLOUD_NAME
+   # sync: false
+
+ # - key: CLOUDINARY_API_KEY
+  #  sync: false
+
+  #- key: CLOUDINARY_API_SECRET
+  #  sync: false
