@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "AlFawz Academy — Online Islamic Education",
     description:
       "Structured online Qur'an and Islamic education for children, youth and adults, worldwide.",
-    images: ["/images/courses/hero.jpg"],
+    images: ["https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/interm.jpg"],
   },
   twitter: {
     card: "summary_large_image",
