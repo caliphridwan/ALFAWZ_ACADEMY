@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
@@ -14,7 +14,7 @@ type VerifyState = "verifying" | "success" | "failed";
  * (Section 15 step 9). The webhook is a parallel safety net in case the
  * student never reaches this page at all.
  */
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const params = useSearchParams();
   const router = useRouter();
   const [state, setState] = useState<VerifyState>("verifying");
@@ -50,7 +50,7 @@ export default function PaymentCallbackPage() {
           <CheckCircle2 className="text-brand mb-6" size={48} />
           <h1 className="text-2xl font-semibold mb-2">Payment confirmed</h1>
           <p className="text-muted-foreground mb-8">
-            Jazakumullahu khairan — your enrollment is now active. You can start
+            Jazakallahu khairan — your enrollment is now active. You can start
             learning from your dashboard.
           </p>
           <Button asChild>
@@ -75,5 +75,19 @@ export default function PaymentCallbackPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container py-24 flex justify-center">
+          <Loader2 className="animate-spin text-brand" size={48} />
+        </div>
+      }
+    >
+      <PaymentCallbackContent />
+    </Suspense>
   );
 }

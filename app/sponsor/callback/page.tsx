@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 type VerifyState = "verifying" | "success" | "failed";
 
-export default function SponsorCallbackPage() {
+function SponsorCallbackContent() {
   const params = useSearchParams();
   const [state, setState] = useState<VerifyState>("verifying");
 
@@ -66,5 +66,19 @@ export default function SponsorCallbackPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function SponsorCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container py-24 flex justify-center">
+          <Loader2 className="animate-spin text-brand" size={48} />
+        </div>
+      }
+    >
+      <SponsorCallbackContent />
+    </Suspense>
   );
 }
