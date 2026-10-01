@@ -69,7 +69,7 @@ export async function sendAlumniApprovedEmail(params: { to: string; name: string
     params.to,
     "Your AlFawz Academy alumni profile is live",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>Your alumni registration has been approved and now appears on the AlFawz Academy Alumni page. Jazakumullahu khairan for sharing your story.</p>`
+     <p> We are delighted to let you know that your <strong>AlFawz Academy alumni registration</strong> has been reviewed and approved. </p> <p> Your alumni profile is now live on the AlFawz Academy Alumni page, allowing you to remain connected with the academy and fellow members of our growing alumni community. </p> <p> Thank you for taking the time to share your journey and remain connected with AlFawz Academy. Your story may inspire current and future students to pursue knowledge and strive for excellence. </p> <p> May Allah ﷻ bless your journey, increase you in beneficial knowledge, and make your contributions a lasting source of benefit. </p> <p> <strong>Jazākallāhu khayran</strong> for being part of the AlFawz Academy family. </p> <p> <strong>AlFawz Academy</strong><br /> Learning. Character. Faith. </p>`
   );
 }
 
@@ -77,8 +77,8 @@ export async function sendPasswordResetEmail(params: { to: string; resetUrl: str
   await send(
     params.to,
     "Reset your AlFawz Academy password",
-    `<p>Click the link below to reset your password. This link expires in 1 hour.</p>
-     <p><a href="${params.resetUrl}">${params.resetUrl}</a></p>`
+    `<p>Assalamu Alaikum,</p> <p> We received a request to reset the password for your <strong>AlFawz Academy</strong> account. </p> <p> If you made this request, click the button below to create a new password: </p> <p style="margin:25px 0;"> <a href="${params.resetUrl}" style=" display:inline-block; padding:12px 22px; background:#0f4c81; color:#ffffff; text-decoration:none;border-radius:6px; font-weight:bold; " > Reset My Password </a> </p> <p> For your security, this password-reset link will expire in <strong>1 hour</strong>. </p> <p> If you did not request a password reset, you can safely ignore this email. Your account password will remain unchanged. </p><p> May Allah ﷻ keep your account and personal information secure. </p> <p> <strong>AlFawz Academy</strong><br /> Learning. Character. Faith. </p>
+     ${params.resetUrl}</a></p>`
   );
 }
 
@@ -98,9 +98,15 @@ export async function sendSponsorWelcomeEmail(params: {
     "Welcome to AlFawz Academy — set up your sponsor dashboard",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
      <p>Jazakumullahu khairan for your sponsorship. An account has been created for you so you can track your impact, view receipts, and manage future sponsorships.</p>
-     <p>Set a password to access it (this link expires in 1 hour):</p>
+     <div style="background:#f4f8fb;padding:18px;border-radius:8px;margin:20px 0;"> <h3 style="margin-top:0;color:#0f4c81;"> Complete Your Account </h3> <p style="margin-bottom:0;"> Please set a password using the button below to activate access to your sponsor dashboard. </p> 
+     <p>Once set, log in any time at the link above's domain using this email address.</p>
+     </div>
+     <p style="margin:25px 0;"> <a href="${params.setupUrl}" style=" display:inline-block; padding:12px 22px; background:#0f4c81; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:bold; " > Set Up My Sponsor Account </a> </p>
      <p><a href="${params.setupUrl}">${params.setupUrl}</a></p>
-     <p>Once set, log in any time at the link above's domain using this email address.</p>`
+     <p> For your security, this setup link will expire in <strong>1 hour</strong>. </p>
+      <p> Your generosity can help provide opportunities for students to pursue beneficial Islamic education. May Allah ﷻ accept your contribution, place barakah in your wealth, and reward you for every good that comes from your support. </p>
+      <p> <strong>Jazākumullāhu khayran</strong> for partnering with AlFawz Academy in this important mission. </p> <p> <strong>AlFawz Academy</strong><br /> Learning. Character. Faith. </p>
+     `
   );
 }
 
