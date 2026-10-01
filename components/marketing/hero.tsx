@@ -11,7 +11,7 @@ export function Hero({ imageUrl }: { imageUrl?: string | null }) {
       />
       <div className="container relative py-24 lg:py-32 grid lg:grid-cols-2 gap-12 items-center">
         <div>
-          <span className="arabic-text text-brand/70 block mb-4">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+          <span className="arabic-text text-brand/70 font-extrabold block mb-4">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] text-charcoal">
             Learn the Qur&apos;an.
             <br />
@@ -43,6 +43,10 @@ export function Hero({ imageUrl }: { imageUrl?: string | null }) {
             )}
           </div>
           <div className="absolute -bottom-6 -left-6 hidden sm:block rounded-xl bg-card border border-border shadow-lg p-4">
+            <p className="text-lg font-extrabold text-blue-900">خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ</p>
+            <p className="text-sm font-medium">"The best among you are those </p>
+            <p className="text-sm font-medium">who learn the Qur'an and teach it" </p>
+            <p className="text-sm text-muted-foreground">-Prophet Muhammad (SAW) </p>
             <p className="text-sm font-medium">Live online classes</p>
             <p className="text-xs text-muted-foreground">Qualified teachers, worldwide</p>
           </div>

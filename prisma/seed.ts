@@ -16,13 +16,13 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      sponsorshipPrice: 30000,
+      sponsorshipPrice: 60000,
       currency: "NGN",
       currencySymbol: "₦",
       minSponsorStudents: 1,
       maxSponsorStudents: 100,
-      whatsappNumber: "+2340000000000", // placeholder — set real number in /admin/settings
-      contactEmail: "info@alfawzacademy.example",
+      whatsappNumber: "+2349038543371", // placeholder — set real number in /admin/settings
+      contactEmail: "caliphridwan93@gmail.com",
       studentsCount: 0, // real counts should come from live data, not this seed
       countriesCount: 0,
       classesDelivered: 0,
@@ -56,12 +56,12 @@ async function main() {
   });
 
   const courseData = [
-    { slug: "beginners-quran", title: "Beginners' Level", shortDescription: "Qur'an recitation, writing and memorisation for new students.", level: "Beginner", duration: "12 weeks", ageGroup: "All ages", price: 15000 },
-    { slug: "tahfeezul-quran", title: "Tahfeezul Qur'an", shortDescription: "Complete Qur'an memorisation with proper Tajweed.", level: "All levels", duration: "Ongoing", ageGroup: "All ages", price: 25000 },
-    { slug: "intermediate-tajweed", title: "Intermediate Level", shortDescription: "Qur'an and Tajweed for advancing students.", level: "Intermediate", duration: "16 weeks", ageGroup: "Teens & Adults", price: 18000 },
-    { slug: "under-9-program", title: "Under-9 Program", shortDescription: "Age-appropriate Islamic education for young learners.", level: "Foundational", duration: "12 weeks", ageGroup: "Under 9", price: 12000 },
-    { slug: "advanced-studies", title: "Advanced Level", shortDescription: "Qur'an, Hadith, Fiqh and Tafseer.", level: "Advanced", duration: "24 weeks", ageGroup: "Adults", price: 30000 },
-    { slug: "diaspora-program", title: "Diaspora Program", shortDescription: "Online Islamic education for students worldwide.", level: "All levels", duration: "Flexible", ageGroup: "All ages", price: 35000 },
+    { slug: "beginners-quran", title: "Beginners' Level", shortDescription: "Qur'an recitation, writing and memorisation for new students.", level: "Beginner", duration: "14 weeks", ageGroup: "All ages", price: 60000 },
+    { slug: "tahfeezul-quran", title: "Tahfeezul Qur'an", shortDescription: "Complete Qur'an memorisation with proper Tajweed.", level: "All levels", duration: "Ongoing", ageGroup: "All ages", price: 150000 },
+    { slug: "intermediate-tajweed", title: "Intermediate Level", shortDescription: "Qur'an and Tajweed for advancing students.", level: "Intermediate", duration: "14 weeks", ageGroup: "Teens & Adults", price: 60000 },
+    { slug: "under-9-program", title: "Under-9 Program", shortDescription: "Age-appropriate Islamic education for young learners.", level: "Foundational", duration: "14 weeks", ageGroup: "Under 9", price: 60000 },
+    { slug: "advanced-studies", title: "Advanced Level", shortDescription: "Qur'an, Hadith, Fiqh and Tafseer.", level: "Advanced", duration: "14 weeks", ageGroup: "Adults", price: 60000 },
+    { slug: "diaspora-program", title: "Diaspora Program", shortDescription: "Online Islamic education for students worldwide.", level: "All levels", duration: "Flexible", ageGroup: "All ages", price: 150000 },
   ];
 
   for (const c of courseData) {
