@@ -29,7 +29,7 @@ async function send(to: string, subject: string, html: string) {
 export async function sendWelcomeEmail({ to, name }: { to: string; name: string }) {
   await send(
     to,
-    "Assalamu Alaikum — Welcome to AlFawz Academy",
+    "Assalamu Alaikum warahmatullahi wabarakaatuh— Welcome to AlFawz Academy",
     `<p>Assalamu Alaikum ${escapeHtml(name)},</p>
      <p>Welcome to AlFawz Academy. Your account has been created successfully.</p>`
   );
@@ -69,7 +69,7 @@ export async function sendAlumniApprovedEmail(params: { to: string; name: string
     params.to,
     "Your AlFawz Academy alumni profile is live",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>Your alumni registration has been approved and now appears on the AlFawz Academy Alumni page. Jazakallahu khairan for sharing your story.</p>`
+     <p>Your alumni registration has been approved and now appears on the AlFawz Academy Alumni page. Jazakumullahu khairan for sharing your story.</p>`
   );
 }
 
@@ -97,7 +97,7 @@ export async function sendSponsorWelcomeEmail(params: {
     params.to,
     "Welcome to AlFawz Academy — set up your sponsor dashboard",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>Jazakallahu khairan for your sponsorship. An account has been created for you so you can track your impact, view receipts, and manage future sponsorships.</p>
+     <p>Jazakumullahu khairan for your sponsorship. An account has been created for you so you can track your impact, view receipts, and manage future sponsorships.</p>
      <p>Set a password to access it (this link expires in 1 hour):</p>
      <p><a href="${params.setupUrl}">${params.setupUrl}</a></p>
      <p>Once set, log in any time at the link above's domain using this email address.</p>`
