@@ -17,6 +17,9 @@ CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESSFUL', 'FAILED', 'REFUNDE
 CREATE TYPE "SponsorshipStatus" AS ENUM ('PENDING', 'ACTIVE', 'EXPIRED', 'CANCELLED');
 
 -- CreateEnum
+CREATE TYPE "AlumniStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+
+-- CreateEnum
 CREATE TYPE "ContactStatus" AS ENUM ('NEW', 'READ', 'RESOLVED');
 
 -- CreateTable
@@ -63,6 +66,7 @@ CREATE TABLE "User" (
     "role" "Role" NOT NULL DEFAULT 'STUDENT',
     "phone" TEXT,
     "country" TEXT,
+    "address" TEXT,
     "dateOfBirth" TIMESTAMP(3),
     "gender" "Gender" DEFAULT 'UNSPECIFIED',
     "profileImage" TEXT,
@@ -97,6 +101,7 @@ CREATE TABLE "Course" (
     "price" DECIMAL(10,2) NOT NULL,
     "currency" TEXT NOT NULL DEFAULT 'NGN',
     "duration" TEXT NOT NULL,
+    "schedule" TEXT,
     "level" TEXT NOT NULL,
     "ageGroup" TEXT NOT NULL,
     "category" TEXT,
@@ -215,6 +220,10 @@ CREATE TABLE "Alumnus" (
     "featured" BOOLEAN NOT NULL DEFAULT false,
     "published" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" "AlumniStatus" NOT NULL DEFAULT 'APPROVED',
+    "email" TEXT,
+    "consentToDisplay" BOOLEAN NOT NULL DEFAULT false,
+    "selfSubmitted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Alumnus_pkey" PRIMARY KEY ("id")
 );
@@ -263,12 +272,26 @@ CREATE TABLE "SiteSettings" (
     "facebookUrl" TEXT,
     "instagramUrl" TEXT,
     "youtubeUrl" TEXT,
+    "logoUrl" TEXT,
+    "heroImageUrl" TEXT,
     "studentsCount" INTEGER NOT NULL DEFAULT 0,
     "countriesCount" INTEGER NOT NULL DEFAULT 0,
     "classesDelivered" INTEGER NOT NULL DEFAULT 0,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "SiteSettings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Notification" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "read" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -332,7 +355,13 @@ CREATE INDEX "Sponsorship_showPublicly_idx" ON "Sponsorship"("showPublicly");
 CREATE UNIQUE INDEX "SponsorProfile_userId_key" ON "SponsorProfile"("userId");
 
 -- CreateIndex
+CREATE INDEX "Alumnus_status_idx" ON "Alumnus"("status");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Event_slug_key" ON "Event"("slug");
+
+-- CreateIndex
+CREATE INDEX "Notification_userId_read_idx" ON "Notification"("userId", "read");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -366,3 +395,6 @@ ALTER TABLE "Sponsorship" ADD CONSTRAINT "Sponsorship_sponsorId_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "SponsorProfile" ADD CONSTRAINT "SponsorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

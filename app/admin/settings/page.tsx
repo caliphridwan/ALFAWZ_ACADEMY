@@ -17,6 +17,8 @@ export default async function AdminSettingsPage() {
           whatsappNumber: settings?.whatsappNumber,
           contactEmail: settings?.contactEmail,
           phoneNumber: settings?.phoneNumber,
+          logoUrl: settings?.logoUrl,
+          heroImageUrl: settings?.heroImageUrl,
         }}
       />
     </div>

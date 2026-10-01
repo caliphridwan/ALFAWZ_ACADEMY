@@ -33,21 +33,29 @@ export async function updateSiteSettings(
     whatsappNumber: formData.get("whatsappNumber") || undefined,
     contactEmail: formData.get("contactEmail") || undefined,
     phoneNumber: formData.get("phoneNumber") || undefined,
+    logoUrl: formData.get("logoUrl") || "",
+    heroImageUrl: formData.get("heroImageUrl") || "",
   });
 
   if (!parsed.success) {
     return { success: false, fieldErrors: parsed.error.flatten().fieldErrors as any };
   }
 
+  const data = {
+    ...parsed.data,
+    logoUrl: parsed.data.logoUrl || null,
+    heroImageUrl: parsed.data.heroImageUrl || null,
+  };
+
   await prisma.siteSettings.upsert({
     where: { id: "singleton" },
-    update: parsed.data,
-    create: { id: "singleton", ...parsed.data },
+    update: data,
+    create: { id: "singleton", ...data },
   });
 
   revalidatePath("/admin/settings");
   revalidatePath("/sponsor");
   revalidatePath("/sponsors");
-  revalidatePath("/");
+  revalidatePath("/", "layout"); // logo lives in the root layout, hero image on "/"
   return { success: true };
 }
