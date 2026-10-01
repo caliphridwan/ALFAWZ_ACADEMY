@@ -15,7 +15,7 @@ function getClient() {
   return new Resend(apiKey);
 }
 
-const FROM = process.env.EMAIL_FROM ?? "AlFawz Academy <noreply@alfawzacademy.example>";
+const FROM = process.env.EMAIL_FROM ?? "AlFawz Academy <noreply@https://alfawz-academy-d2yt.onrender.com>";
 
 async function send(to: string, subject: string, html: string) {
   const client = getClient();
