@@ -24,7 +24,7 @@ export function AlumniJoinForm({ programSuggestions }: { programSuggestions: str
       <div className="rounded-md bg-brand/10 border border-brand/20 px-5 py-8 text-center">
         <p className="font-medium text-brand mb-2">Submission received</p>
         <p className="text-sm text-muted-foreground">
-          Jazakumullahu khairan. Our team will review your details, and your
+          Jazakallahu khairan. Our team will review your details, and your
           profile will appear on the Alumni page once approved.
         </p>
       </div>

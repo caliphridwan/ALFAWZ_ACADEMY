@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, BookOpenText } from "lucide-react";
@@ -19,7 +20,7 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navbar() {
+export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { data: session, status } = useSession();
@@ -49,10 +50,25 @@ export function Navbar() {
     >
       <nav className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-foreground">
-            <BookOpenText size={18} />
-          </span>
-          <span>AlFawz Academy</span>
+          {logoUrl ? (
+            <span className="relative h-9 w-auto min-w-[36px]">
+              <Image
+                src={logoUrl}
+                alt="AlFawz Academy"
+                height={36}
+                width={140}
+                className="h-9 w-auto object-contain"
+                priority
+              />
+            </span>
+          ) : (
+            <>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-foreground">
+                <BookOpenText size={18} />
+              </span>
+              <span>AlFawz Academy</span>
+            </>
+          )}
         </Link>
 
         <div className="hidden lg:flex items-center gap-7">
