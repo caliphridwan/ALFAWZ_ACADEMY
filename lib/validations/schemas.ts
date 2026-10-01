@@ -8,39 +8,18 @@ import { z } from "zod";
  */
 
 /**
- * Images are files you place in public/images/ and reference by path, e.g.
- * /images/courses/beginners.jpg. Restricting to local paths keeps the site
- * from loading arbitrary remote images (and avoids next/image host errors).
- * An empty string is allowed and means "no image".
+ * Images are hosted externally (Cloudinary) and referenced by their full
+ * delivery URL, e.g. https://res.cloudinary.com/your-cloud/image/upload/...
+ * Local files under public/images were dropped: relying on files baked into
+ * the deployed build turned out to be fragile on some hosts (Render
+ * included), and a hosted CDN avoids that entirely. An empty string is
+ * allowed and means "no image". Restricted to https for safety.
  */
 export const imagePathSchema = z
   .string()
   .trim()
-  .refine(
-    (value) => {
-      if (value === "") return true;
-
-      // Allow local images from public/images
-      if (value.startsWith("/images/")) {
-        return /^\/images\/[A-Za-z0-9_\-./]+\.(jpe?g|png|webp|avif|gif|svg)$/i.test(
-          value
-        ) && !value.includes("..");
-      }
-
-      // Allow Cloudinary images
-      try {
-        const url = new URL(value);
-
-        return (
-          url.protocol === "https:" &&
-          url.hostname === "res.cloudinary.com"
-           );
-      } catch {
-        return false;
-      }
-    },
-    "Use a valid local image path or a Cloudinary HTTPS URL"
-  )
+  .url("Enter a valid image URL (e.g. from Cloudinary)")
+  .refine((v) => v.startsWith("https://"), "Image URL must use https://")
   .optional()
   .or(z.literal(""));
 
@@ -185,4 +164,6 @@ export const siteSettingsSchema = z.object({
   whatsappNumber: z.string().optional(),
   contactEmail: z.string().email().optional(),
   phoneNumber: z.string().optional(),
+  logoUrl: imagePathSchema,
+  heroImageUrl: imagePathSchema,
 });

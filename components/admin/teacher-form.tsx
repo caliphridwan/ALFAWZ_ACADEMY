@@ -63,8 +63,8 @@ export function TeacherForm({
         />
       </div>
       <div>
-        <Label htmlFor="photo">Photo path</Label>
-        <Input id="photo" name="photo" defaultValue={defaults?.photo ?? ""} placeholder="/images/teachers/name.jpg" />
+        <Label htmlFor="photo">Photo URL</Label>
+        <Input id="photo" name="photo" defaultValue={defaults?.photo ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../teacher-name.jpg" />
       </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" name="active" defaultChecked={defaults?.active ?? true} className="rounded border-border" />

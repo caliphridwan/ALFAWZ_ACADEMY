@@ -148,8 +148,8 @@ export function CourseForm({
           </select>
         </div>
         <div>
-          <Label htmlFor="image">Image path</Label>
-          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="/images/courses/name.jpg" />
+          <Label htmlFor="image">Image URL</Label>
+          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../course-name.jpg" />
         </div>
       </div>
 

@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero imageUrl={settings?.heroImageUrl} />
       <StatsSection stats={settings} />
 
       {/* Introduction */}

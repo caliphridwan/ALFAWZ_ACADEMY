@@ -89,8 +89,8 @@ export function AlumnusForm({
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="photo">Photo path</Label>
-          <Input id="photo" name="photo" defaultValue={defaults?.photo ?? ""} placeholder="/images/alumni/name.jpg" />
+          <Label htmlFor="photo">Photo URL</Label>
+          <Input id="photo" name="photo" defaultValue={defaults?.photo ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../alumni-name.jpg" />
         </div>
         <div>
           <Label htmlFor="linkedinUrl">LinkedIn URL (optional)</Label>

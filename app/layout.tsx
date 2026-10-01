@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "AlFawz Academy — Online Islamic Education",
     description:
       "Structured online Qur'an and Islamic education for children, youth and adults, worldwide.",
-    images: ["https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/interm.jpg"],
+    images: ["/images/og-default.jpg"],
   },
   twitter: {
     card: "summary_large_image",
@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
         <Providers>
-          <Navbar />
+          <Navbar logoUrl={settings?.logoUrl} />
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsAppButton phoneNumber={settings?.whatsappNumber} />

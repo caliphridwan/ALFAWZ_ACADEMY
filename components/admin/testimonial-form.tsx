@@ -65,8 +65,8 @@ export function TestimonialForm({
           <Input id="course" name="course" defaultValue={defaults?.course ?? ""} />
         </div>
         <div>
-          <Label htmlFor="image">Photo path</Label>
-          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="/images/testimonials/name.jpg" />
+          <Label htmlFor="image">Photo URL</Label>
+          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../testimonial-name.jpg" />
         </div>
       </div>
       <label className="flex items-center gap-2 text-sm">

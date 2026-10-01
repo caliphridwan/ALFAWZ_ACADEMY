@@ -82,8 +82,8 @@ export function EventForm({
           <Input id="speaker" name="speaker" defaultValue={defaults?.speaker ?? ""} />
         </div>
         <div>
-          <Label htmlFor="image">Image path</Label>
-          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="/images/events/name.jpg" />
+          <Label htmlFor="image">Image URL</Label>
+          <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../event-name.jpg" />
         </div>
       </div>
       <label className="flex items-center gap-2 text-sm">

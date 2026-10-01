@@ -52,7 +52,7 @@ export function Hero() {
         <div className="relative">
           <div className="aspect-[4/3] rounded-2xl bg-brand/5 border border-brand/10 flex items-center justify-center overflow-hidden relative">
             {hasHeroImage ? (
-              <Image src="https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/interm.jpg" alt="Students learning with AlFawz Academy" fill className="object-cover" priority />
+              <Image src="https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/under-9.jpg" alt="Students learning with AlFawz Academy" fill className="object-cover" priority />
             ) : (
               <div className="w-full h-full bg-[radial-gradient(circle_at_30%_20%,hsl(var(--brand)/0.15),transparent_60%),radial-gradient(circle_at_70%_80%,hsl(var(--gold)/0.2),transparent_60%)]" />
             )}

@@ -16,6 +16,8 @@ type Defaults = {
   whatsappNumber?: string | null;
   contactEmail?: string | null;
   phoneNumber?: string | null;
+  logoUrl?: string | null;
+  heroImageUrl?: string | null;
 };
 
 function SaveButton() {
@@ -78,6 +80,33 @@ export function SettingsForm({ defaults }: { defaults: Defaults }) {
             <Label htmlFor="phoneNumber">Phone Number</Label>
             <Input id="phoneNumber" name="phoneNumber" defaultValue={defaults.phoneNumber ?? ""} />
           </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-4">
+        <legend className="font-semibold mb-2">Branding</legend>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Paste the full delivery URL from Cloudinary (or leave blank to use the default).
+        </p>
+        <div>
+          <Label htmlFor="logoUrl">Navbar Logo URL</Label>
+          <Input
+            id="logoUrl"
+            name="logoUrl"
+            defaultValue={defaults.logoUrl ?? ""}
+            placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../logo.png"
+          />
+          <FieldError messages={state.fieldErrors?.logoUrl} />
+        </div>
+        <div>
+          <Label htmlFor="heroImageUrl">Homepage Hero Image URL</Label>
+          <Input
+            id="heroImageUrl"
+            name="heroImageUrl"
+            defaultValue={defaults.heroImageUrl ?? ""}
+            placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../hero.jpg"
+          />
+          <FieldError messages={state.fieldErrors?.heroImageUrl} />
         </div>
       </fieldset>
 
