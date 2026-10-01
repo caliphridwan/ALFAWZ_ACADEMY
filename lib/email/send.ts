@@ -15,7 +15,7 @@ function getClient() {
   return new Resend(apiKey);
 }
 
-const FROM = process.env.EMAIL_FROM ?? "AlFawz Academy <noreply@https://alfawz-academy-d2yt.onrender.com>";
+const FROM = process.env.EMAIL_FROM ?? "AlFawz Academy <https://alfawz-academy-d2yt.onrender.com>";
 
 async function send(to: string, subject: string, html: string) {
   const client = getClient();
@@ -29,9 +29,9 @@ async function send(to: string, subject: string, html: string) {
 export async function sendWelcomeEmail({ to, name }: { to: string; name: string }) {
   await send(
     to,
-    "Assalamu Alaikum warahmatullahi wabarakaatuh— Welcome to AlFawz Academy",
-    `<p>Assalamu Alaikum ${escapeHtml(name)},</p>
-     <p>Welcome to AlFawz Academy. Your account has been created successfully.</p>`
+    "Assalamu Alaikum — Welcome to AlFawz Academy",
+    `<p>Assalamu Alaikum warahmatullahi wabarakaatuh ${escapeHtml(name)},</p>
+     <p>Welcome to AlFawz Academy. Your account has been created successfully. Baarakallahu feekum.</p>`
   );
 }
 
