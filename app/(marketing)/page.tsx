@@ -19,10 +19,20 @@ export default async function HomePage() {
     prisma.testimonial.findMany({ where: { published: true }, take: 3 }),
   ]);
 
+  // All three are admin-set in /admin/settings rather than computed from
+  // registered accounts — many real students and alumni studied with the
+  // institution before this platform existed and have no account here, so a
+  // live database count would understate reality.
+  const stats = {
+    studentsCount: settings?.studentsCount ?? null,
+    countriesCount: settings?.countriesCount ?? null,
+    classesDelivered: settings?.classesDelivered ?? null,
+  };
+
   return (
     <>
       <Hero imageUrl={settings?.heroImageUrl} />
-      <StatsSection stats={settings} />
+      <StatsSection stats={stats} />
 
       {/* Introduction */}
       <section className="container py-20 text-center max-w-3xl mx-auto">
