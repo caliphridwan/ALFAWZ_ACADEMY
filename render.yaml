@@ -23,6 +23,7 @@ services:
     healthCheckPath: /
     autoDeploy: true
     envVars:
+    
       # --- Database ---
       - key: DATABASE_URL
         sync: false # paste your Neon (or other Postgres) connection string
