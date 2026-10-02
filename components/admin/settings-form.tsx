@@ -18,6 +18,9 @@ type Defaults = {
   phoneNumber?: string | null;
   logoUrl?: string | null;
   heroImageUrl?: string | null;
+  studentsCount?: number | null;
+  countriesCount?: number | null;
+  classesDelivered?: number | null;
 };
 
 function SaveButton() {
@@ -79,6 +82,51 @@ export function SettingsForm({ defaults }: { defaults: Defaults }) {
           <div>
             <Label htmlFor="phoneNumber">Phone Number</Label>
             <Input id="phoneNumber" name="phoneNumber" defaultValue={defaults.phoneNumber ?? ""} />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-4">
+        <legend className="font-semibold mb-2">Homepage Statistics</legend>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Set these manually — many real students and alumni studied before
+          this platform existed and will never have an account here, so an
+          automatic count would always understate the real numbers. Leave a
+          field blank to keep its current value unchanged.
+        </p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="studentsCount">Students</Label>
+            <Input
+              id="studentsCount"
+              name="studentsCount"
+              type="number"
+              min={0}
+              defaultValue={defaults.studentsCount ?? ""}
+            />
+            <FieldError messages={state.fieldErrors?.studentsCount} />
+          </div>
+          <div>
+            <Label htmlFor="countriesCount">Countries</Label>
+            <Input
+              id="countriesCount"
+              name="countriesCount"
+              type="number"
+              min={0}
+              defaultValue={defaults.countriesCount ?? ""}
+            />
+            <FieldError messages={state.fieldErrors?.countriesCount} />
+          </div>
+          <div>
+            <Label htmlFor="classesDelivered">Classes Delivered</Label>
+            <Input
+              id="classesDelivered"
+              name="classesDelivered"
+              type="number"
+              min={0}
+              defaultValue={defaults.classesDelivered ?? ""}
+            />
+            <FieldError messages={state.fieldErrors?.classesDelivered} />
           </div>
         </div>
       </fieldset>

@@ -35,6 +35,9 @@ export async function updateSiteSettings(
     phoneNumber: formData.get("phoneNumber") || undefined,
     logoUrl: formData.get("logoUrl") || "",
     heroImageUrl: formData.get("heroImageUrl") || "",
+    studentsCount: formData.get("studentsCount") || undefined,
+    countriesCount: formData.get("countriesCount") || undefined,
+    classesDelivered: formData.get("classesDelivered") || undefined,
   });
 
   if (!parsed.success) {

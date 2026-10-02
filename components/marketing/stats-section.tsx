@@ -1,13 +1,15 @@
 type Stats = {
-  studentsCount: number;
-  countriesCount: number;
-  classesDelivered: number;
+  studentsCount: number | null;
+  countriesCount: number | null;
+  classesDelivered: number | null;
 };
 
 /**
- * Section 7: these figures come straight from SiteSettings (admin-editable)
- * — never fabricated placeholders. If an admin hasn't set them yet, we show
- * "—" rather than inventing a number.
+ * Section 7: all three figures are admin-set in /admin/settings rather than
+ * computed from registered accounts — real students and alumni who studied
+ * before this platform existed have no account here, so a live count would
+ * always understate reality. Shown as "—" rather than a fabricated number
+ * until an admin sets a value.
  */
 export function StatsSection({ stats }: { stats: Stats | null }) {
   const items = [

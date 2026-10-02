@@ -166,4 +166,7 @@ export const siteSettingsSchema = z.object({
   phoneNumber: z.string().optional(),
   logoUrl: imagePathSchema,
   heroImageUrl: imagePathSchema,
+  studentsCount: z.coerce.number().int().min(0).optional(),
+  countriesCount: z.coerce.number().int().min(0).optional(),
+  classesDelivered: z.coerce.number().int().min(0).optional(),
 });

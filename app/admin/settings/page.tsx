@@ -19,6 +19,9 @@ export default async function AdminSettingsPage() {
           phoneNumber: settings?.phoneNumber,
           logoUrl: settings?.logoUrl,
           heroImageUrl: settings?.heroImageUrl,
+          studentsCount: settings?.studentsCount,
+          countriesCount: settings?.countriesCount,
+          classesDelivered: settings?.classesDelivered,
         }}
       />
     </div>
