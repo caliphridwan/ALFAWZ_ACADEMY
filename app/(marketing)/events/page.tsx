@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -54,8 +55,9 @@ export default async function EventsPage() {
         <p className="text-muted-foreground mb-12">No upcoming events right now — check back soon.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
-          {upcoming.map((e) => (
-            <Card key={e.id} className="overflow-hidden">
+          {upcoming.map((e, i) => (
+            <ScrollReveal key={e.id} delay={(i % 3) * 0.08}>
+            <Card className="overflow-hidden">
               {e.image && (
                 <div className="relative aspect-[16/9] bg-brand/5">
                   <Image src={e.image} alt={e.title} fill className="object-cover" />
@@ -75,6 +77,7 @@ export default async function EventsPage() {
                 </Button>
               </CardContent>
             </Card>
+            </ScrollReveal>
           ))}
         </div>
       )}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { prisma } from "@/lib/db/prisma";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Testimonials",
@@ -26,8 +27,9 @@ export default async function TestimonialsPage() {
         <p className="text-muted-foreground text-center">No testimonials published yet.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {testimonials.map((t) => (
-            <blockquote key={t.id} className="rounded-lg border border-border p-6 bg-card">
+          {testimonials.map((t, i) => (
+            <ScrollReveal key={t.id} delay={(i % 3) * 0.08}>
+            <blockquote className="rounded-lg border border-border p-6 bg-card">
               <p className="text-sm text-muted-foreground mb-4">&ldquo;{t.content}&rdquo;</p>
               <footer className="flex items-center gap-3">
                 {t.image && (
@@ -42,6 +44,7 @@ export default async function TestimonialsPage() {
                 </div>
               </footer>
             </blockquote>
+            </ScrollReveal>
           ))}
         </div>
       )}

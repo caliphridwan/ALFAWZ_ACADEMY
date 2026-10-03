@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Our Teachers",
@@ -28,8 +29,9 @@ export default async function TeachersPage() {
         <p className="text-muted-foreground">Teacher profiles will be added soon.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {teachers.map((t) => (
-            <Card key={t.id}>
+          {teachers.map((t, i) => (
+            <ScrollReveal key={t.id} delay={(i % 3) * 0.08}>
+            <Card>
               <CardContent className="p-6">
                 <div className="aspect-square rounded-full w-20 h-20 bg-brand/10 mb-4 overflow-hidden">
                   {t.photo && (
@@ -54,6 +56,7 @@ export default async function TeachersPage() {
                 )}
               </CardContent>
             </Card>
+            </ScrollReveal>
           ))}
         </div>
       )}

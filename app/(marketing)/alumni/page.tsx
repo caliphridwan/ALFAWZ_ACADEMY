@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Linkedin } from "lucide-react";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Alumni",
@@ -53,8 +54,10 @@ export default async function AlumniPage() {
             Featured Stories
           </h2>
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {featured.map((a) => (
-              <AlumnusCard key={a.id} alumnus={a} featured />
+            {featured.map((a, i) => (
+              <ScrollReveal key={a.id} delay={(i % 2) * 0.08}>
+                <AlumnusCard alumnus={a} featured />
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -62,8 +65,10 @@ export default async function AlumniPage() {
 
       {rest.length > 0 && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {rest.map((a) => (
-            <AlumnusCard key={a.id} alumnus={a} />
+          {rest.map((a, i) => (
+            <ScrollReveal key={a.id} delay={(i % 3) * 0.08}>
+              <AlumnusCard alumnus={a} />
+            </ScrollReveal>
           ))}
         </div>
       )}

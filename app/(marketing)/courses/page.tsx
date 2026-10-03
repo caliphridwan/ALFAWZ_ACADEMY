@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { CourseCard } from "@/components/courses/course-card";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "Courses",
@@ -31,23 +32,24 @@ export default async function CoursesPage() {
         </p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={{
-                slug: course.slug,
-                title: course.title,
-                shortDescription: course.shortDescription,
-                image: course.image,
-                level: course.level,
-                duration: course.duration,
-                price: Number(course.price),
-                currency: course.currency,
-                ageGroup: course.ageGroup,
-                instructorName: course.instructor?.name,
-                enrollmentOpen: course.enrollmentOpen,
-              }}
-            />
+          {courses.map((course, i) => (
+            <ScrollReveal key={course.id} delay={(i % 3) * 0.08}>
+              <CourseCard
+                course={{
+                  slug: course.slug,
+                  title: course.title,
+                  shortDescription: course.shortDescription,
+                  image: course.image,
+                  level: course.level,
+                  duration: course.duration,
+                  price: Number(course.price),
+                  currency: course.currency,
+                  ageGroup: course.ageGroup,
+                  instructorName: course.instructor?.name,
+                  enrollmentOpen: course.enrollmentOpen,
+                }}
+              />
+            </ScrollReveal>
           ))}
         </div>
       )}
