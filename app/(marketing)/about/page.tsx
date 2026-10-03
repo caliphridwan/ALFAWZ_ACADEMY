@@ -14,7 +14,7 @@ const ABOUT_IMAGE =
 const SECTIONS = [
   {
     title: "Our Story",
-    body: "AlFawz Academy was established with a simple but important purpose: to help Muslims access quality Islamic education regardless of their location, schedule, or access to local learning opportunities. By combining traditional Islamic learning with modern online education, the Academy seeks to create a learning experience that is structured, accessible, and meaningful for students of different ages and backgrounds.",
+    body: "AlFawz Academy was established in 2023 with a simple but important purpose: to help Muslims access quality Islamic education regardless of their location, schedule, or access to local learning opportunities. By combining traditional Islamic learning with modern online education, the Academy seeks to create a learning experience that is structured, accessible, and meaningful for students of different ages and backgrounds.",
   },
   {
     title: "Our Mission",
