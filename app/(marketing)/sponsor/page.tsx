@@ -43,7 +43,7 @@ export default async function SponsorPage() {
             <p className="text-xs text-muted-foreground mb-2">{tier.label}</p>
             <p className="text-sm font-medium">
               {formatCurrency(tier.count * pricePerStudent, undefined, currencySymbol)}
-              <span className="text-muted-foreground font-normal">/mo</span>
+              <span className="text-muted-foreground font-normal">/cohort</span>
             </p>
           </div>
         ))}

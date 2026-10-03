@@ -1,30 +1,44 @@
 {
   "node": {
-    "069212428850fc70f5b75b1c2583ef312b915b95": {
+    "0303e3fa18366c72c48bfcb88362769cebe83f75": {
       "workers": {
-        "app/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fdashboard%2Fexam-result-actions.ts%22%2C%5B%22acknowledgeExamResult%22%5D%5D%5D&__client_imported__=true!"
+        "app/admin/courses/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/courses/[id]/edit/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2F%5Bid%5D%2Fedit%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%2C%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=!"
       },
       "layer": {
-        "app/dashboard/page": "action-browser"
+        "app/admin/courses/page": "action-browser",
+        "app/admin/courses/[id]/edit/page": "rsc"
       }
     },
-    "06b6f0d3bd00e20e526f9f567dcea95e44e030e1": {
+    "496968940901f329eebc4cf59900671f046f20cb": {
       "workers": {
-        "app/admin/students/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setExamResult%22%2C%22setStudentActive%22%5D%5D%5D&__client_imported__=true!"
+        "app/admin/courses/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/courses/[id]/edit/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2F%5Bid%5D%2Fedit%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%2C%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=!"
       },
       "layer": {
-        "app/admin/students/[id]/page": "action-browser"
+        "app/admin/courses/page": "action-browser",
+        "app/admin/courses/[id]/edit/page": "rsc"
       }
     },
-    "688aa11586fdf31e39aae34ba74f32bebd3b692b": {
+    "b1d8e88a6753aa40491f1a0d17a8790f9c6ff622": {
       "workers": {
-        "app/admin/students/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setExamResult%22%2C%22setStudentActive%22%5D%5D%5D&__client_imported__=true!"
+        "app/admin/courses/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=true!",
+        "app/admin/courses/[id]/edit/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2F%5Bid%5D%2Fedit%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%2C%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=!"
       },
       "layer": {
-        "app/admin/students/[id]/page": "action-browser"
+        "app/admin/courses/page": "action-browser",
+        "app/admin/courses/[id]/edit/page": "rsc"
+      }
+    },
+    "84882539b4b3ac0540948ce43935878a6a220c2f": {
+      "workers": {
+        "app/admin/courses/[id]/edit/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2F%5Bid%5D%2Fedit%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%2C%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fcourses%2Factions.ts%22%2C%5B%22createCourse%22%2C%22updateCourse%22%2C%22archiveCourse%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/admin/courses/[id]/edit/page": "rsc"
       }
     }
   },
   "edge": {},
-  "encryptionKey": "hoAV5hwd184bH2oR1eoJ6ScDQ9T+g+AFnxbnKVP4R+c="
+  "encryptionKey": "f3wKCmODLFQVULfrhnrUIfwYuZfAWWjFZZWYb6yBjfg="
 }

@@ -1,9 +1,7 @@
 {
+  "/(marketing)/sponsor/page": "app/(marketing)/sponsor/page.js",
   "/(marketing)/page": "app/(marketing)/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/dashboard/page": "app/dashboard/page.js",
+  "/admin/courses/page": "app/admin/courses/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/students/page": "app/admin/students/page.js",
-  "/admin/students/[id]/page": "app/admin/students/[id]/page.js"
+  "/admin/courses/[id]/edit/page": "app/admin/courses/[id]/edit/page.js"
 }
