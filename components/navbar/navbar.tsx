@@ -39,6 +39,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
       : "/dashboard";
 
   return (
+    <>
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
@@ -116,8 +117,9 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
           <Menu size={24} />
         </button>
       </nav>
+    </header>
 
-      <AnimatePresence>
+    <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -176,7 +178,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
-    </header>
+    </AnimatePresence>
+    </>
   );
 }
