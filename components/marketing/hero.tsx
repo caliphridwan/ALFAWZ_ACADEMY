@@ -195,7 +195,7 @@ export function Hero({ imageUrl }: { imageUrl?: string | null }) {
                     Learn Online
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    From anywhere in the world
+                    From anywhere across the globe
                   </p>
                 </div>
               </div>
