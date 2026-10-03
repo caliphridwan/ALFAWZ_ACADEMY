@@ -1,7 +1,4 @@
 {
-  "/(marketing)/sponsor/page": "app/(marketing)/sponsor/page.js",
   "/(marketing)/page": "app/(marketing)/page.js",
-  "/admin/courses/page": "app/admin/courses/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/courses/[id]/edit/page": "app/admin/courses/[id]/edit/page.js"
+  "/(marketing)/sponsor/page": "app/(marketing)/sponsor/page.js"
 }

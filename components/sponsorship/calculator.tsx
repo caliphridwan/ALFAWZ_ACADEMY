@@ -155,9 +155,9 @@ export function SponsorshipCalculator({
               className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
               required
             >
-              <option value="1 month">1 month</option>
-              <option value="3 months">3 months</option>
-              <option value="6 months">6 months</option>
+              <option value="1 month">1 cohort</option>
+              <option value="3 months">2 cohorts</option>
+              <option value="6 months">3 cohorts</option>
               <option value="12 months">12 months</option>
             </select>
           </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpenText, Facebook, Instagram, Youtube, MessageCircle } from "lucide-react";
+import { BookOpenText, Facebook, Instagram, Youtube, MessageCircle, Twitter } from "lucide-react";
 
 const PROGRAMS = [
   { label: "Beginners", href: "/courses/beginners-quran" },
@@ -84,9 +84,11 @@ export function Footer() {
             </li>
           </ul>
           <div className="flex gap-4">
+            <a href="https://www.youtube.com/@caliphridwan" target="_blank" rel="noopener noreferrer" aria-label="Follow Alfawz Academy on YouTube">   <Youtube size={18} className="opacity-70 hover:opacity-100 cursor-pointer" /></a>
+          <a href="https://x.com/CaliphRidwan" target="_blank" rel="noopener noreferrer" aria-label="Follow AlFawz Academy on X">  <Twitter size={18} className="opacity-70 hover:opacity-100 cursor-pointer" /></a>
             <Facebook size={18} className="opacity-70 hover:opacity-100 cursor-pointer" />
             <Instagram size={18} className="opacity-70 hover:opacity-100 cursor-pointer" />
-            <Youtube size={18} className="opacity-70 hover:opacity-100 cursor-pointer" />
+         
             <MessageCircle size={18} className="opacity-70 hover:opacity-100 cursor-pointer" />
           </div>
         </div>
