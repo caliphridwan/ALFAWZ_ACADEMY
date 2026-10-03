@@ -16,7 +16,7 @@ export default async function ContactPage() {
       <div>
         <h1 className="text-3xl sm:text-4xl font-bold mb-4">Contact Us</h1>
         <p className="text-muted-foreground mb-8">
-          Questions about courses, enrollment, or sponsorship? We&apos;d love to hear from you.
+          Whether you're interested in enrolling, sponsoring a student, joining our alumni network, or learning more about our programmes, our team would be happy to assist you.
         </p>
 
         <div className="space-y-4 text-sm">

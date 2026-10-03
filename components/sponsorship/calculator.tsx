@@ -148,7 +148,7 @@ export function SponsorshipCalculator({
             <Input id="country" name="country" required />
           </div>
           <div>
-            <Label htmlFor="duration">Sponsorship Duration</Label>
+            <Label htmlFor="duration">Sponsorship Duration (optional)</Label>
             <select
               id="duration"
               name="duration"
