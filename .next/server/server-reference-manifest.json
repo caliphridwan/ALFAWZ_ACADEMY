@@ -1,22 +1,30 @@
 {
   "node": {
-    "05756b1227db6e43f6df5f0b411c5023dfd372a7": {
+    "069212428850fc70f5b75b1c2583ef312b915b95": {
       "workers": {
-        "app/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setStudentActive%22%2C%22setExamResult%22%5D%5D%5D&__client_imported__=true!"
+        "app/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fdashboard%2Fexam-result-actions.ts%22%2C%5B%22acknowledgeExamResult%22%5D%5D%5D&__client_imported__=true!"
       },
       "layer": {
         "app/dashboard/page": "action-browser"
       }
     },
-    "c1c7ad86c6378a8a5c46f3bc3df27e47a83b19dc": {
+    "06b6f0d3bd00e20e526f9f567dcea95e44e030e1": {
       "workers": {
-        "app/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setStudentActive%22%2C%22setExamResult%22%5D%5D%5D&__client_imported__=true!"
+        "app/admin/students/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setExamResult%22%2C%22setStudentActive%22%5D%5D%5D&__client_imported__=true!"
       },
       "layer": {
-        "app/dashboard/page": "action-browser"
+        "app/admin/students/[id]/page": "action-browser"
+      }
+    },
+    "688aa11586fdf31e39aae34ba74f32bebd3b692b": {
+      "workers": {
+        "app/admin/students/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmac%2FDesktop%2Ftrial%2Falfawz-academy%203%2Fapp%2Fadmin%2Fstudents%2Factions.ts%22%2C%5B%22setExamResult%22%2C%22setStudentActive%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/students/[id]/page": "action-browser"
       }
     }
   },
   "edge": {},
-  "encryptionKey": "VIRFKM4u7n+tzUXXlKFpvbvEDB8OrGgwdwPLvu6zaOU="
+  "encryptionKey": "hoAV5hwd184bH2oR1eoJ6ScDQ9T+g+AFnxbnKVP4R+c="
 }
