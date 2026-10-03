@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentStatusToggle } from "@/components/admin/student-status-toggle";
+import { ExamResultControls } from "@/components/admin/exam-result-controls";
 import { formatCurrency } from "@/lib/utils/cn";
 
 export default async function AdminStudentDetailPage({ params }: { params: { id: string } }) {
@@ -60,18 +61,34 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-border text-left text-muted-foreground">
-              <tr><th className="p-4">Course</th><th className="p-4">Status</th><th className="p-4">Enrolled</th></tr>
+              <tr>
+                <th className="p-4">Course</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Enrolled</th>
+                <th className="p-4">Exam Result</th>
+              </tr>
             </thead>
             <tbody>
               {student.enrollments.map((e) => (
-                <tr key={e.id} className="border-b border-border last:border-0">
+                <tr key={e.id} className="border-b border-border last:border-0 align-top">
                   <td className="p-4">{e.course.title}</td>
                   <td className="p-4"><Badge>{e.status}</Badge></td>
                   <td className="p-4 text-muted-foreground">{e.enrolledAt.toLocaleDateString()}</td>
+                  <td className="p-4">
+                    <div className="space-y-2">
+                      {e.examResult && (
+                        <Badge variant={e.examResult === "PASSED" ? "default" : "muted"}>
+                          {e.examResult === "PASSED" ? "Passed" : "Failed"}
+                          {!e.examResultSeen && " (unseen)"}
+                        </Badge>
+                      )}
+                      <ExamResultControls enrollmentId={e.id} />
+                    </div>
+                  </td>
                 </tr>
               ))}
               {student.enrollments.length === 0 && (
-                <tr><td colSpan={3} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
+                <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
               )}
             </tbody>
           </table>

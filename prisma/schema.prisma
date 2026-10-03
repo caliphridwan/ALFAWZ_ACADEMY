@@ -33,6 +33,11 @@ enum EnrollmentStatus {
   EXPIRED
 }
 
+enum ExamResult {
+  PASSED
+  FAILED
+}
+
 enum PaymentType {
   COURSE
   SPONSORSHIP
@@ -79,7 +84,6 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
- 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -189,6 +193,12 @@ model Enrollment {
   status     EnrollmentStatus @default(PENDING)
   enrolledAt DateTime         @default(now())
   expiresAt  DateTime?
+
+  // null = not graded yet. examResultSeen gates the dashboard pop-up: set
+  // false whenever a new result is recorded, flipped true once the student
+  // dismisses it, so it shows exactly once per result.
+  examResult     ExamResult?
+  examResultSeen Boolean     @default(false)
 
   @@unique([studentId, courseId])
   @@index([status])
