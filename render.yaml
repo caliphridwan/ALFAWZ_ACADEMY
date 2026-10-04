@@ -44,7 +44,7 @@ services:
       - key: EMAIL_API_KEY
         sync: false
       - key: EMAIL_FROM
-        value: "AlFawz Academy <onboarding@resend.dev>"
+        value: "AlFawz Academy <noreply@alfawzacademy.com>"
 
       # --- App ---
       - key: NEXT_PUBLIC_APP_URL
