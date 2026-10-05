@@ -14,12 +14,14 @@ import {
   LogOut,
   HeartHandshake,
   Receipt,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const STUDENT_LINKS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/courses", label: "My Courses", icon: BookOpen },
+  { href: "/dashboard/materials", label: "Class Materials", icon: FileText },
   { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
   { href: "/dashboard/schedule", label: "Schedule", icon: CalendarDays },
   { href: "/dashboard/profile", label: "Profile", icon: User },

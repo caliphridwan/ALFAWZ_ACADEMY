@@ -52,6 +52,9 @@ export default async function AdminCoursesPage() {
                     <Button asChild size="sm" variant="outline">
                       <Link href={`/admin/courses/${c.id}/edit`}>Edit</Link>
                     </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/admin/courses/${c.id}/materials`}>Materials</Link>
+                    </Button>
                     {c.active && <ArchiveCourseButton courseId={c.id} />}
                   </td>
                 </tr>
