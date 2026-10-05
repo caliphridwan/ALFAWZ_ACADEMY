@@ -1,16 +1,15 @@
+
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
-import { Button } from "@/components/ui/button";
+import { motion, useReducedMotion, type Variants } from "motion/react";
 import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  Globe2,
   HeartHandshake,
-  Laptop,
+  Play,
   Sparkles,
 } from "lucide-react";
 
@@ -18,536 +17,562 @@ type HeroProps = {
   imageUrl?: string | null;
 };
 
-/* =========================================================
-   HERO
-========================================================= */
-
-export function Hero({ imageUrl }: HeroProps) {
-  const reduceMotion = useReducedMotion();
-
-  
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: {
     opacity: 0,
-    y: 20,
+    y: 22,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.75,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const imageReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.97,
+    y: 18,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const identityReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 14,
+    scale: 0.98,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.65,
+      delay: 0.12,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const cardReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 16,
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.7,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+      delay: 0.4,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
 
+export function Hero({ imageUrl }: HeroProps) {
+  const reduceMotion = useReducedMotion();
 
-
-  const imageReveal = {
-    hidden: {
-      opacity: 0,
-      x: reduceMotion ? 0 : 30,
-      scale: reduceMotion ? 1 : 0.97,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      scale: 1,
-      transition: {
-        duration: reduceMotion ? 0 : 0.9,
-        delay: 0.15,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
+  const heroImage =
+    imageUrl && imageUrl.trim().length > 0
+      ? imageUrl
+      : "/images/hero.jpg";
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-cream via-background to-blue-50/50">
-
+    <section className="relative overflow-hidden bg-background">
       {/* =====================================================
-          BACKGROUND
-      ===================================================== */}
+          SUBTLE ATMOSPHERE
+      ====================================================== */}
 
       <div
-        className="pointer-events-none absolute inset-0 bg-geo-pattern bg-repeat opacity-[0.035]"
-        aria-hidden
-      />
-
-      {/* Blue atmosphere */}
-
-      <motion.div
-        className="pointer-events-none absolute -right-52 -top-52 h-[620px] w-[620px] rounded-full bg-brand/10 blur-3xl"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                scale: [1, 1.08, 1],
-                opacity: [0.35, 0.55, 0.35],
-              }
-        }
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden
-      />
-
-      {/* Gold atmosphere */}
-
-      <motion.div
-        className="pointer-events-none absolute -bottom-64 -left-64 h-[600px] w-[600px] rounded-full bg-gold/10 blur-3xl"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                scale: [1, 1.06, 1],
-                opacity: [0.25, 0.4, 0.25],
-              }
-        }
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden
-      />
-
-      {/* Small decorative dots */}
-
-      <div
-        className="pointer-events-none absolute left-[7%] top-[25%] hidden h-2 w-2 rounded-full bg-brand/30 lg:block"
-        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.025] bg-geo-pattern"
+        aria-hidden="true"
       />
 
       <div
-        className="pointer-events-none absolute left-[9%] top-[29%] hidden h-1.5 w-1.5 rounded-full bg-gold/50 lg:block"
-        aria-hidden
+        className="pointer-events-none absolute -left-48 top-20 h-[30rem] w-[30rem] rounded-full bg-brand/10 blur-[130px]"
+        aria-hidden="true"
       />
 
       <div
-        className="pointer-events-none absolute right-[8%] top-[35%] hidden h-2 w-2 rounded-full bg-brand/20 lg:block"
-        aria-hidden
+        className="pointer-events-none absolute -right-48 top-32 h-[32rem] w-[32rem] rounded-full bg-brand/10 blur-[140px]"
+        aria-hidden="true"
       />
 
       {/* =====================================================
-          HERO CONTENT
-      ===================================================== */}
+          MAIN HERO
+      ====================================================== */}
 
-      <div className="container relative py-14 sm:py-20 lg:py-24 xl:py-28">
-        <div className="grid items-center gap-14 lg:grid-cols-[1fr_0.95fr] lg:gap-16 xl:gap-24">
-
+      <div className="container relative z-10">
+        <div className="grid items-center gap-14 py-14 sm:py-20 lg:min-h-[700px] lg:grid-cols-[0.96fr_1.04fr] lg:gap-16 lg:py-20 xl:gap-24">
           {/* =================================================
-              LEFT SIDE
-          ================================================= */}
+              LEFT CONTENT
+          ================================================== */}
 
-          <div className="relative z-10 max-w-2xl">
-
+          <div className="max-w-2xl">
             {/* Bismillah */}
 
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
+              transition={{
+                delay: reduceMotion ? 0 : 0.02,
+              }}
+              className="mb-4"
             >
-              <span className="arabic-text mb-5 block text-center text-lg font-extrabold tracking-wide text-brand/80 sm:text-left sm:text-xl lg:text-2xl">
+              <p
+                dir="rtl"
+                className="arabic-text text-center text-xl font-semibold tracking-wide text-brand/80 sm:text-left sm:text-2xl"
+              >
                 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-              </span>
+              </p>
             </motion.div>
 
-            {/* Eyebrow */}
+            {/* =================================================
+                PREMIUM IDENTITY PANEL
+            ================================================== */}
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-              transition={{ delay: 0.08 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand/10 bg-white/80 px-4 py-2 text-sm font-semibold text-brand shadow-sm backdrop-blur"
-            >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/30" />
-                <span className="relative h-2.5 w-2.5 rounded-full bg-brand" />
-              </span>
 
-              Online Qur&apos;an &amp; Islamic Education
-            </motion.div>
+<motion.div
+  variants={identityReveal}
+  initial="hidden"
+  animate="visible"
+  className="mb-8 inline-flex max-w-full items-center gap-3 rounded-2xl border border-brand/10 bg-white/80 px-4 py-3 shadow-sm shadow-brand/5 backdrop-blur-md sm:px-5"
+>
+  {/* Animated glow behind the badge */}
+  <motion.div
+    className="absolute -inset-1 -z-10 rounded-2xl bg-brand/10 blur-md"
+    animate={
+      reduceMotion
+        ? { opacity: 0.4 }
+        : {
+            opacity: [0.2, 0.55, 0.2],
+            scale: [0.98, 1.02, 0.98],
+          }
+    }
+    transition={{
+      duration: 2.8,
+      repeat: reduceMotion ? 0 : Infinity,
+      ease: "easeInOut",
+    }}
+    aria-hidden="true"
+  />
 
-            {/* Heading */}
+  {/* Animated icon */}
+  <motion.div
+    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/10"
+    animate={
+      reduceMotion
+        ? { opacity: 1 }
+        : {
+            scale: [1, 1.08, 1],
+            rotate: [0, 4, -4, 0],
+          }
+    }
+    transition={{
+      duration: 2.4,
+      repeat: reduceMotion ? 0 : Infinity,
+      ease: "easeInOut",
+    }}
+  >
+    <motion.div
+      animate={
+        reduceMotion
+          ? { opacity: 1 }
+          : {
+              opacity: [0.55, 1, 0.55],
+              scale: [0.9, 1.08, 0.9],
+            }
+      }
+      transition={{
+        duration: 1.8,
+        repeat: reduceMotion ? 0 : Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <Sparkles
+        className="h-4 w-4 text-brand"
+        aria-hidden="true"
+      />
+    </motion.div>
+  </motion.div>
+
+  <div>
+    <motion.p
+      className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand"
+      animate={
+        reduceMotion
+          ? { opacity: 1 }
+          : {
+              opacity: [1, 0.7, 1],
+            }
+      }
+      transition={{
+        duration: 2.2,
+        repeat: reduceMotion ? 0 : Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      AlFawz Academy
+    </motion.p>
+
+    <p className="mt-0.5 text-xs font-medium text-muted-foreground sm:text-sm">
+      Online Qur&apos;an & Islamic Education
+    </p>
+  </div>
+</motion.div>
+
+            {/* =================================================
+                HEADLINE
+            ================================================== */}
 
             <motion.h1
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              transition={{ delay: 0.18 }}
-              className="text-4xl font-bold leading-[1.06] tracking-tight text-charcoal sm:text-5xl lg:text-6xl xl:text-[4.35rem]"
+              transition={{
+                delay: reduceMotion ? 0 : 0.2,
+              }}
+              className="text-[3.05rem] font-bold leading-[0.98] tracking-[-0.055em] text-charcoal sm:text-6xl md:text-7xl lg:text-[4.35rem] xl:text-[4.85rem]"
             >
               Learn the Qur&apos;an.
               <br />
-
-              <span className="relative text-brand">
-                Understand Your Deen.
-
-                <span
-                  className="absolute -bottom-1 left-0 h-1 w-24 rounded-full bg-gold/60"
-                  aria-hidden
-                />
-              </span>
-
+              <span className="text-brand">Understand Your Deen.</span>
               <br />
-
               <span>Transform Your Life.</span>
             </motion.h1>
 
-            {/* Accent */}
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                scaleX: 0,
-              }}
-              animate={{
-                opacity: 1,
-                scaleX: 1,
-              }}
-              transition={{
-                delay: 0.55,
-                duration: reduceMotion ? 0 : 0.6,
-              }}
-              style={{ transformOrigin: "left" }}
-              className="mt-7 h-1 w-16 rounded-full bg-brand"
-            />
-
-            {/* Description */}
+            {/* =================================================
+                DESCRIPTION
+            ================================================== */}
 
             <motion.p
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              transition={{ delay: 0.35 }}
-              className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"
+              transition={{
+                delay: reduceMotion ? 0 : 0.28,
+              }}
+              className="mt-7 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"
             >
-              AlFawz Academy provides structured and engaging online
-              Qur&apos;an and Islamic education for children, youth and
-              adults — helping students build a stronger relationship with
-              the Qur&apos;an, deepen their understanding of Islam and grow
-              in faith.
+              Structured and engaging online Qur&apos;an and Islamic education
+              for children, youth and adults — helping you build a stronger
+              relationship with the Qur&apos;an, deepen your understanding of
+              Islam and grow in faith.
             </motion.p>
 
-            {/* CTA */}
+            {/* =================================================
+                PRIMARY ACTION
+            ================================================== */}
 
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              transition={{ delay: 0.5 }}
-              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+              transition={{
+                delay: reduceMotion ? 0 : 0.36,
+              }}
+              className="mt-9"
             >
-              <Button
-                asChild
-                size="lg"
-                className="group h-12 px-7 text-base shadow-lg shadow-brand/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              <Link
+                href="/courses"
+                className="group inline-flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-brand px-7 text-sm font-bold text-white shadow-xl shadow-brand/20 transition-all duration-300 hover:-translate-y-1 hover:bg-brand/90 hover:shadow-2xl hover:shadow-brand/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto"
               >
-                <Link href="/courses">
-                  Explore Our Courses
-
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              </Button>
-
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="h-12 border-brand/20 bg-white px-7 text-base transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:bg-brand/5"
-              >
-                <Link href="/register">
-                  Join Us Today
-                </Link>
-              </Button>
-
-              <Button
-                asChild
-                size="lg"
-                variant="ghost"
-                className="h-12 px-7 text-base font-semibold text-brand transition-all duration-300 hover:bg-brand/5"
-              >
-                <Link href="/sponsor">
-                  Sponsor a Student
-                </Link>
-              </Button>
+                Explore Our Courses
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
             </motion.div>
 
-            {/* Audience */}
+            {/* =================================================
+                SECONDARY ACTION + SPONSOR
+            ================================================== */}
 
             <motion.div
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              transition={{ delay: 0.65 }}
-              className="mt-10 grid max-w-xl grid-cols-1 gap-4 border-t border-border/60 pt-7 sm:grid-cols-3 sm:gap-0"
+              transition={{
+                delay: reduceMotion ? 0 : 0.43,
+              }}
+              className="mt-4 flex flex-col items-start gap-3"
             >
-              <Audience
-                title="Children"
-                description="Strong Islamic foundations"
-              />
+              <Link
+                href="/register"
+                className="group inline-flex h-12 items-center gap-3 rounded-xl px-1 text-sm font-bold text-charcoal transition-colors duration-300 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white transition-all duration-300 group-hover:border-brand/30 group-hover:bg-brand/5">
+                  <Play
+                    className="ml-0.5 h-3.5 w-3.5 fill-current"
+                    aria-hidden="true"
+                  />
+                </span>
 
-              <Audience
-                title="Youth"
-                description="Qur'an & Islamic understanding"
-              />
+                Join Us Today
+              </Link>
 
-              <Audience
-                title="Adults"
-                description="Continue your learning journey"
-              />
+              <Link
+                href="/sponsorship"
+                className="group inline-flex items-center gap-2 rounded-lg px-1 text-sm font-semibold text-brand transition-all duration-300 hover:gap-3 hover:text-brand/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              >
+                <HeartHandshake
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                />
+
+                Sponsor a Student
+
+                <ArrowRight
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
+            </motion.div>
+
+            {/* =================================================
+                TRUST INDICATORS
+            ================================================== */}
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                delay: reduceMotion ? 0 : 0.5,
+              }}
+              className="mt-8 flex flex-wrap gap-x-6 gap-y-3"
+            >
+              <TrustPoint text="Qualified instructors" />
+              <TrustPoint text="Flexible learning" />
+              <TrustPoint text="Authentic knowledge" />
             </motion.div>
           </div>
 
           {/* =================================================
-              RIGHT SIDE
-          ================================================= */}
+              RIGHT SIDE IMAGE
+          ================================================== */}
 
           <motion.div
             variants={imageReveal}
             initial="hidden"
             animate="visible"
-            className="relative mx-auto w-full max-w-xl lg:max-w-none"
+            className="relative mx-auto w-full max-w-[620px] lg:ml-auto"
           >
-
-            {/* Decorative geometric frame */}
-
-            <div className="absolute -inset-4 rounded-[2.5rem] border border-brand/10 bg-brand/[0.015]" />
-
-            <div className="absolute -right-5 -top-5 h-20 w-20 rounded-3xl border border-brand/10 bg-brand/5" />
-
-            <div className="absolute -bottom-6 -left-6 h-20 w-20 rounded-full border border-gold/20 bg-gold/5" />
-
             {/* Main image */}
 
-            <motion.div
-              whileHover={
-                reduceMotion
-                  ? undefined
-                  : {
-                      y: -5,
-                    }
-              }
-              transition={{
-                duration: 0.35,
-              }}
-              className="relative overflow-visible"
-            >
-              <div className="relative rounded-[2rem] bg-gradient-to-br from-brand/25 via-brand/5 to-gold/20 p-1.5 shadow-2xl shadow-brand/10">
+            <div className="relative">
+              <div className="relative aspect-[1/0.92] overflow-hidden rounded-[2.5rem] bg-muted shadow-2xl shadow-black/10 sm:aspect-[1/0.88] lg:aspect-[1/0.86]">
+                <Image
+                  src={heroImage}
+                  alt="Students learning Qur'an and Islamic studies with AlFawz Academy"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 52vw"
+                  className="object-cover"
+                />
 
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[1.65rem] bg-brand/5">
+                {/* Soft cinematic overlay */}
 
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt="Students learning Qur'an and Islamic studies with AlFawz Academy"
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-700 hover:scale-[1.025]"
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-gradient-to-br from-brand/10 via-white to-gold/10" />
-                  )}
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"
+                  aria-hidden="true"
+                />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+                <div
+                  className="absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-transparent"
+                  aria-hidden="true"
+                />
+              </div>
 
-                  {/* Image label */}
+              {/* =================================================
+                  IMAGE FLOATING CARD
+              ================================================== */}
 
-                  <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5">
-                    <div className="rounded-2xl border border-white/20 bg-black/30 p-4 text-white backdrop-blur-md">
-                      <div className="flex items-center gap-3">
+              <motion.div
+                variants={cardReveal}
+                initial="hidden"
+                animate="visible"
+                className="absolute -bottom-5 left-4 right-4 sm:left-7 sm:right-auto sm:w-[330px]"
+              >
+                <div className="rounded-2xl border border-white/60 bg-white/95 p-4 shadow-2xl shadow-black/10 backdrop-blur-xl sm:p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                      <BookOpen
+                        className="h-5 w-5 text-brand"
+                        aria-hidden="true"
+                      />
+                    </div>
 
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15">
-                          <BookOpen className="h-5 w-5" />
-                        </div>
+                    <div>
+                      <p className="text-sm font-bold text-charcoal">
+                        Knowledge that transforms
+                      </p>
 
-                        <div>
-                          <p className="text-sm font-semibold">
-                            Learn wherever you are
-                          </p>
-
-                          <p className="mt-1 text-xs text-white/80">
-                            Qur&apos;an &amp; Islamic education without
-                            geographical barriers.
-                          </p>
-                        </div>
-
-                      </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        Qur&apos;an • Sunnah • Character
+                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Online badge */}
+              {/* Small image status */}
 
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.75, duration: 0.6 }}
-                className="absolute -right-3 -top-5 hidden rounded-2xl border border-brand/10 bg-white p-4 shadow-xl sm:block lg:-right-7"
+                variants={cardReveal}
+                initial="hidden"
+                animate="visible"
+                transition={{
+                  delay: reduceMotion ? 0 : 0.5,
+                }}
+                className="absolute right-4 top-4 sm:right-6 sm:top-6"
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10">
-                    <Laptop className="h-5 w-5 text-brand" />
-                  </div>
+                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-black/30 px-3 py-2 text-white backdrop-blur-md">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
 
-                  <div>
-                    <p className="text-sm font-bold text-charcoal">
-                      Learn Online
-                    </p>
-
-                    <p className="text-xs text-muted-foreground">
-                      From anywhere
-                    </p>
-                  </div>
+                  <span className="text-[10px] font-semibold sm:text-[11px]">
+                    Learn • Grow • Transform
+                  </span>
                 </div>
               </motion.div>
+            </div>
 
-              {/* Hadith */}
+            {/* =================================================
+                HADITH CARD
+            ================================================== */}
 
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85, duration: 0.7 }}
-                className="absolute -bottom-11 -left-5 hidden w-72 rounded-2xl border border-border/70 bg-white p-5 shadow-xl sm:block lg:-left-10"
-              >
-                <p
-                  dir="rtl"
-                  className="arabic-text text-center text-lg font-extrabold leading-8 text-brand"
-                >
-                  خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ
-                </p>
+            <motion.div
+              variants={cardReveal}
+              initial="hidden"
+              animate="visible"
+              transition={{
+                delay: reduceMotion ? 0 : 0.65,
+              }}
+              className="mt-10 rounded-2xl border border-border/70 bg-white/80 p-5 shadow-lg shadow-black/[0.04] backdrop-blur-md sm:p-6"
+            >
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10">
+                  <BookOpen
+                    className="h-4 w-4 text-brand"
+                    aria-hidden="true"
+                  />
+                </div>
 
-                <div className="my-3 h-px bg-border" />
+                <div>
+                  <p className="text-sm font-semibold leading-6 text-charcoal">
+                    “The best of you are those who learn the Qur&apos;an and
+                    teach it.”
+                  </p>
 
-                <p className="text-center text-sm font-medium leading-6 text-charcoal">
-                  &ldquo;The best among you are those who learn the Qur&apos;an
-                  and teach it.&rdquo;
-                </p>
-
-                <p className="mt-2 text-center text-xs text-muted-foreground">
-                  Prophet Muhammad ﷺ
-                </p>
-
-                <p className="mt-3 text-center text-xs font-semibold text-brand">
-                  Sahih al-Bukhari 5027
-                </p>
-              </motion.div>
-
-              {/* Sponsorship pill */}
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
-                className="absolute -bottom-6 right-5 hidden rounded-full border border-gold/20 bg-white px-4 py-2 shadow-lg sm:flex sm:items-center sm:gap-2"
-              >
-                <HeartHandshake className="h-4 w-4 text-gold" />
-
-                <span className="text-xs font-semibold text-charcoal">
-                  Give the gift of knowledge
-                </span>
-              </motion.div>
+                  <p className="mt-2 text-xs font-medium text-muted-foreground">
+                    Prophet Muhammad ﷺ · Sahih al-Bukhari 5027
+                  </p>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </div>
+
+        {/* =====================================================
+            BOTTOM VALUE STRIP
+        ====================================================== */}
+
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{
+            once: true,
+            amount: 0.2,
+            margin: "0px 0px -60px 0px",
+          }}
+          className="border-t border-border/60 py-8 sm:py-10"
+        >
+          <div className="grid gap-7 sm:grid-cols-3 sm:gap-0">
+            <HeroPrinciple
+              number="01"
+              title="Learn"
+              description="Build a strong foundation in Qur'anic and Islamic knowledge."
+            />
+
+            <HeroPrinciple
+              number="02"
+              title="Understand"
+              description="Study with clarity, context, and authentic sources."
+            />
+
+            <HeroPrinciple
+              number="03"
+              title="Live"
+              description="Turn knowledge into character, worship, and action."
+            />
+          </div>
+        </motion.div>
       </div>
-
-      {/* =====================================================
-          FEATURE STRIP
-      ===================================================== */}
-
-      <div className="border-t border-border/50 bg-white/90 backdrop-blur">
-        <div className="container grid grid-cols-2 divide-x divide-y divide-border/60 sm:grid-cols-4 sm:divide-y-0">
-
-          <FeatureStrip
-            icon={<BookOpen className="h-4 w-4" />}
-            title="Qur'an"
-            text="Reading & Memorisation"
-          />
-
-          <FeatureStrip
-            icon={<Sparkles className="h-4 w-4" />}
-            title="Tajweed"
-            text="Correct Pronunciation"
-          />
-
-          <FeatureStrip
-            icon={<Globe2 className="h-4 w-4" />}
-            title="Islamic Studies"
-            text="Knowledge & Understanding"
-          />
-
-          <FeatureStrip
-            icon={<Laptop className="h-4 w-4" />}
-            title="Flexible Learning"
-            text="Learn From Anywhere"
-          />
-
-        </div>
-      </div>
-
-      <div className="geo-divider" />
     </section>
   );
 }
 
-/* =========================================================
-   AUDIENCE
-========================================================= */
+/* ============================================================
+   TRUST POINT
+============================================================ */
 
-function Audience({
+function TrustPoint({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
+      <CheckCircle2
+        className="h-4 w-4 shrink-0 text-brand"
+        aria-hidden="true"
+      />
+
+      <span>{text}</span>
+    </div>
+  );
+}
+
+/* ============================================================
+   HERO PRINCIPLE
+============================================================ */
+
+function HeroPrinciple({
+  number,
   title,
   description,
 }: {
+  number: string;
   title: string;
   description: string;
 }) {
   return (
-    <div className="sm:px-5 first:sm:pl-0 last:sm:pr-0">
-      <p className="text-sm font-bold text-charcoal">
-        {title}
-      </p>
+    <div className="flex gap-4 sm:px-8 first:sm:pl-0 last:sm:pr-0">
+      <span className="pt-0.5 text-xs font-bold tracking-[0.15em] text-brand/60">
+        {number}
+      </span>
 
-      <p className="mt-1 text-xs leading-5 text-muted-foreground">
-        {description}
-      </p>
-    </div>
-  );
-}
+      <div>
+        <h3 className="text-sm font-bold text-charcoal">{title}</h3>
 
-/* =========================================================
-   FEATURE STRIP
-========================================================= */
-
-function FeatureStrip({
-  icon,
-  title,
-  text,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="group px-4 py-5 text-center transition-colors duration-300 hover:bg-brand/[0.025] sm:px-6">
-
-      <div className="mx-auto flex w-fit items-center gap-2 text-brand">
-        {icon}
-
-        <p className="text-sm font-bold text-charcoal group-hover:text-brand">
-          {title}
+        <p className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
+          {description}
         </p>
       </div>
-
-      <p className="mt-1 text-xs text-muted-foreground">
-        {text}
-      </p>
     </div>
   );
 }
+
