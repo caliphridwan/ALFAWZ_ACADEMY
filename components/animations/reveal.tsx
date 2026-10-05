@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion, type Variants } from "motion/react";
@@ -14,10 +13,10 @@ type RevealProps = {
 };
 
 const directions = {
-  up: { y: 45, x: 0 },
-  down: { y: -45, x: 0 },
-  left: { x: -45, y: 0 },
-  right: { x: 45, y: 0 },
+  up: { x: 0, y: 32 },
+  down: { x: 0, y: -32 },
+  left: { x: -32, y: 0 },
+  right: { x: 32, y: 0 },
   none: { x: 0, y: 0 },
 };
 
@@ -25,18 +24,19 @@ export function Reveal({
   children,
   className,
   delay = 0,
-  duration = 0.65,
+  duration = 0.7,
   direction = "up",
-  amount = 0.2,
+  amount = 0.15,
 }: RevealProps) {
-  const initial = directions[direction];
+  const offset = directions[direction];
 
   const variants: Variants = {
     hidden: {
       opacity: 0,
-      x: initial.x,
-      y: initial.y,
+      x: offset.x,
+      y: offset.y,
     },
+
     visible: {
       opacity: 1,
       x: 0,
@@ -58,6 +58,7 @@ export function Reveal({
       viewport={{
         once: true,
         amount,
+        margin: "0px 0px -60px 0px",
       }}
     >
       {children}

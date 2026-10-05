@@ -11,9 +11,11 @@ type StaggerProps = {
 
 const containerVariants: Variants = {
   hidden: {},
+
   visible: {
     transition: {
-      staggerChildren: 0.12,
+      staggerChildren: 0.11,
+      delayChildren: 0.05,
     },
   },
 };
@@ -21,15 +23,16 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 35,
-    scale: 0.97,
+    y: 28,
+    scale: 0.98,
   },
+
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.65,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -47,7 +50,8 @@ export function StaggerContainer({
       whileInView="visible"
       viewport={{
         once: true,
-        amount: 0.15,
+        amount: 0.1,
+        margin: "0px 0px -50px 0px",
       }}
     >
       {children}
@@ -60,8 +64,12 @@ export function StaggerItem({
   className,
 }: StaggerProps) {
   return (
-    <motion.div variants={itemVariants} className={className}>
+    <motion.div
+      variants={itemVariants}
+      className={className}
+    >
       {children}
     </motion.div>
   );
 }
+
