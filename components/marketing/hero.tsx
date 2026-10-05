@@ -328,7 +328,7 @@ export function Hero({ imageUrl }: HeroProps) {
               </Link>
 
               <Link
-                href="/sponsorship"
+                href="/sponsor"
                 className="group inline-flex items-center gap-2 rounded-lg px-1 text-sm font-semibold text-brand transition-all duration-300 hover:gap-3 hover:text-brand/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               >
                 <HeartHandshake
