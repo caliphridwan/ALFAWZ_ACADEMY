@@ -3,9 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import { Navbar } from "@/components/navbar/navbar";
-import { Footer } from "@/components/footer/footer";
-import { WhatsAppButton } from "@/components/shared/whatsapp-button";
+import { SiteChrome } from "@/components/shared/site-chrome";
 import { JsonLd } from "@/components/shared/json-ld";
 import { prisma } from "@/lib/db/prisma";
 
@@ -65,10 +63,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
         <Providers>
-          <Navbar logoUrl={settings?.logoUrl} />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <WhatsAppButton phoneNumber={settings?.whatsappNumber} />
+          <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}>
+            {children}
+          </SiteChrome>
         </Providers>
       </body>
     </html>

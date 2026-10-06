@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, BookOpenText } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/navbar/logo";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
@@ -24,6 +25,12 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  // Only the homepage has empty decorative space under the nav for a
+  // transparent-over-hero look to work. Every other page puts a heading
+  // right at the top, so a transparent nav there means nav text literally
+  // overlaps page text — always solid on those instead.
+  const isHome = pathname === "/";
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -43,31 +50,14 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
-        scrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
+        !isHome || scrolled
+          ? "bg-background border-b border-border shadow-sm"
           : "bg-transparent"
       )}
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
       <nav className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-          {logoUrl ? (
-            <span className="relative h-9 w-9 shrink-0">
-              <Image
-                src={logoUrl}
-                alt="AlFawz Academy"
-                fill
-                className="object-contain"
-                priority
-              />
-            </span>
-          ) : (
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brand-foreground">
-              <BookOpenText size={18} />
-            </span>
-          )}
-          <span>AlFawz Academy</span>
-        </Link>
+        <Logo logoUrl={logoUrl} />
 
         <div className="hidden lg:flex items-center gap-7">
           {NAV_LINKS.map((link) => (
