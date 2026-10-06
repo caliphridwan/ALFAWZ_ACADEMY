@@ -80,7 +80,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
               <Button asChild variant="outline" size="sm">
                 <Link href={`${dashboardHref}/profile`}>Profile</Link>
               </Button>
-              <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
+              <Button size="sm" onClick={() => signOut({ callbackUrl: "https://alfawzacademy.com" })}>
                 Logout
               </Button>
             </>
@@ -149,7 +149,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                       <Button asChild>
                         <Link href={dashboardHref}>Dashboard</Link>
                       </Button>
-                      <Button variant="outline" onClick={() => signOut({ callbackUrl: "/" })}>
+                      <Button variant="outline" onClick={() => signOut({ callbackUrl: "https://alfawzacademy.com" })}>
                         Logout
                       </Button>
                     </>
