@@ -60,7 +60,7 @@ export async function sendPaymentConfirmationEmail(params: {
     params.to,
     "Payment confirmed — AlFawz Academy",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p>We've received your ${label} of ${params.currency} ${params.amount.toLocaleString()}. Jazakallahu khairan.</p>`
+     <p>We've received your ${label} of ${params.currency} ${params.amount.toLocaleString()}. Jazakumullahu khairan.</p>`
   );
 }
 
@@ -69,7 +69,7 @@ export async function sendAlumniApprovedEmail(params: { to: string; name: string
     params.to,
     "Your AlFawz Academy alumni profile is live",
     `<p>Assalamu Alaikum ${escapeHtml(params.name)},</p>
-     <p> We are delighted to let you know that your <strong>AlFawz Academy alumni registration</strong> has been reviewed and approved. </p> <p> Your alumni profile is now live on the AlFawz Academy Alumni page, allowing you to remain connected with the academy and fellow members of our growing alumni community. </p> <p> Thank you for taking the time to share your journey and remain connected with AlFawz Academy. Your story may inspire current and future students to pursue knowledge and strive for excellence. </p> <p> May Allah ﷻ bless your journey, increase you in beneficial knowledge, and make your contributions a lasting source of benefit. </p> <p> <strong>Jazākallāhu khayran</strong> for being part of the AlFawz Academy family. </p> <p> <strong>AlFawz Academy</strong><br /> Learning. Character. Faith. </p>`
+     <p> We are delighted to let you know that your <strong>AlFawz Academy alumni registration</strong> has been reviewed and approved. </p> <p> Your alumni profile is now live on the AlFawz Academy Alumni page, allowing you to remain connected with the academy and fellow members of our growing alumni community. </p> <p> Thank you for taking the time to share your journey and remain connected with AlFawz Academy. Your story may inspire current and future students to pursue knowledge and strive for excellence. </p> <p> May Allah ﷻ bless your journey, increase you in beneficial knowledge, and make your contributions a lasting source of benefit. </p> <p> <strong>Jazākumullāhu khayran</strong> for being part of the AlFawz Academy family. </p> <p> <strong>AlFawz Academy</strong><br /> Learning. Character. Faith. </p>`
   );
 }
 

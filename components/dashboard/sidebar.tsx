@@ -64,7 +64,7 @@ export function DashboardSidebar({ variant = "student" }: { variant?: "student" 
           );
         })}
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => signOut({ callbackUrl: "https://alfawzacademy.com" })}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
         >
           <LogOut size={18} />

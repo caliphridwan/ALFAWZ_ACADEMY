@@ -35,7 +35,7 @@ function SponsorCallbackContent() {
       {state === "success" && (
         <>
           <CheckCircle2 className="text-brand mb-6" size={48} />
-          <h1 className="text-2xl font-semibold mb-2">Jazakallahu Khairan</h1>
+          <h1 className="text-2xl font-semibold mb-2">Jazakumullahu Khairan</h1>
           <p className="text-muted-foreground mb-8">
             Your sponsorship is now active. Check your email for a
             confirmation, plus a separate link to set up your sponsor
