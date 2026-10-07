@@ -35,6 +35,7 @@ export default async function EditCoursePage({ params }: { params: { id: string 
           currency: course.currency,
           duration: course.duration,
           schedule: course.schedule,
+          zoomLink: course.zoomLink,
           level: course.level,
           ageGroup: course.ageGroup,
           category: course.category,

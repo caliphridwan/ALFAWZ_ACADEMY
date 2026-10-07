@@ -22,6 +22,7 @@ function parseCourseForm(formData: FormData) {
     currency: formData.get("currency") || "NGN",
     duration: formData.get("duration"),
     schedule: formData.get("schedule") || undefined,
+    zoomLink: formData.get("zoomLink") || "",
     level: formData.get("level"),
     ageGroup: formData.get("ageGroup"),
     category: formData.get("category") || undefined,
@@ -52,6 +53,7 @@ export async function createCourse(
     data: {
       ...parsed.data,
       image: parsed.data.image || null,
+      zoomLink: parsed.data.zoomLink || null,
       instructorId: parsed.data.instructorId || null,
     },
   });
@@ -83,6 +85,7 @@ export async function updateCourse(
     data: {
       ...parsed.data,
       image: parsed.data.image || null,
+      zoomLink: parsed.data.zoomLink || null,
       instructorId: parsed.data.instructorId || null,
     },
   });

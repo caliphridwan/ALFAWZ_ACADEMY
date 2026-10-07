@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Video } from "lucide-react";
 
 export default async function MyCoursesPage() {
   const session = await getServerSession(authOptions);
@@ -41,9 +42,21 @@ export default async function MyCoursesPage() {
                     {e.status}
                   </Badge>
                 </div>
-                <Button asChild size="sm" variant="outline">
-                  <Link href={`/courses/${e.course.slug}`}>View Course</Link>
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  {/* ACTIVE is only ever reached after a verified Paystack payment
+                      (see applyVerifiedPayment) — never shown otherwise. */}
+                  {e.status === "ACTIVE" && e.course.zoomLink && (
+                    <Button asChild size="sm">
+                      <a href={e.course.zoomLink} target="_blank" rel="noopener noreferrer">
+                        <Video size={16} className="mr-1" />
+                        Join Class
+                      </a>
+                    </Button>
+                  )}
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/courses/${e.course.slug}`}>View Course</Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

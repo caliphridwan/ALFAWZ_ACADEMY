@@ -89,11 +89,20 @@ export default async function DashboardOverviewPage() {
                     </Badge>
                   )}
                 </div>
-                <Button asChild size="sm" variant={e.status === "ACTIVE" ? "default" : "outline"}>
-                  <Link href={`/courses/${e.course.slug}`}>
-                    {e.status === "ACTIVE" ? "Continue Learning" : "View Course"}
-                  </Link>
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  {e.status === "ACTIVE" && e.course.zoomLink && (
+                    <Button asChild size="sm">
+                      <a href={e.course.zoomLink} target="_blank" rel="noopener noreferrer">
+                        Join Class
+                      </a>
+                    </Button>
+                  )}
+                  <Button asChild size="sm" variant={e.status === "ACTIVE" ? "default" : "outline"}>
+                    <Link href={`/courses/${e.course.slug}`}>
+                      {e.status === "ACTIVE" ? "Continue Learning" : "View Course"}
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

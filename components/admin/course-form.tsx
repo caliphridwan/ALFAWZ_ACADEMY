@@ -17,6 +17,7 @@ type CourseDefaults = {
   currency: string;
   duration: string;
   schedule?: string | null;
+  zoomLink?: string | null;
   level: string;
   ageGroup: string;
   category?: string | null;
@@ -113,6 +114,20 @@ export function CourseForm({
       <div>
         <Label htmlFor="schedule">Class Schedule</Label>
         <Input id="schedule" name="schedule" defaultValue={defaults?.schedule ?? ""} placeholder="e.g. Mon/Wed/Fri, 7:00 PM WAT" />
+      </div>
+
+      <div>
+        <Label htmlFor="zoomLink">Zoom Link</Label>
+        <Input
+          id="zoomLink"
+          name="zoomLink"
+          defaultValue={defaults?.zoomLink ?? ""}
+          placeholder="https://zoom.us/j/..."
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Only visible to students with an active (paid) enrollment in this course.
+        </p>
+        <FieldError messages={state.fieldErrors?.zoomLink} />
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4">

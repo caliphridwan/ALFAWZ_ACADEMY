@@ -50,7 +50,7 @@ function PaymentCallbackContent() {
           <CheckCircle2 className="text-brand mb-6" size={48} />
           <h1 className="text-2xl font-semibold mb-2">Payment confirmed</h1>
           <p className="text-muted-foreground mb-8">
-            Jazakallahu khairan — your enrollment is now active. You can start
+            Jazakumullahu khairan — your enrollment is now active. You can start
             learning from your dashboard.
           </p>
           <Button asChild>

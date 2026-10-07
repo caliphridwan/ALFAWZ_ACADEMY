@@ -164,6 +164,7 @@ model Course {
   currency         String   @default("NGN")
   duration         String
   schedule         String?
+  zoomLink         String?
   level            String
   ageGroup         String
   category         String?
