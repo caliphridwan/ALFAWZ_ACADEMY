@@ -100,12 +100,6 @@ export const courseSchema = z.object({
     .url("Enter a valid Zoom (or other meeting) link")
     .optional()
     .or(z.literal("")),
-  zoomLink: z
-    .string()
-    .trim()
-    .url("Enter a valid Zoom link (starting with https://)")
-    .optional()
-    .or(z.literal("")),
   level: z.string().min(1),
   ageGroup: z.string().min(1),
   category: z.string().optional(),
