@@ -67,6 +67,7 @@ export default async function AdminPaymentsPage({
                 <th className="p-4">Type</th>
                 <th className="p-4">Course</th>
                 <th className="p-4">Amount</th>
+                <th className="p-4">Source</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Date</th>
               </tr>
@@ -83,6 +84,13 @@ export default async function AdminPaymentsPage({
                   <td className="p-4 text-muted-foreground">{p.course?.title ?? "—"}</td>
                   <td className="p-4">{formatCurrency(Number(p.amount), p.currency)}</td>
                   <td className="p-4">
+                    {p.provider === "manual" ? (
+                      <Badge variant="muted">Offline (manual)</Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Paystack</span>
+                    )}
+                  </td>
+                  <td className="p-4">
                     <Badge variant={STATUS_VARIANT[p.status] ?? "muted"}>{p.status}</Badge>
                   </td>
                   <td className="p-4 text-muted-foreground">{p.createdAt.toLocaleDateString()}</td>
@@ -90,7 +98,7 @@ export default async function AdminPaymentsPage({
               ))}
               {payments.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="p-8 text-center text-muted-foreground">
                     No payments match your filters.
                   </td>
                 </tr>

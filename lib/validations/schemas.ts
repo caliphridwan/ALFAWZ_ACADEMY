@@ -100,6 +100,12 @@ export const courseSchema = z.object({
     .url("Enter a valid Zoom (or other meeting) link")
     .optional()
     .or(z.literal("")),
+  zoomLink: z
+    .string()
+    .trim()
+    .url("Enter a valid Zoom link (starting with https://)")
+    .optional()
+    .or(z.literal("")),
   level: z.string().min(1),
   ageGroup: z.string().min(1),
   category: z.string().optional(),
@@ -175,4 +181,22 @@ export const siteSettingsSchema = z.object({
   studentsCount: z.coerce.number().int().min(0).optional(),
   countriesCount: z.coerce.number().int().min(0).optional(),
   classesDelivered: z.coerce.number().int().min(0).optional(),
+});
+
+export const adminCreateStudentSchema = z.object({
+  name: z.string().min(2, "Full name is required"),
+  email: z
+    .string()
+    .email("Enter a valid email address")
+    .transform((v) => v.trim().toLowerCase()),
+  phone: z.string().optional(),
+  country: z.string().optional(),
+});
+
+export const manualEnrollmentSchema = z.object({
+  courseId: z.string().min(1, "Choose a course"),
+  reason: z.enum(["SCHOLARSHIP", "OFFLINE_PAYMENT"], {
+    errorMap: () => ({ message: "Choose a reason" }),
+  }),
+  note: z.string().max(500).optional(),
 });

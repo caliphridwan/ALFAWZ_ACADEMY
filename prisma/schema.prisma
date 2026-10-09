@@ -33,6 +33,17 @@ enum EnrollmentStatus {
   EXPIRED
 }
 
+// How an enrollment became ACTIVE. PAYSTACK is the normal self-serve flow.
+// The other two are admin-recorded (Section: admin adds students directly)
+// — OFFLINE_PAYMENT still creates a real Payment row (counts as revenue,
+// money genuinely changed hands, just not through Paystack); SCHOLARSHIP
+// creates no Payment row at all, so it never inflates revenue totals.
+enum EnrollmentSource {
+  PAYSTACK
+  SCHOLARSHIP
+  OFFLINE_PAYMENT
+}
+
 enum ExamResult {
   PASSED
   FAILED
@@ -209,6 +220,8 @@ model Enrollment {
   courseId   String
   course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   status     EnrollmentStatus @default(PENDING)
+  source     EnrollmentSource @default(PAYSTACK)
+  adminNote  String?
   enrolledAt DateTime         @default(now())
   expiresAt  DateTime?
 

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 /**
  * Section 25: search + filter students. Note passwordHash is never selected
@@ -45,7 +46,12 @@ export default async function AdminStudentsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Students</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Students</h1>
+        <Button asChild>
+          <Link href="/admin/students/new">Add Student</Link>
+        </Button>
+      </div>
 
       <form className="flex gap-3 mb-6" action="/admin/students">
         <Input name="q" placeholder="Search by name or email..." defaultValue={q} className="max-w-sm" />

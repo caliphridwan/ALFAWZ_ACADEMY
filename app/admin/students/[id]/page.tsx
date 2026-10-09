@@ -4,17 +4,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentStatusToggle } from "@/components/admin/student-status-toggle";
 import { ExamResultControls } from "@/components/admin/exam-result-controls";
+import { ManualEnrollmentForm } from "@/components/admin/manual-enrollment-form";
 import { formatCurrency } from "@/lib/utils/cn";
 
 export default async function AdminStudentDetailPage({ params }: { params: { id: string } }) {
-  const student = await prisma.user.findUnique({
-    where: { id: params.id, role: "STUDENT" },
-    include: {
-      guardian: true,
-      enrollments: { include: { course: true }, orderBy: { enrolledAt: "desc" } },
-      payments: { orderBy: { createdAt: "desc" } },
-    },
-  });
+  const [student, activeCourses] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: params.id, role: "STUDENT" },
+      include: {
+        guardian: true,
+        enrollments: { include: { course: true }, orderBy: { enrolledAt: "desc" } },
+        payments: { orderBy: { createdAt: "desc" } },
+      },
+    }),
+    prisma.course.findMany({
+      where: { active: true },
+      select: { id: true, title: true, price: true, currency: true },
+      orderBy: { title: "asc" },
+    }),
+  ]);
 
   if (!student) notFound();
 
@@ -64,6 +72,7 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
               <tr>
                 <th className="p-4">Course</th>
                 <th className="p-4">Status</th>
+                <th className="p-4">Source</th>
                 <th className="p-4">Enrolled</th>
                 <th className="p-4">Exam Result</th>
               </tr>
@@ -73,6 +82,20 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
                 <tr key={e.id} className="border-b border-border last:border-0 align-top">
                   <td className="p-4">{e.course.title}</td>
                   <td className="p-4"><Badge>{e.status}</Badge></td>
+                  <td className="p-4">
+                    {e.source === "PAYSTACK" ? (
+                      <span className="text-muted-foreground text-xs">Paystack</span>
+                    ) : (
+                      <div>
+                        <Badge variant={e.source === "SCHOLARSHIP" ? "gold" : "muted"}>
+                          {e.source === "SCHOLARSHIP" ? "Scholarship" : "Offline Payment"}
+                        </Badge>
+                        {e.adminNote && (
+                          <p className="text-xs text-muted-foreground mt-1 max-w-[180px]">{e.adminNote}</p>
+                        )}
+                      </div>
+                    )}
+                  </td>
                   <td className="p-4 text-muted-foreground">{e.enrolledAt.toLocaleDateString()}</td>
                   <td className="p-4">
                     <div className="space-y-2">
@@ -88,7 +111,7 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
                 </tr>
               ))}
               {student.enrollments.length === 0 && (
-                <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
+                <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
               )}
             </tbody>
           </table>
@@ -116,6 +139,25 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
               )}
             </tbody>
           </table>
+        </CardContent>
+      </Card>
+
+      <h2 className="font-semibold mb-3 mt-8">Enroll Without Paystack</h2>
+      <p className="text-sm text-muted-foreground mb-4 max-w-lg">
+        For scholarship students or those who paid offline. This activates
+        the enrollment immediately — no Paystack checkout involved.
+      </p>
+      <Card>
+        <CardContent className="p-6">
+          <ManualEnrollmentForm
+            studentId={student.id}
+            courses={activeCourses.map((c) => ({
+              id: c.id,
+              title: c.title,
+              price: Number(c.price),
+              currency: c.currency,
+            }))}
+          />
         </CardContent>
       </Card>
     </div>
