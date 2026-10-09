@@ -97,12 +97,6 @@ export const courseSchema = z.object({
   zoomLink: z
     .string()
     .trim()
-    .url("Enter a valid Zoom (or other meeting) link")
-    .optional()
-    .or(z.literal("")),
-  zoomLink: z
-    .string()
-    .trim()
     .url("Enter a valid Zoom link (starting with https://)")
     .optional()
     .or(z.literal("")),
