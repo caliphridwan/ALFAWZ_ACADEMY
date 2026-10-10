@@ -1,77 +1,86 @@
-
 import "server-only";
 import { Resend } from "resend";
 
-/**
- * AlFawz Academy Email Service
- * All email delivery goes through the shared send() helper.
- */
+const BRAND = "#1d4ed8";
+const BRAND_DARK = "#1e3a8a";
+const MUTED = "#64748b";
+const EMAIL_BACKGROUND = "#f1f5f9";
 
 function getClient() {
   const apiKey = process.env.EMAIL_API_KEY;
 
   if (!apiKey) {
-    console.warn("EMAIL_API_KEY not set — emails will be logged, not sent.");
-    return null;
+    throw new Error("EMAIL_API_KEY is not configured.");
   }
 
   return new Resend(apiKey);
 }
 
 const FROM =
-  process.env.EMAIL_FROM ?? "AlFawz Academy <onboarding@resend.dev>";
+  process.env.EMAIL_FROM ??
+  "AlFawz Academy <onboarding@resend.dev>";
 
-const BRAND = "#1d4ed8";
-const BRAND_DARK = "#1e40af";
-const TEXT = "#1e293b";
-const MUTED = "#64748b";
-const LIGHT_BG = "#f8fafc";
-
-/**
- * Shared HTML email layout.
- */
 function emailLayout(content: string) {
   return `
-    <div style="margin:0;padding:24px 12px;background:${LIGHT_BG};font-family:Arial,Helvetica,sans-serif;color:${TEXT};line-height:1.8;">
-      <div style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
-
-        <div style="background:${BRAND};padding:26px 24px;text-align:center;">
-          <h1 style="margin:0;color:#ffffff;font-size:25px;line-height:1.4;">
-            AlFawz Academy
-          </h1>
-          <p style="margin:7px 0 0;color:#dbeafe;font-size:13px;letter-spacing:1px;">
-            LEARNING. CHARACTER. FAITH.
-          </p>
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AlFawz Academy</title>
+      </head>
+      <body style="margin:0;padding:0;background:${EMAIL_BACKGROUND};font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
+        <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+          AlFawz Academy — seeking beneficial Islamic knowledge.
         </div>
 
-        <div style="padding:28px 24px;">
-          ${content}
-        </div>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${EMAIL_BACKGROUND};padding:30px 12px;">
+          <tr>
+            <td align="center">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+                <tr>
+                  <td style="background:${BRAND_DARK};padding:28px 24px;text-align:center;">
+                    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#bfdbfe;margin-bottom:8px;">
+                      Knowledge • Faith • Excellence
+                    </div>
+                    <h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.3;">
+                      AlFawz Academy
+                    </h1>
+                    <p style="margin:9px 0 0;color:#dbeafe;font-size:14px;">
+                      Nurturing hearts through the light of Islamic knowledge
+                    </p>
+                  </td>
+                </tr>
 
-        <div style="padding:20px 24px;background:#f1f5f9;text-align:center;border-top:1px solid #e2e8f0;">
-          <p style="margin:0;color:${BRAND_DARK};font-size:14px;font-weight:bold;">
-            AlFawz Academy
-          </p>
-          <p style="margin:4px 0 0;color:${MUTED};font-size:12px;">
-            Nurturing knowledge, strengthening faith, building character.
-          </p>
-        </div>
+                <tr>
+                  <td style="padding:32px 26px;font-size:15px;line-height:1.8;">
+                    ${content}
+                  </td>
+                </tr>
 
-      </div>
-    </div>
+                <tr>
+                  <td style="padding:22px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+                    <p style="margin:0 0 8px;color:${BRAND_DARK};font-size:14px;font-weight:bold;">
+                      The AlFawz Academy Team
+                    </p>
+                    <p style="margin:0;color:${MUTED};font-size:12px;line-height:1.7;">
+                      May Allah grant us beneficial knowledge and righteous deeds.
+                      <br />
+                      This is an automated email. Please do not reply directly to it.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 }
 
-/**
- * Shared email delivery helper.
- */
 async function send(to: string, subject: string, html: string) {
   const client = getClient();
-
-  if (!client) {
-    console.log(`[dev email] to=${to} subject="${subject}"`);
-    return;
-  }
 
   const { error } = await client.emails.send({
     from: FROM,
@@ -81,84 +90,66 @@ async function send(to: string, subject: string, html: string) {
   });
 
   if (error) {
-    console.error("Failed to send email:", error);
-    throw new Error("Email delivery failed.");
+    console.error("AlFawz Academy email error:", error);
+    throw new Error(`Failed to send email: ${error.message}`);
   }
 }
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+
+    return entities[character];
+  });
+}
+
 /**
- * Welcome email for newly registered users.
+ * Welcome email after a student creates an account.
  */
-export async function sendWelcomeEmail({
-  to,
-  name,
-}: {
+export async function sendWelcomeEmail(params: {
   to: string;
   name: string;
 }) {
   await send(
-    to,
-    "Assalamu Alaikum — Welcome to AlFawz Academy",
+    params.to,
+    "Welcome to AlFawz Academy",
     emailLayout(`
-      <div style="text-align:center;margin-bottom:28px;">
-        <div style="font-size:42px;margin-bottom:8px;">🌙</div>
-        <h2 style="margin:0;color:${BRAND};font-size:26px;">
-          Welcome to AlFawz Academy!
-        </h2>
-        <p style="margin:10px 0 0;color:${MUTED};font-size:14px;">
-          Your journey toward beneficial knowledge begins here.
-        </p>
-      </div>
+      <h2 style="color:${BRAND_DARK};margin-top:0;">
+        Assalamu Alaikum, ${escapeHtml(params.name)}!
+      </h2>
 
       <p>
-        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
-        ${escapeHtml(name)},
+        Welcome to <strong>AlFawz Academy</strong>. We are delighted to have
+        you join our learning community, where students are encouraged to
+        grow in Qur'anic knowledge, Islamic understanding, and excellent character.
       </p>
 
       <p>
-        We are delighted to welcome you to the
-        <strong>AlFawz Academy family!</strong> Your account has been
-        successfully created, and you can now access your student account
-        and begin your learning journey with us.
+        Explore our available courses, choose a learning path that suits you,
+        and take the next step in your pursuit of beneficial knowledge.
       </p>
 
       <p>
-        At AlFawz Academy, we are committed to nurturing students with
-        <strong>authentic Islamic knowledge, sound character, and a deep love
-        for the Qur'an and authentic Sunnah.</strong>
+        May Allah ﷻ make your learning easy, increase you in knowledge,
+        and make it a source of goodness in this life and the Hereafter. Ameen.
       </p>
 
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
-        <h3 style="color:${BRAND_DARK};margin:0 0 8px;font-size:17px;">
-          Your Next Step
-        </h3>
-        <p style="margin:0;">
-          Log in to your account and explore your student dashboard to discover
-          available courses, learning resources, and academic activities.
-        </p>
-      </div>
-
-      <p>
-        We pray that your time with us will be beneficial, inspiring, and
-        a means of drawing closer to Allah ﷻ.
-      </p>
-
-      <p>
-        May Allah ﷻ place barakah in your pursuit of knowledge, increase you
-        in beneficial knowledge, and make what you learn a source of guidance
-        and benefit for you, your family, and the wider Ummah.
-      </p>
-
-      <p>
-        <strong>Bārakallāhu fīk.</strong> Once again, welcome to
-        <strong>AlFawz Academy.</strong>
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
+        <strong style="color:${BRAND};">AlFawz Academy</strong>
       </p>
     `)
   );
 }
 
 /**
- * Enrollment confirmation email.
+ * Confirmation email after course enrollment.
  */
 export async function sendEnrollmentConfirmationEmail(params: {
   to: string;
@@ -167,79 +158,48 @@ export async function sendEnrollmentConfirmationEmail(params: {
 }) {
   await send(
     params.to,
-    `Enrollment confirmed: ${params.courseTitle}`,
+    `Enrollment Confirmed — ${params.courseTitle}`,
     emailLayout(`
-      <div style="text-align:center;padding:4px 0 24px;">
-        <div style="font-size:42px;margin-bottom:10px;">🎓</div>
-
-        <h2 style="color:${BRAND};margin:0;font-size:26px;line-height:1.4;">
-          Alhamdulillah! You're Enrolled!
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">📚</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Enrollment Confirmed!
         </h2>
-
-        <p style="color:${MUTED};font-size:14px;margin:10px 0 0;">
-          Your journey toward beneficial knowledge begins here.
+        <p style="color:${MUTED};margin:8px 0 0;">
+          Your learning journey starts here.
         </p>
       </div>
 
       <p>
-        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
-        ${escapeHtml(params.name)},
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
       </p>
 
       <p>
-        Congratulations! We are delighted to confirm that your enrollment in
-        <strong style="color:${BRAND};">
-          ${escapeHtml(params.courseTitle)}
-        </strong>
-        has been successfully activated.
+        We are pleased to confirm your enrollment at AlFawz Academy.
+        Your registration for the following course has been received successfully:
       </p>
 
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
-        <p style="margin:0 0 8px;font-size:17px;font-weight:bold;color:${BRAND_DARK};">
-          ✓ Your Enrollment Is Confirmed!
+        <p style="margin:0 0 6px;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:1px;">
+          Enrolled Course
         </p>
-
-        <p style="margin:0;color:#334155;">
-          You are all set to begin your learning journey with AlFawz Academy.
-          Get ready to deepen your understanding of Islam, strengthen your
-          connection with the Qur'an, and grow in beneficial knowledge.
-        </p>
+        <h3 style="margin:0;color:${BRAND_DARK};font-size:21px;">
+          ${escapeHtml(params.courseTitle)}
+        </h3>
       </div>
 
       <p>
-        At <strong>AlFawz Academy</strong>, we believe that seeking knowledge
-        is a noble journey that transforms hearts, builds character, and brings
-        us closer to Allah. We are honoured to accompany you on this path.
+        Please check your student dashboard and any further instructions
+        provided by the Academy for details about your course and next steps.
       </p>
-
-      <div style="background:#f8fafc;border-left:4px solid #93c5fd;padding:16px 18px;margin:24px 0;border-radius:6px;">
-        <p style="font-size:16px;font-style:italic;color:#334155;margin:0 0 8px;">
-          "And say, 'My Lord, increase me in knowledge.'"
-        </p>
-        <p style="font-size:13px;color:${BRAND_DARK};font-weight:bold;margin:0;">
-          — Qur'an 20:114
-        </p>
-      </div>
 
       <p>
-        May Allah ﷻ place barakah in your studies, grant you beneficial
-        knowledge, make it easy for you to practise what you learn, and make
-        this journey a means of success in this life and the Hereafter. Ameen.
+        May Allah ﷻ bless your studies and grant you knowledge that benefits
+        you and the wider Ummah. Ameen.
       </p>
-
-      <div style="text-align:center;margin:28px 0;padding:20px;background:${BRAND};border-radius:10px;">
-        <p style="color:#ffffff;font-size:16px;font-weight:bold;margin:0;">
-          Seek Knowledge. Live by It. Share Its Light.
-        </p>
-        <p style="color:#dbeafe;font-size:13px;margin:7px 0 0;">
-          Welcome to the AlFawz Academy family!
-        </p>
-      </div>
-
-      <p>We look forward to seeing you learn, grow, and excel.</p>
 
       <p style="margin-bottom:0;">
-        Warm regards,<br />
+        Jazakumullahu Khairan,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -247,7 +207,7 @@ export async function sendEnrollmentConfirmationEmail(params: {
 }
 
 /**
- * Payment confirmation email for courses and sponsorships.
+ * Payment confirmation for course enrollment or sponsorship.
  */
 export async function sendPaymentConfirmationEmail(params: {
   to: string;
@@ -256,65 +216,70 @@ export async function sendPaymentConfirmationEmail(params: {
   currency: string;
   type: "COURSE" | "SPONSORSHIP";
 }) {
-  const isCourse = params.type === "COURSE";
-  const label = isCourse ? "course payment" : "sponsorship";
-  const formattedAmount =
-    `${params.currency} ${params.amount.toLocaleString()}`;
+  const isSponsorship = params.type === "SPONSORSHIP";
+  const formattedAmount = new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: params.currency,
+  }).format(params.amount);
 
   await send(
     params.to,
-    "Payment confirmed — AlFawz Academy",
+    isSponsorship
+      ? "Sponsorship Payment Confirmation — AlFawz Academy"
+      : "Payment Confirmation — AlFawz Academy",
     emailLayout(`
-      <div style="text-align:center;margin-bottom:26px;">
-        <div style="font-size:42px;margin-bottom:8px;">✓</div>
-        <h2 style="color:${BRAND};margin:0;font-size:25px;">
-          Payment Successful!
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">${
+          isSponsorship ? "🤝" : "✅"
+        }</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Payment Successful
         </h2>
-        <p style="color:${MUTED};font-size:14px;margin:8px 0 0;">
-          Thank you for your trust and support.
+        <p style="color:${MUTED};margin:8px 0 0;">
+          Thank you for your ${
+            isSponsorship ? "generous support" : "payment"
+          }.
         </p>
       </div>
 
       <p>
-        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
-        ${escapeHtml(params.name)},
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
       </p>
 
       <p>
-        We are pleased to confirm that your ${label} has been received
-        successfully.
+        This email confirms that we have received your ${
+          isSponsorship ? "sponsorship contribution" : "course payment"
+        } for AlFawz Academy.
       </p>
 
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;padding:22px;margin:24px 0;border-radius:10px;text-align:center;">
-        <p style="margin:0;color:${MUTED};font-size:13px;">
-          Amount Received
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:22px;margin:24px 0;">
+        <p style="margin:0 0 8px;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:1px;">
+          Amount Paid
         </p>
-        <h2 style="margin:6px 0;color:${BRAND};font-size:28px;">
+        <h2 style="margin:0;color:${BRAND_DARK};font-size:30px;">
           ${escapeHtml(formattedAmount)}
         </h2>
-        <p style="margin:0;color:${BRAND_DARK};font-weight:bold;">
-          ${isCourse ? "Course Payment Confirmed" : "Sponsorship Payment Confirmed"}
+        <p style="margin:12px 0 0;color:${MUTED};font-size:13px;">
+          Payment type: ${isSponsorship ? "Student Sponsorship" : "Course Enrollment"}
         </p>
       </div>
 
       ${
-        isCourse
-          ? `<p>Your payment helps secure your participation in your learning journey. We look forward to supporting your growth in beneficial Islamic knowledge.</p>`
-          : `<p>Your generosity helps support Islamic education and create learning opportunities for students. Your contribution can make a meaningful difference in their lives.</p>`
+        isSponsorship
+          ? `<p>
+              Your generosity helps support access to Islamic education.
+              May Allah ﷻ reward you abundantly, place barakah in your wealth,
+              and make your contribution a lasting source of reward. Ameen.
+            </p>`
+          : `<p>
+              Thank you for taking this step in your pursuit of beneficial
+              Islamic knowledge. Please check your student dashboard for
+              enrollment information and any further instructions.
+            </p>`
       }
 
-      <p>
-        May Allah ﷻ accept your contribution, place barakah in your wealth,
-        and reward you abundantly for your support.
-      </p>
-
-      <p>
-        <strong>Jazākallāhu khayran!</strong> Thank you for being part of
-        the AlFawz Academy community.
-      </p>
-
       <p style="margin-bottom:0;">
-        Warm regards,<br />
+        With gratitude,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -322,7 +287,7 @@ export async function sendPaymentConfirmationEmail(params: {
 }
 
 /**
- * Alumni approval notification.
+ * Email notification when an alumni application is approved.
  */
 export async function sendAlumniApprovedEmail(params: {
   to: string;
@@ -330,64 +295,38 @@ export async function sendAlumniApprovedEmail(params: {
 }) {
   await send(
     params.to,
-    "Your AlFawz Academy alumni profile is live",
+    "Your AlFawz Academy Alumni Application Is Approved",
     emailLayout(`
-      <div style="text-align:center;margin-bottom:26px;">
-        <div style="font-size:42px;margin-bottom:8px;">🎉</div>
-        <h2 style="color:${BRAND};margin:0;font-size:25px;">
-          Your Alumni Profile Is Live!
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">🎓</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Welcome to Our Alumni Community!
         </h2>
-        <p style="color:${MUTED};font-size:14px;margin:8px 0 0;">
-          You will always be part of our story.
-        </p>
       </div>
 
       <p>
-        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
-        ${escapeHtml(params.name)},
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
       </p>
 
       <p>
-        We are delighted to let you know that your
-        <strong>AlFawz Academy alumni registration</strong> has been reviewed
-        and approved.
-      </p>
-
-      <div style="background:#eff6ff;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
-        <h3 style="color:${BRAND_DARK};margin:0 0 8px;">
-          Welcome Back to the Family!
-        </h3>
-        <p style="margin:0;">
-          Your alumni profile is now live on the AlFawz Academy Alumni page.
-          You can remain connected with the academy and fellow members of
-          our growing alumni community.
-        </p>
-      </div>
-
-      <p>
-        Your journey, experiences, and achievements can inspire current and
-        future students to pursue knowledge, strengthen their character,
-        and strive for excellence.
+        We are pleased to inform you that your application to join the
+        AlFawz Academy alumni community has been approved.
       </p>
 
       <p>
-        As an alumnus, you can also help shape the future of AlFawz Academy
-        by supporting institutional growth and helping students access
-        beneficial Islamic education.
+        As an alumnus, you remain an important part of our growing community.
+        You can help strengthen the Academy by sharing your experiences,
+        supporting current students, and contributing to the continued growth
+        of Islamic education.
       </p>
 
       <p>
-        May Allah ﷻ bless your journey, increase you in beneficial knowledge,
-        and make your contributions a lasting source of benefit.
-      </p>
-
-      <p>
-        <strong>Jazākallāhu khayran</strong> for remaining part of the
-        AlFawz Academy family.
+        May Allah ﷻ continue to guide you, bless your efforts, and make you
+        a means of benefit to others. Ameen.
       </p>
 
       <p style="margin-bottom:0;">
-        Warm regards,<br />
+        With appreciation,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -401,65 +340,46 @@ export async function sendPasswordResetEmail(params: {
   to: string;
   resetUrl: string;
 }) {
-  const resetUrl = escapeHtml(params.resetUrl);
+  const safeResetUrl = escapeHtml(params.resetUrl);
 
   await send(
     params.to,
-    "Reset your AlFawz Academy password",
+    "Reset Your AlFawz Academy Password",
     emailLayout(`
-      <div style="text-align:center;margin-bottom:26px;">
-        <div style="font-size:40px;margin-bottom:8px;">🔐</div>
-        <h2 style="color:${BRAND};margin:0;font-size:25px;">
-          Reset Your Password
-        </h2>
-        <p style="color:${MUTED};font-size:14px;margin:8px 0 0;">
-          Let's get you securely back into your account.
-        </p>
-      </div>
-
-      <p>Assalamu Alaikum,</p>
+      <h2 style="color:${BRAND_DARK};margin-top:0;">
+        Password Reset Request
+      </h2>
 
       <p>
-        We received a request to reset the password for your
-        <strong>AlFawz Academy</strong> account.
+        Assalamu Alaikum.
       </p>
 
       <p>
-        If you made this request, use the button below to create a new password.
+        We received a request to reset the password for your AlFawz Academy
+        account. Use the button below to continue.
       </p>
 
-      <div style="text-align:center;margin:30px 0;">
-        <a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:${BRAND};color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:15px;">
+      <div style="text-align:center;margin:28px 0;">
+        <a href="${safeResetUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
           Reset My Password
         </a>
       </div>
 
-      <p style="font-size:13px;color:${MUTED};">
-        If the button doesn't work, copy and paste this link into your browser:
+      <p>
+        If the button does not work, copy and paste this link into your browser:
       </p>
 
-      <p style="font-size:13px;word-break:break-all;">
-        <a href="${resetUrl}" style="color:${BRAND};">${resetUrl}</a>
+      <p style="word-break:break-all;font-size:13px;">
+        <a href="${safeResetUrl}" style="color:${BRAND};">${safeResetUrl}</a>
       </p>
-
-      <div style="background:#fff7ed;border:1px solid #fed7aa;padding:16px;margin:22px 0;border-radius:8px;">
-        <p style="margin:0;color:#9a3412;font-size:14px;">
-          <strong>Security notice:</strong> This password-reset link will
-          expire in <strong>1 hour</strong>.
-        </p>
-      </div>
 
       <p>
         If you did not request a password reset, you can safely ignore this
-        email. Your account password will remain unchanged.
-      </p>
-
-      <p>
-        May Allah ﷻ keep you and your personal information safe and secure.
+        email. For your security, do not share your reset link with anyone.
       </p>
 
       <p style="margin-bottom:0;">
-        Warm regards,<br />
+        Regards,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -467,92 +387,61 @@ export async function sendPasswordResetEmail(params: {
 }
 
 /**
- * Sponsor welcome email and account setup.
+ * Welcome email for a sponsor, including a sponsorship setup link.
  */
 export async function sendSponsorWelcomeEmail(params: {
   to: string;
   name: string;
   setupUrl: string;
 }) {
-  const setupUrl = escapeHtml(params.setupUrl);
+  const safeSetupUrl = escapeHtml(params.setupUrl);
 
   await send(
     params.to,
-    "Welcome to AlFawz Academy — Set Up Your Sponsor Dashboard",
+    "Thank You for Supporting AlFawz Academy",
     emailLayout(`
-      <div style="text-align:center;margin-bottom:26px;">
-        <div style="font-size:42px;margin-bottom:8px;">💙</div>
-        <h2 style="color:${BRAND};margin:0;font-size:25px;">
-          Your Generosity Makes a Difference!
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">🤝</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Your Generosity Can Change Lives
         </h2>
-        <p style="color:${MUTED};font-size:14px;margin:8px 0 0;">
-          Welcome to our family of supporters.
-        </p>
       </div>
 
       <p>
-        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
-        ${escapeHtml(params.name)},
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
       </p>
 
       <p>
-        <strong>Jazākumullāhu khayran</strong> for your generous sponsorship.
-        Your support helps create opportunities for students to pursue
-        beneficial Islamic education.
+        Thank you for your interest in supporting AlFawz Academy. Your
+        willingness to help students access Qur'anic and Islamic education
+        is deeply appreciated.
       </p>
 
       <p>
-        We have created an account for you so you can access your sponsor
-        dashboard, track your impact, view receipts, and manage future
-        sponsorships.
+        Use the link below to continue with your sponsorship arrangements:
       </p>
-
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
-        <h3 style="margin:0 0 8px;color:${BRAND_DARK};">
-          Complete Your Account Setup
-        </h3>
-        <p style="margin:0;">
-          Set a password using the button below to activate access to your
-          sponsor dashboard. You can then log in using your email address.
-        </p>
-      </div>
 
       <div style="text-align:center;margin:28px 0;">
-        <a href="${setupUrl}" style="display:inline-block;padding:14px 26px;background:${BRAND};color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:15px;">
-          Set Up My Sponsor Account
+        <a href="${safeSetupUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 26px;border-radius:8px;font-weight:bold;">
+          Continue Sponsorship
         </a>
       </div>
 
-      <p style="font-size:13px;color:${MUTED};">
-        If the button doesn't work, copy this link into your browser:
+      <p>
+        If the button does not work, copy this link into your browser:
       </p>
 
-      <p style="font-size:13px;word-break:break-all;">
-        <a href="${setupUrl}" style="color:${BRAND};">${setupUrl}</a>
-      </p>
-
-      <p style="font-size:13px;color:${MUTED};">
-        For your security, this setup link will expire in
-        <strong>1 hour</strong>.
+      <p style="word-break:break-all;font-size:13px;">
+        <a href="${safeSetupUrl}" style="color:${BRAND};">${safeSetupUrl}</a>
       </p>
 
       <p>
-        Your generosity can help students gain access to knowledge that
-        benefits them, their families, and the wider Ummah.
-      </p>
-
-      <p>
-        May Allah ﷻ accept your contribution, place barakah in your wealth,
-        and reward you for every good that comes from your support.
-      </p>
-
-      <p>
-        <strong>Jazākumullāhu khayran</strong> for partnering with
-        AlFawz Academy in this important mission.
+        May Allah ﷻ accept your intention, bless your wealth, and reward
+        you for every student who benefits from your support. Ameen.
       </p>
 
       <p style="margin-bottom:0;">
-        With gratitude and du'a,<br />
+        With sincere appreciation,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -560,7 +449,7 @@ export async function sendSponsorWelcomeEmail(params: {
 }
 
 /**
- * Contact form notification to the administrator.
+ * Notify the administrator when someone submits the contact form.
  */
 export async function sendContactNotificationToAdmin(params: {
   adminEmail: string;
@@ -571,51 +460,104 @@ export async function sendContactNotificationToAdmin(params: {
 }) {
   await send(
     params.adminEmail,
-    `New contact message: ${params.subject}`,
+    `Website Contact: ${params.subject}`,
     emailLayout(`
-      <h2 style="color:${BRAND};margin-top:0;">
-        New Contact Message
+      <h2 style="color:${BRAND_DARK};margin-top:0;">
+        New Website Contact Message
       </h2>
 
-      <p>
-        A new message has been submitted through the AlFawz Academy website.
-      </p>
+      <p>An enquiry has been submitted through the AlFawz Academy website.</p>
 
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:18px;border-radius:8px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin:22px 0;">
         <p style="margin:0 0 8px;">
-          <strong>From:</strong> ${escapeHtml(params.name)}
+          <strong>Name:</strong> ${escapeHtml(params.name)}
         </p>
-
         <p style="margin:0 0 8px;">
           <strong>Email:</strong> ${escapeHtml(params.email)}
         </p>
-
         <p style="margin:0 0 8px;">
           <strong>Subject:</strong> ${escapeHtml(params.subject)}
         </p>
-
-        <p style="margin:16px 0 6px;">
-          <strong>Message:</strong>
+        <p style="margin:0;">
+          <strong>Message:</strong><br />
+          ${escapeHtml(params.message).replace(/\n/g, "<br />")}
         </p>
-
-        <p style="margin:0;white-space:pre-wrap;">${escapeHtml(params.message)}</p>
       </div>
 
-      <p style="font-size:13px;color:${MUTED};">
-        You can reply directly to the sender using the email address above.
+      <p style="margin-bottom:0;">
+        This notification was generated by the AlFawz Academy website.
       </p>
     `)
   );
 }
 
 /**
- * Escapes user-provided text before inserting it into HTML.
+ * Email sent when an administrator creates a student account.
  */
-function escapeHtml(str: string) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+export async function sendAdminCreatedAccountEmail(params: {
+  to: string;
+  name: string;
+  password: string;
+}) {
+  await send(
+    params.to,
+    "Your AlFawz Academy Student Account Is Ready",
+    emailLayout(`
+      <div style="text-align:center;margin-bottom:26px;">
+        <div style="font-size:42px;margin-bottom:8px;">🎓</div>
+        <h2 style="color:${BRAND};margin:0;font-size:25px;">
+          Welcome to AlFawz Academy!
+        </h2>
+        <p style="color:${MUTED};font-size:14px;margin:8px 0 0;">
+          Your student account has been created.
+        </p>
+      </div>
+
+      <p>
+        Assalamu Alaikum wa Rahmatullahi wa Barakatuh,
+        ${escapeHtml(params.name)}.
+      </p>
+
+      <p>
+        We are pleased to inform you that an administrator has successfully
+        created your student account at <strong>AlFawz Academy</strong>.
+        You can now log in and begin your journey toward beneficial
+        Islamic knowledge.
+      </p>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
+        <h3 style="color:${BRAND_DARK};margin:0 0 14px;">
+          Your Login Details
+        </h3>
+
+        <p style="margin:0 0 8px;">
+          <strong>Email:</strong> ${escapeHtml(params.to)}
+        </p>
+
+        <p style="margin:0;">
+          <strong>Temporary Password:</strong><br />
+          <span style="font-family:monospace;word-break:break-all;">
+            ${escapeHtml(params.password)}
+          </span>
+        </p>
+      </div>
+
+      <p>
+        Please log in using the credentials provided above. For your security,
+        change your temporary password as soon as possible if your account
+        settings allow you to do so.
+      </p>
+
+      <p>
+        May Allah ﷻ bless your pursuit of knowledge, increase you in
+        beneficial knowledge, and make your studies a source of goodness
+        for you and the wider Ummah. Ameen.
+      </p>
+
+      <p style="margin-bottom:0;">
+        Warm regards,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
 }

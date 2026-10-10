@@ -101,12 +101,10 @@ export async function createStudentByAdmin(
     },
   });
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   await sendAdminCreatedAccountEmail({
     to: student.email,
     name: student.name,
-    tempPassword,
-    loginUrl: `${appUrl}/login`,
+    password: tempPassword,
   }).catch((err) => console.error("Admin-created account email failed:", err));
 
   revalidatePath("/admin/students");
