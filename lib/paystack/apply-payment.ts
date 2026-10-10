@@ -84,7 +84,7 @@ export async function applyVerifiedPayment(
     await createNotification(
       payment.userId,
       "Sponsorship confirmed",
-      "Your sponsorship payment was received. Jazakallahu khairan for supporting students."
+      "Your sponsorship payment was received. Jazakumullahu khairan for supporting students."
     );
   }
 

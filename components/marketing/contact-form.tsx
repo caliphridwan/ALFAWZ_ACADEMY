@@ -24,7 +24,7 @@ export function ContactForm() {
       <div className="rounded-md bg-brand/10 border border-brand/20 px-5 py-8 text-center">
         <p className="font-medium text-brand mb-2">Message sent</p>
         <p className="text-sm text-muted-foreground">
-          Jazakallahu khairan for reaching out — we&apos;ll get back to you soon.
+          Jazakumullahu khairan for reaching out — we&apos;ll get back to you soon.
         </p>
       </div>
     );
