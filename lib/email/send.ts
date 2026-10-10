@@ -66,7 +66,7 @@ function emailLayout(content: string) {
                     <p style="margin:0;color:${MUTED};font-size:12px;line-height:1.7;">
                       May Allah grant us beneficial knowledge and righteous deeds.
                       <br />
-                      This is an automated email. Please do not reply directly to it.
+                      
                     </p>
                   </td>
                 </tr>
@@ -125,13 +125,13 @@ export async function sendWelcomeEmail(params: {
       </h2>
 
       <p>
-        Welcome to <strong>AlFawz Academy</strong>. We are delighted to have
+        Welcome to <strong>AlFawz Academy </strong>. We are delighted to have
         you join our learning community, where students are encouraged to
         grow in Qur'anic knowledge, Islamic understanding, and excellent character.
       </p>
 
       <p>
-        Explore our available courses, choose a learning path that suits you,
+        Kindly proceed to exploring our available courses, choose a learning path that suits you,
         and take the next step in your pursuit of beneficial knowledge.
       </p>
 
