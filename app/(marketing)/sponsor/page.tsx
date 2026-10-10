@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { SponsorshipCalculator } from "@/components/sponsorship/calculator";
+import { SponsorsList } from "@/components/sponsorship/sponsors-list";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils/cn";
 
 export const metadata: Metadata = {
@@ -10,7 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SponsorPage() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
+  const [settings, sponsorCount] = await Promise.all([
+    prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
+    prisma.sponsorship.count({ where: { status: "ACTIVE" } }),
+  ]);
 
   const pricePerStudent = Number(settings?.sponsorshipPrice ?? 30000);
   const currencySymbol = settings?.currencySymbol ?? "₦";
@@ -43,7 +49,7 @@ export default async function SponsorPage() {
             <p className="text-xs text-muted-foreground mb-2">{tier.label}</p>
             <p className="text-sm font-medium">
               {formatCurrency(tier.count * pricePerStudent, undefined, currencySymbol)}
-              <span className="text-muted-foreground font-normal">/cohort</span>
+              <span className="text-muted-foreground font-normal">/mo</span>
             </p>
           </div>
         ))}
@@ -57,6 +63,18 @@ export default async function SponsorPage() {
           maxStudents={maxStudents}
         />
       </div>
+
+      {sponsorCount > 0 && (
+        <div className="mt-20">
+          <h2 className="text-2xl font-bold text-center mb-8">Our Sponsors</h2>
+          <SponsorsList limit={6} emptyState={false} />
+          <div className="text-center mt-8">
+            <Button asChild variant="outline">
+              <Link href="/sponsors">View All Sponsors</Link>
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
