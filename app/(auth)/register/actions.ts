@@ -63,6 +63,7 @@ export async function registerStudent(
       phone: data.phone,
       country: data.country,
       address: data.address,
+      profileImage: data.profileImage || null,
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
       ...(data.guardian

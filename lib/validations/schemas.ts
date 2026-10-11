@@ -40,6 +40,7 @@ export const registerSchema = z
     country: z.string().min(2, "Country is required"),
     phone: z.string().min(7, "Enter a valid phone number"),
     address: z.string().optional(),
+    profileImage: imagePathSchema,
 
     previousQuranKnowledge: z.string().optional(),
     currentLevel: z.string().optional(),
@@ -97,6 +98,12 @@ export const courseSchema = z.object({
   zoomLink: z
     .string()
     .trim()
+    .url("Enter a valid Zoom (or other meeting) link")
+    .optional()
+    .or(z.literal("")),
+  zoomLink: z
+    .string()
+    .trim()
     .url("Enter a valid Zoom link (starting with https://)")
     .optional()
     .or(z.literal("")),
@@ -147,7 +154,7 @@ export const profileUpdateSchema = z.object({
   phone: z.string().min(7).optional(),
   country: z.string().min(2).optional(),
   address: z.string().optional(),
-  profileImage: z.string().url().optional(),
+  profileImage: imagePathSchema,
 });
 
 export const passwordChangeSchema = z

@@ -22,6 +22,7 @@ export async function updateProfile(
     phone: formData.get("phone") || undefined,
     country: formData.get("country") || undefined,
     address: formData.get("address") || undefined,
+    profileImage: formData.get("profileImage") || "",
   });
 
   if (!parsed.success) {
@@ -63,7 +64,7 @@ export async function updateProfile(
   // deliberately not accepted from this form.
   await prisma.user.update({
     where: { id: session.user.id },
-    data,
+    data: { ...data, profileImage: data.profileImage || null },
   });
 
   // The session's JWT keeps the old email until the next sign-in (it's only

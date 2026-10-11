@@ -18,6 +18,7 @@ export default async function AdminProfilePage() {
           phone: user.phone,
           country: user.country,
           address: user.address,
+          profileImage: user.profileImage,
         }}
       />
       <PasswordForm />

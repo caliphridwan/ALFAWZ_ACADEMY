@@ -22,6 +22,7 @@ export default async function ProfilePage() {
           phone: user.phone,
           country: user.country,
           address: user.address,
+          profileImage: user.profileImage,
         }}
       />
       {user.guardian && (

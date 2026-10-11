@@ -18,6 +18,7 @@ export default async function SponsorProfilePage() {
           phone: user.phone,
           country: user.country,
           address: user.address,
+          profileImage: user.profileImage,
         }}
       />
       <PasswordForm />
