@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ImageUploadField } from "@/components/shared/image-upload-field";
 
 const initial: ProfileFormState = { success: false };
 
@@ -106,25 +107,14 @@ export function ProfileForm({
             <Label htmlFor="address">Address</Label>
             <Input id="address" name="address" defaultValue={defaultValues.address ?? ""} />
           </div>
-          <div>
-            <Label htmlFor="profileImage">Profile Photo URL</Label>
-            <div className="flex items-center gap-3">
-              {defaultValues.profileImage && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={defaultValues.profileImage}
-                  alt=""
-                  className="h-10 w-10 rounded-full object-cover shrink-0 border border-border"
-                />
-              )}
-              <Input
-                id="profileImage"
-                name="profileImage"
-                defaultValue={defaultValues.profileImage ?? ""}
-                placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../photo.jpg"
-              />
-            </div>
-          </div>
+          <ImageUploadField
+            id="profileImage"
+            name="profileImage"
+            label="Profile Photo"
+            defaultValue={defaultValues.profileImage}
+            placeholder="Or paste a photo link here"
+            round
+          />
           <SaveButton label="Save Changes" />
         </form>
       </CardContent>

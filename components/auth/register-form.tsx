@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field-error";
+import { ImageUploadField } from "@/components/shared/image-upload-field";
 import { registerStudent, type RegisterFormState } from "@/app/(auth)/register/actions";
 
 const MINOR_AGE_THRESHOLD = 18;
@@ -102,6 +103,16 @@ export function RegisterForm() {
         <div>
           <Label htmlFor="address">Address</Label>
           <Input id="address" name="address" />
+        </div>
+        <div>
+          <ImageUploadField
+            id="profileImage"
+            name="profileImage"
+            label="Profile Photo (optional)"
+            placeholder="Or paste a photo link here"
+            round
+          />
+          <FieldError messages={state.fieldErrors?.profileImage} />
         </div>
       </fieldset>
 
