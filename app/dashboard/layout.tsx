@@ -34,12 +34,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <Image
                 src={user.profileImage}
                 alt=""
-                width={44}
-                height={44}
-                className="h-11 w-11 rounded-full object-cover border-2 border-border hover:border-brand transition-colors"
+                width={96}
+                height={96}
+                className="h-24 w-24 rounded-full object-cover border-4 border-border hover:border-brand transition-colors"
               />
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-brand-foreground font-semibold text-lg border-2 border-border hover:border-brand transition-colors">
+              <span className="flex h-24 w-24 items-center justify-center rounded-full bg-brand text-brand-foreground font-semibold text-3xl border-4 border-border hover:border-brand transition-colors">
                 {user?.name?.trim()?.[0]?.toUpperCase() ?? "S"}
               </span>
             )}
