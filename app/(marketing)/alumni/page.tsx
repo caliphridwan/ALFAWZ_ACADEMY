@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { prisma } from "@/lib/db/prisma";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Linkedin } from "lucide-react";
+import { AlumnusCard } from "@/components/marketing/alumnus-card";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
 
 export const metadata: Metadata = {
@@ -97,63 +94,5 @@ export default async function AlumniPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-function AlumnusCard({
-  alumnus,
-  featured = false,
-}: {
-  alumnus: {
-    id: string;
-    name: string;
-    photo: string | null;
-    graduationYear: number;
-    program: string;
-    currentRole: string | null;
-    location: string | null;
-    story: string;
-    linkedinUrl: string | null;
-  };
-  featured?: boolean;
-}) {
-  return (
-    <Card className={featured ? "border-gold/40" : undefined}>
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4 mb-4">
-          <div className="w-14 h-14 rounded-full bg-brand/10 overflow-hidden shrink-0 relative">
-            {alumnus.photo && (
-              <Image src={alumnus.photo} alt={alumnus.name} fill className="object-cover" />
-            )}
-          </div>
-          <div>
-            <p className="font-semibold">{alumnus.name}</p>
-            <p className="text-xs text-muted-foreground">
-              {alumnus.program} · Class of {alumnus.graduationYear}
-            </p>
-            {alumnus.currentRole && (
-              <p className="text-xs text-brand mt-0.5">{alumnus.currentRole}</p>
-            )}
-          </div>
-        </div>
-        <p className={`text-sm text-muted-foreground ${featured ? "" : "line-clamp-4"}`}>
-          {alumnus.story}
-        </p>
-        <div className="flex items-center justify-between mt-4">
-          {alumnus.location && <Badge variant="muted">{alumnus.location}</Badge>}
-          {alumnus.linkedinUrl && (
-            <a
-              href={alumnus.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-brand"
-              aria-label={`${alumnus.name} on LinkedIn`}
-            >
-              <Linkedin size={16} />
-            </a>
-          )}
-        </div>
-      </CardContent>
-    </Card>
   );
 }
