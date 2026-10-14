@@ -310,7 +310,7 @@ export async function sendAlumniApprovedEmail(params: {
 
       <p>
         We are pleased to inform you that your application to join the
-        AlFawz Academy alumni community has been approved.
+        AlFawz Academy alumni community has been approved and your experience has now been published.
       </p>
 
       <p>
