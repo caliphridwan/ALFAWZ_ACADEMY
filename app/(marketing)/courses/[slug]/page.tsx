@@ -68,7 +68,7 @@ export default async function CourseDetailPage({ params }: Props) {
         )}
         <Badge className="mb-4">{course.level}</Badge>
         <h1 className="text-3xl sm:text-4xl font-bold mb-4">{course.title}</h1>
-        <p className="text-muted-foreground text-lg mb-8">{course.description}</p>
+        <p className="text-muted-foreground text-lg mb-8 whitespace-pre-line">{course.description}</p>
 
         {curriculum.length > 0 && (
           <section className="mb-10">

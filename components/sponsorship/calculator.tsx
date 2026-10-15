@@ -41,7 +41,9 @@ export function SponsorshipCalculator({
       phone: form.get("phone"),
       country: form.get("country"),
       numberOfStudents: count,
-      duration: form.get("duration"),
+      // No longer asked of the sponsor up front — sponsorships are ongoing
+      // by default; renewal/changes happen from the admin side if needed.
+      duration: "Ongoing",
       message: form.get("message") || undefined,
       showPublicly: form.get("showPublicly") === "on",
       publicName: form.get("publicName") || undefined,
@@ -142,25 +144,9 @@ export function SponsorshipCalculator({
             <Input id="phone" name="phone" type="tel" required />
           </div>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="country">Country</Label>
-            <Input id="country" name="country" required />
-          </div>
-          {/* <div>
-            <Label htmlFor="duration">Sponsorship Duration</Label>
-            <select
-              id="duration"
-              name="duration"
-              className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
-              required
-            >
-              <option value="1 month">1 cohort</option>
-              <option value="3 months">2 cohorts</option>
-              <option value="6 months">3 cohorts</option>
-              <option value="12 months">12 months</option>
-            </select>
-          </div> */}
+        <div>
+          <Label htmlFor="country">Country</Label>
+          <Input id="country" name="country" required />
         </div>
         <div>
           <Label htmlFor="message">Message (optional)</Label>

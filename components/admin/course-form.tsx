@@ -83,11 +83,15 @@ export function CourseForm({
 
       <div>
         <Label htmlFor="description">Full Description</Label>
+        <p className="text-xs text-muted-foreground mb-1">
+          Line breaks are preserved on the course page — press Enter to start
+          new paragraphs or outline what's covered.
+        </p>
         <textarea
           id="description"
           name="description"
           required
-          rows={5}
+          rows={8}
           defaultValue={defaults?.description}
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
         />
