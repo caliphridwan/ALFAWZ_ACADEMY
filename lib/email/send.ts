@@ -66,7 +66,7 @@ function emailLayout(content: string) {
                     <p style="margin:0;color:${MUTED};font-size:12px;line-height:1.7;">
                       May Allah grant us beneficial knowledge and righteous deeds.
                       <br />
-                      
+                      This is an automated email. Please do not reply directly to it.
                     </p>
                   </td>
                 </tr>
@@ -125,13 +125,13 @@ export async function sendWelcomeEmail(params: {
       </h2>
 
       <p>
-        Welcome to <strong>AlFawz Academy </strong>. We are delighted to have
+        Welcome to <strong>AlFawz Academy</strong>. We are delighted to have
         you join our learning community, where students are encouraged to
         grow in Qur'anic knowledge, Islamic understanding, and excellent character.
       </p>
 
       <p>
-        Kindly proceed to exploring our available courses, choose a learning path that suits you,
+        Explore our available courses, choose a learning path that suits you,
         and take the next step in your pursuit of beneficial knowledge.
       </p>
 
@@ -200,6 +200,105 @@ export async function sendEnrollmentConfirmationEmail(params: {
 
       <p style="margin-bottom:0;">
         Jazakumullahu Khairan,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
+/**
+ * Reminder sent to a student who registered for a course but has not yet
+ * completed payment — their Enrollment is still PENDING. Sent by the
+ * payment-reminders cron job (or an admin's manual trigger), throttled so a
+ * given student doesn't receive one more than once a day.
+ */
+export async function sendPaymentReminderEmail(params: {
+  to: string;
+  name: string;
+  courseTitle: string;
+  amount: number;
+  currency: string;
+  completePaymentUrl: string;
+  closesAt?: Date | null;
+}) {
+  const formattedAmount = new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: params.currency,
+  }).format(params.amount);
+
+  const safeUrl = escapeHtml(params.completePaymentUrl);
+
+  const deadlineNotice = params.closesAt
+    ? `<p style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;font-size:14px;color:#92400e;margin:20px 0;">
+        ⏰ Registration for this course closes on
+        <strong>${escapeHtml(
+          params.closesAt.toLocaleString("en-GB", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })
+        )}</strong>. Complete your payment before then to keep your place.
+      </p>`
+    : "";
+
+  await send(
+    params.to,
+    `Reminder: Complete Your Payment — ${params.courseTitle}`,
+    emailLayout(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">⏳</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          You're Almost Enrolled!
+        </h2>
+        <p style="color:${MUTED};margin:8px 0 0;">
+          Just one step left to secure your place.
+        </p>
+      </div>
+
+      <p>
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
+      </p>
+
+      <p>
+        You registered for the course below at AlFawz Academy, but we
+        haven't yet received your payment. Your registration is still
+        held as pending until payment is completed.
+      </p>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
+        <p style="margin:0 0 6px;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:1px;">
+          Course
+        </p>
+        <h3 style="margin:0 0 10px;color:${BRAND_DARK};font-size:21px;">
+          ${escapeHtml(params.courseTitle)}
+        </h3>
+        <p style="margin:0;color:${MUTED};font-size:13px;">
+          Amount due: <strong style="color:${BRAND_DARK};">${escapeHtml(formattedAmount)}</strong>
+        </p>
+      </div>
+
+      ${deadlineNotice}
+
+      <div style="text-align:center;margin:28px 0;">
+        <a href="${safeUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
+          Complete My Payment
+        </a>
+      </div>
+
+      <p>
+        If the button does not work, copy and paste this link into your browser:
+      </p>
+
+      <p style="word-break:break-all;font-size:13px;">
+        <a href="${safeUrl}" style="color:${BRAND};">${safeUrl}</a>
+      </p>
+
+      <p>
+        If you have already paid or no longer wish to enroll, you can
+        safely disregard this reminder.
+      </p>
+
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
       </p>
     `)
@@ -310,7 +409,7 @@ export async function sendAlumniApprovedEmail(params: {
 
       <p>
         We are pleased to inform you that your application to join the
-        AlFawz Academy alumni community has been approved and your experience has now been published.
+        AlFawz Academy alumni community has been approved.
       </p>
 
       <p>

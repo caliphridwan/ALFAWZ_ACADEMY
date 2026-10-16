@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils/cn";
+import { SendRemindersButton } from "@/components/admin/send-reminders-button";
 
 const STATUS_VARIANT: Record<string, "default" | "muted" | "gold"> = {
   SUCCESSFUL: "default",
@@ -40,6 +41,8 @@ export default async function AdminPaymentsPage({
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Payments</h1>
+
+      <SendRemindersButton />
 
       <form className="flex flex-wrap gap-3 mb-6" action="/admin/payments">
         <Input name="q" placeholder="Search reference, name or email..." defaultValue={q} className="max-w-xs" />

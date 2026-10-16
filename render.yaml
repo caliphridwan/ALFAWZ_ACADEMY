@@ -23,14 +23,13 @@ services:
     healthCheckPath: /
     autoDeploy: true
     envVars:
-    
       # --- Database ---
       - key: DATABASE_URL
         sync: false # paste your Neon (or other Postgres) connection string
 
       # --- Auth.js ---
       - key: AUTH_SECRET
-        sync: false # Render generates a strong random value for you
+        sync: false # paste the value already generated in the Render dashboard
       - key: NEXTAUTH_URL
         sync: false # set to your Render URL, e.g. https://alfawz-academy.onrender.com
 
@@ -55,33 +54,55 @@ services:
       - key: NODE_VERSION
         value: "20"
 
+      # --- Cloudinary (signed, server-side uploads) ---
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
-
       - key: CLOUDINARY_API_KEY
         sync: false
-
       - key: CLOUDINARY_API_SECRET
         sync: false
+
+      # --- Payment reminder cron ---
+      # Shared secret the cron job below sends as a Bearer token. Render
+      # generates one value here and the cron service pulls the same value
+      # via fromService, so they always stay in sync with each other.
+      - key: CRON_SECRET
+        generateValue: true
+
+  # Periodically emails students whose Enrollment is still PENDING (they
+  # registered but haven't completed payment) a reminder to finish checkout.
+  # Hits the web service's own protected API route rather than running its
+  # own copy of the app, so there's nothing extra to build here — just curl,
+  # which is preinstalled on Render's runner images.
+  - type: cron
+    runtime: node
+    name: alfawz-academy-payment-reminders
+    plan: starter
+    region: oregon
+    branch: main
+    schedule: "0 */6 * * *" # every 6 hours; adjust in the Render dashboard if you want a different cadence
+    buildCommand: "echo 'no build needed'"
+    startCommand: >
+      curl -fsS -X POST
+      -H "Authorization: Bearer $CRON_SECRET"
+      "$APP_URL/api/cron/payment-reminders"
+    envVars:
+      - key: CRON_SECRET
+        fromService:
+          type: web
+          name: alfawz-academy
+          envVarKey: CRON_SECRET
+      - key: APP_URL
+        sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
 
 # Uncomment this block instead if you'd rather have Render provision and
 # manage Postgres for you, then change DATABASE_URL above to:
 #   - key: DATABASE_URL
 #     fromDatabase:
-#       name: alfawz-academy-db 
+#       name: alfawz-academy-db
 #       property: connectionString
 #
 # databases:
 #   - name: alfawz-academy-db
 #     plan: starter
 #     region: oregon
-
-
-# key: CLOUDINARY_CLOUD_NAME
-   # sync: false
-
- # - key: CLOUDINARY_API_KEY
-  #  sync: false
-
-  #- key: CLOUDINARY_API_SECRET
-  #  sync: false

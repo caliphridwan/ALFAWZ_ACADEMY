@@ -235,6 +235,12 @@ model Enrollment {
   examResult     ExamResult?
   examResultSeen Boolean     @default(false)
 
+  // Tracks the "complete your payment" reminder email so the cron job (or
+  // the admin's manual trigger) doesn't re-send it every run — null means
+  // never sent, otherwise the last time one went out, throttled in code.
+  reminderSentAt DateTime?
+  reminderCount  Int        @default(0)
+
   @@unique([studentId, courseId])
   @@index([status])
 }
