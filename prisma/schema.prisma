@@ -186,6 +186,10 @@ model Course {
   faqs             Json?
   active           Boolean  @default(true)
   enrollmentOpen   Boolean  @default(true)
+  // Optional per-course deadline. When set and in the past, enrollment is
+  // treated as closed even if enrollmentOpen is still true — the admin
+  // doesn't have to remember to flip it off manually.
+  registrationClosesAt DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

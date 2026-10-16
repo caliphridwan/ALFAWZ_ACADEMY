@@ -108,6 +108,11 @@ export const courseSchema = z.object({
   image: imagePathSchema,
   active: z.boolean().default(true),
   enrollmentOpen: z.boolean().default(true),
+  // datetime-local input value ("YYYY-MM-DDTHH:mm") or empty/undefined for no deadline.
+  registrationClosesAt: z
+    .string()
+    .optional()
+    .transform((v) => (v ? new Date(v) : null)),
 });
 
 export const enrollmentInitSchema = z.object({

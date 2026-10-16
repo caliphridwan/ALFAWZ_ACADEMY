@@ -30,6 +30,7 @@ function parseCourseForm(formData: FormData) {
     image: formData.get("image") || "",
     active: formData.get("active") === "on",
     enrollmentOpen: formData.get("enrollmentOpen") === "on",
+    registrationClosesAt: formData.get("registrationClosesAt") || undefined,
   });
 }
 

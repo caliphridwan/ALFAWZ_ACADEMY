@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { prisma } from "@/lib/db/prisma";
 import { Badge } from "@/components/ui/badge";
-import { EnrollButton } from "@/components/courses/enroll-button";
+import { EnrollmentGate } from "@/components/courses/enrollment-gate";
 import { formatCurrency } from "@/lib/utils/cn";
 import { JsonLd } from "@/components/shared/json-ld";
 
@@ -34,6 +34,11 @@ export default async function CourseDetailPage({ params }: Props) {
   const requirements = Array.isArray(course.requirements) ? (course.requirements as string[]) : [];
   const faqs = Array.isArray(course.faqs) ? (course.faqs as { q: string; a: string }[]) : [];
 
+  const closesAtPassedOnServer = course.registrationClosesAt
+    ? course.registrationClosesAt.getTime() <= Date.now()
+    : false;
+  const registrationOpen = course.enrollmentOpen && !closesAtPassedOnServer;
+
   return (
     <article className="container py-16 grid lg:grid-cols-3 gap-12">
       <JsonLd
@@ -54,7 +59,7 @@ export default async function CourseDetailPage({ params }: Props) {
             "@type": "Offer",
             price: Number(course.price),
             priceCurrency: course.currency,
-            availability: course.enrollmentOpen
+            availability: registrationOpen
               ? "https://schema.org/InStock"
               : "https://schema.org/SoldOut",
           },
@@ -141,13 +146,13 @@ export default async function CourseDetailPage({ params }: Props) {
             <dd className="text-foreground">{course.level}</dd>
           </div>
         </dl>
-        {course.enrollmentOpen ? (
-          <EnrollButton courseId={course.id} courseSlug={course.slug} />
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Enrollment is currently closed for this course.
-          </p>
-        )}
+        <EnrollmentGate
+          courseId={course.id}
+          courseSlug={course.slug}
+          enrollmentOpen={course.enrollmentOpen}
+          closesAt={course.registrationClosesAt ? course.registrationClosesAt.toISOString() : null}
+          closesAtPassedOnServer={closesAtPassedOnServer}
+        />
       </aside>
     </article>
   );

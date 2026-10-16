@@ -6,7 +6,17 @@ import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-export function EnrollButton({ courseId, courseSlug }: { courseId: string; courseSlug: string }) {
+export function EnrollButton({
+  courseId,
+  courseSlug,
+  label = "Enroll Now",
+  pendingLabel = "Preparing checkout...",
+}: {
+  courseId: string;
+  courseSlug: string;
+  label?: string;
+  pendingLabel?: string;
+}) {
   const { status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -43,7 +53,7 @@ export function EnrollButton({ courseId, courseSlug }: { courseId: string; cours
 
   return (
     <Button size="lg" onClick={handleEnroll} disabled={loading} className="w-full sm:w-auto">
-      {loading ? "Preparing checkout..." : "Enroll Now"}
+      {loading ? pendingLabel : label}
     </Button>
   );
 }

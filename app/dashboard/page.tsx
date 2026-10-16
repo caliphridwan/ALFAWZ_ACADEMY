@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils/cn";
 import { ExamResultModal } from "@/components/dashboard/exam-result-modal";
+import { EnrollmentGate } from "@/components/courses/enrollment-gate";
 
 export default async function DashboardOverviewPage() {
   const session = await getServerSession(authOptions);
@@ -87,6 +88,29 @@ export default async function DashboardOverviewPage() {
                     <Badge variant={e.examResult === "PASSED" ? "default" : "muted"} className="mt-1">
                       Exam: {e.examResult === "PASSED" ? "Passed" : "Repeating"}
                     </Badge>
+                  )}
+
+                  {e.status === "PENDING" && (
+                    <div className="mt-3">
+                      <EnrollmentGate
+                        courseId={e.course.id}
+                        courseSlug={e.course.slug}
+                        enrollmentOpen={e.course.enrollmentOpen}
+                        closesAt={
+                          e.course.registrationClosesAt
+                            ? e.course.registrationClosesAt.toISOString()
+                            : null
+                        }
+                        closesAtPassedOnServer={
+                          e.course.registrationClosesAt
+                            ? e.course.registrationClosesAt.getTime() <= Date.now()
+                            : false
+                        }
+                        label="Complete Payment"
+                        pendingLabel="Preparing checkout..."
+                        closedMessage="Registration has closed for this course. Contact support if you still wish to enroll."
+                      />
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">

@@ -43,6 +43,7 @@ export default async function EditCoursePage({ params }: { params: { id: string 
           image: course.image,
           active: course.active,
           enrollmentOpen: course.enrollmentOpen,
+          registrationClosesAt: course.registrationClosesAt,
         }}
       />
     </div>

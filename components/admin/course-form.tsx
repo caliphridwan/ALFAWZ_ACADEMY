@@ -25,7 +25,16 @@ type CourseDefaults = {
   image?: string | null;
   active: boolean;
   enrollmentOpen: boolean;
+  registrationClosesAt?: Date | null;
 };
+
+// datetime-local inputs need "YYYY-MM-DDTHH:mm" in the browser's local time.
+function toDatetimeLocalValue(date?: Date | null): string {
+  if (!date) return "";
+  const d = new Date(date);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -170,6 +179,20 @@ export function CourseForm({
           <Label htmlFor="image">Image URL</Label>
           <Input id="image" name="image" defaultValue={defaults?.image ?? ""} placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../course-name.jpg" />
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="registrationClosesAt">Registration Closes At (optional)</Label>
+        <Input
+          id="registrationClosesAt"
+          name="registrationClosesAt"
+          type="datetime-local"
+          defaultValue={toDatetimeLocalValue(defaults?.registrationClosesAt)}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Shows a live countdown on the course page and automatically closes
+          enrollment once it passes. Leave blank for no deadline.
+        </p>
       </div>
 
       <div className="flex gap-6">
