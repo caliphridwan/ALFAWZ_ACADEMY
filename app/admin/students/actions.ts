@@ -8,6 +8,33 @@ import { adminCreateStudentSchema, manualEnrollmentSchema } from "@/lib/validati
 import { generateTempPassword } from "@/lib/auth/generate-password";
 import { sendAdminCreatedAccountEmail, sendEnrollmentConfirmationEmail } from "@/lib/email/send";
 import { createNotification } from "@/lib/notifications";
+import { sendNeverEnrolledReminders, type EnrollmentReminderResult } from "@/lib/enrollment-reminders";
+
+export type SendEnrollmentRemindersState = {
+  result?: EnrollmentReminderResult;
+  error?: string;
+};
+
+/**
+ * Manual trigger for admins who don't want to wait for the scheduled cron
+ * run (see render.yaml + app/api/cron/enrollment-reminders) — goes through
+ * the same throttled sendNeverEnrolledReminders function, so running this
+ * right after the cron job fired just finds nothing new to send.
+ */
+export async function sendEnrollmentRemindersNow(
+  _prev: SendEnrollmentRemindersState
+): Promise<SendEnrollmentRemindersState> {
+  await requireAdmin();
+
+  try {
+    const result = await sendNeverEnrolledReminders();
+    revalidatePath("/admin/students");
+    return { result };
+  } catch (err) {
+    console.error("Manual enrollment reminder run failed:", err);
+    return { error: "Something went wrong sending reminders. Please try again." };
+  }
+}
 
 export async function setStudentActive(studentId: string, isActive: boolean) {
   await requireAdmin();

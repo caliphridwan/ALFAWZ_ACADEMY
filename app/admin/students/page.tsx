@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SendEnrollmentRemindersButton } from "@/components/admin/send-enrollment-reminders-button";
 
 /**
  * Section 25: search + filter students. Note passwordHash is never selected
@@ -52,6 +53,8 @@ export default async function AdminStudentsPage({
           <Link href="/admin/students/new">Add Student</Link>
         </Button>
       </div>
+
+      <SendEnrollmentRemindersButton />
 
       <form className="flex gap-3 mb-6" action="/admin/students">
         <Input name="q" placeholder="Search by name or email..." defaultValue={q} className="max-w-sm" />

@@ -135,6 +135,12 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  // "You registered but haven't picked a course yet" reminder, for a
+  // STUDENT with zero Enrollment rows at all. Same throttling idea as
+  // Enrollment.reminderSentAt — null means never sent.
+  enrollmentReminderSentAt DateTime?
+  enrollmentReminderCount  Int        @default(0)
+
   // Student-specific relations
   guardian     Guardian?
   enrollments  Enrollment[]

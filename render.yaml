@@ -95,6 +95,31 @@ services:
       - key: APP_URL
         sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
 
+  # Emails registered students who have never enrolled in any course at all
+  # (a different gap from the pending-payment reminder above). Throttled to
+  # once a week per student inside the route itself, so checking every 6
+  # hours here just means most runs find nothing new to send — harmless.
+  - type: cron
+    runtime: node
+    name: alfawz-academy-enrollment-reminders
+    plan: starter
+    region: oregon
+    branch: main
+    schedule: "0 */6 * * *" # adjust in the Render dashboard if you want a different cadence
+    buildCommand: "echo 'no build needed'"
+    startCommand: >
+      curl -fsS -X POST
+      -H "Authorization: Bearer $CRON_SECRET"
+      "$APP_URL/api/cron/enrollment-reminders"
+    envVars:
+      - key: CRON_SECRET
+        fromService:
+          type: web
+          name: alfawz-academy
+          envVarKey: CRON_SECRET
+      - key: APP_URL
+        sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
+
 # Uncomment this block instead if you'd rather have Render provision and
 # manage Postgres for you, then change DATABASE_URL above to:
 #   - key: DATABASE_URL

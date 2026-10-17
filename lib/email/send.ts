@@ -306,6 +306,76 @@ export async function sendPaymentReminderEmail(params: {
 }
 
 /**
+ * Reminder for a student who created an account but has never enrolled in
+ * any course — a different gap from sendPaymentReminderEmail, which is for
+ * someone who already started enrolling but hasn't paid. Sent by the
+ * enrollment-reminders cron job (or an admin's manual trigger), throttled
+ * per student the same way.
+ */
+export async function sendEnrollmentReminderEmail(params: {
+  to: string;
+  name: string;
+  browseCoursesUrl: string;
+}) {
+  const safeUrl = escapeHtml(params.browseCoursesUrl);
+
+  await send(
+    params.to,
+    "Complete Your Registration — Choose a Course at AlFawz Academy",
+    emailLayout(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">📖</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Your Learning Journey Is Waiting
+        </h2>
+        <p style="color:${MUTED};margin:8px 0 0;">
+          You're registered — now pick a course to get started.
+        </p>
+      </div>
+
+      <p>
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
+      </p>
+
+      <p>
+        You created an account at AlFawz Academy, but we noticed you
+        haven't yet enrolled in a course. We would love to have you join
+        one of our structured Qur'an and Islamic education programs.
+      </p>
+
+      <p>
+        Browse our available courses and choose the one that fits your
+        level and schedule — enrolling takes just a few minutes.
+      </p>
+
+      <div style="text-align:center;margin:28px 0;">
+        <a href="${safeUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
+          Browse Courses
+        </a>
+      </div>
+
+      <p>
+        If the button does not work, copy and paste this link into your browser:
+      </p>
+
+      <p style="word-break:break-all;font-size:13px;">
+        <a href="${safeUrl}" style="color:${BRAND};">${safeUrl}</a>
+      </p>
+
+      <p>
+        May Allah ﷻ make this journey of seeking knowledge easy and
+        beneficial for you. Ameen.
+      </p>
+
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
+/**
  * Payment confirmation for course enrollment or sponsorship.
  */
 export async function sendPaymentConfirmationEmail(params: {
