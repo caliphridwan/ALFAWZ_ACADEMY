@@ -315,9 +315,11 @@ export async function sendPaymentReminderEmail(params: {
 export async function sendEnrollmentReminderEmail(params: {
   to: string;
   name: string;
+  dashboardUrl: string;
   browseCoursesUrl: string;
 }) {
-  const safeUrl = escapeHtml(params.browseCoursesUrl);
+  const safeDashboardUrl = escapeHtml(params.dashboardUrl);
+  const safeCoursesUrl = escapeHtml(params.browseCoursesUrl);
 
   await send(
     params.to,
@@ -329,7 +331,7 @@ export async function sendEnrollmentReminderEmail(params: {
           Your Learning Journey Is Waiting
         </h2>
         <p style="color:${MUTED};margin:8px 0 0;">
-          You're registered — now pick a course to get started.
+          You're registered — now pick a course and complete payment to get started.
         </p>
       </div>
 
@@ -339,18 +341,19 @@ export async function sendEnrollmentReminderEmail(params: {
 
       <p>
         You created an account at AlFawz Academy, but we noticed you
-        haven't yet enrolled in a course. We would love to have you join
-        one of our structured Qur'an and Islamic education programs.
+        haven't yet enrolled in a course. Your registration isn't complete
+        until you choose a course and make payment — we would love to have
+        you join one of our structured Qur'an and Islamic education programs.
       </p>
 
       <p>
-        Browse our available courses and choose the one that fits your
-        level and schedule — enrolling takes just a few minutes.
+        Head to your dashboard to pick a course that fits your level and
+        schedule and complete your payment — it only takes a few minutes.
       </p>
 
       <div style="text-align:center;margin:28px 0;">
-        <a href="${safeUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
-          Browse Courses
+        <a href="${safeDashboardUrl}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
+          Go to My Dashboard
         </a>
       </div>
 
@@ -359,7 +362,13 @@ export async function sendEnrollmentReminderEmail(params: {
       </p>
 
       <p style="word-break:break-all;font-size:13px;">
-        <a href="${safeUrl}" style="color:${BRAND};">${safeUrl}</a>
+        <a href="${safeDashboardUrl}" style="color:${BRAND};">${safeDashboardUrl}</a>
+      </p>
+
+      <p style="color:${MUTED};font-size:13px;">
+        Not sure which course to pick yet? You can also
+        <a href="${safeCoursesUrl}" style="color:${BRAND};">browse all available courses</a>
+        first.
       </p>
 
       <p>

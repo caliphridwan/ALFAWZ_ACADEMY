@@ -55,6 +55,7 @@ export async function sendNeverEnrolledReminders(): Promise<EnrollmentReminderRe
       await sendEnrollmentReminderEmail({
         to: student.email,
         name: student.name,
+        dashboardUrl: `${appUrl()}/dashboard`,
         browseCoursesUrl: `${appUrl()}/courses`,
       });
 
