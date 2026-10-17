@@ -64,10 +64,9 @@ function emailLayout(content: string) {
                       The AlFawz Academy Team
                     </p>
                     <p style="margin:0;color:${MUTED};font-size:12px;line-height:1.7;">
-                      May Allah grant us beneficial knowledge and righteous deeds.
+                  أكاديمية الفوز    
                       <br />
-                      This is an automated email. Please do not reply directly to it.
-                    </p>
+                      
                   </td>
                 </tr>
               </table>
