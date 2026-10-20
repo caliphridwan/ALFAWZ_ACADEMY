@@ -4,6 +4,8 @@ import Image from "next/image";
 import { prisma } from "@/lib/db/prisma";
 import { Badge } from "@/components/ui/badge";
 import { EnrollmentGate } from "@/components/courses/enrollment-gate";
+import { CurrencyConverter } from "@/components/courses/currency-converter";
+import { getExchangeRates } from "@/lib/currency/exchange-rates";
 import { formatCurrency } from "@/lib/utils/cn";
 import { JsonLd } from "@/components/shared/json-ld";
 
@@ -38,6 +40,15 @@ export default async function CourseDetailPage({ params }: Props) {
     ? course.registrationClosesAt.getTime() <= Date.now()
     : false;
   const registrationOpen = course.enrollmentOpen && !closesAtPassedOnServer;
+
+  // Currency conversion is only shown on the Diaspora program(s), per the
+  // intent that this is for students/parents abroad comparing against a
+  // currency they actually think in — not a general feature on every
+  // course page. Matches on slug or title so an admin naming a future
+  // course "Diaspora ..." picks this up automatically.
+  const isDiasporaCourse =
+    course.slug.toLowerCase().includes("diaspora") || course.title.toLowerCase().includes("diaspora");
+  const exchangeRates = isDiasporaCourse ? await getExchangeRates(course.currency) : null;
 
   return (
     <article className="container py-16 grid lg:grid-cols-3 gap-12">
@@ -126,6 +137,13 @@ export default async function CourseDetailPage({ params }: Props) {
         <p className="text-3xl font-bold text-brand">
           {formatCurrency(Number(course.price), course.currency)}
         </p>
+        {isDiasporaCourse && (
+          <CurrencyConverter
+            amount={Number(course.price)}
+            baseCurrency={course.currency}
+            rates={exchangeRates}
+          />
+        )}
         <dl className="text-sm space-y-2 text-muted-foreground">
           <div className="flex justify-between">
             <dt>Duration</dt>
