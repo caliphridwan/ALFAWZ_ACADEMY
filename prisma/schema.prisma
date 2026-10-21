@@ -196,6 +196,10 @@ model Course {
   // treated as closed even if enrollmentOpen is still true — the admin
   // doesn't have to remember to flip it off manually.
   registrationClosesAt DateTime?
+  // When this cohort's classes actually begin. Set by the admin once a
+  // start date is confirmed; leaving it blank just means no commencement
+  // notice goes out (e.g. a rolling/self-paced course with no fixed start).
+  classStartsAt    DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -246,6 +250,11 @@ model Enrollment {
   // never sent, otherwise the last time one went out, throttled in code.
   reminderSentAt DateTime?
   reminderCount  Int        @default(0)
+
+  // Tracks the "classes start on..." commencement notice so the cron job
+  // (or the admin's manual trigger) sends it to each student exactly once
+  // per course, regardless of how many times the check runs.
+  commencementNotifiedAt DateTime?
 
   @@unique([studentId, courseId])
   @@index([status])

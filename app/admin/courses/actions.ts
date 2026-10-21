@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { courseSchema } from "@/lib/validations/schemas";
+import {
+  sendClassCommencementNotifications,
+  type ClassCommencementResult,
+} from "@/lib/class-commencement-notifications";
 
 export type CourseFormState = {
   success: boolean;
@@ -31,6 +35,7 @@ function parseCourseForm(formData: FormData) {
     active: formData.get("active") === "on",
     enrollmentOpen: formData.get("enrollmentOpen") === "on",
     registrationClosesAt: formData.get("registrationClosesAt") || undefined,
+    classStartsAt: formData.get("classStartsAt") || undefined,
   });
 }
 
@@ -104,4 +109,30 @@ export async function archiveCourse(courseId: string) {
   await prisma.course.update({ where: { id: courseId }, data: { active: false, enrollmentOpen: false } });
   revalidatePath("/admin/courses");
   revalidatePath("/courses");
+}
+
+export type SendCommencementState = {
+  result?: ClassCommencementResult;
+  error?: string;
+};
+
+/**
+ * Manual trigger for admins who don't want to wait for the scheduled cron
+ * run (see render.yaml + app/api/cron/class-commencement) — goes through the
+ * same throttled sendClassCommencementNotifications function, so running
+ * this right after the cron job fired just finds nothing new to send.
+ */
+export async function sendClassCommencementNow(
+  _prev: SendCommencementState
+): Promise<SendCommencementState> {
+  await requireAdmin();
+
+  try {
+    const result = await sendClassCommencementNotifications();
+    revalidatePath("/admin/courses");
+    return { result };
+  } catch (err) {
+    console.error("Manual class commencement run failed:", err);
+    return { error: "Something went wrong sending commencement notices. Please try again." };
+  }
 }

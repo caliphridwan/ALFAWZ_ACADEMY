@@ -120,6 +120,32 @@ services:
       - key: APP_URL
         sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
 
+  # Emails every actively-enrolled student a one-time "your classes start
+  # on..." notice (date, time, duration, schedule) once a course's
+  # classStartsAt falls inside the notify window (lib/class-commencement-
+  # notifications.ts). Idempotent per enrollment via commencementNotifiedAt,
+  # so checking every 6 hours just means most runs find nothing new.
+  - type: cron
+    runtime: node
+    name: alfawz-academy-class-commencement
+    plan: starter
+    region: oregon
+    branch: main
+    schedule: "0 */6 * * *" # adjust in the Render dashboard if you want a different cadence
+    buildCommand: "echo 'no build needed'"
+    startCommand: >
+      curl -fsS -X POST
+      -H "Authorization: Bearer $CRON_SECRET"
+      "$APP_URL/api/cron/class-commencement"
+    envVars:
+      - key: CRON_SECRET
+        fromService:
+          type: web
+          name: alfawz-academy
+          envVarKey: CRON_SECRET
+      - key: APP_URL
+        sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
+
 # Uncomment this block instead if you'd rather have Render provision and
 # manage Postgres for you, then change DATABASE_URL above to:
 #   - key: DATABASE_URL

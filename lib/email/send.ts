@@ -305,6 +305,116 @@ export async function sendPaymentReminderEmail(params: {
 }
 
 /**
+ * One-time notice that a course's classes are starting, sent to every
+ * actively enrolled student as the class-commencement cron job (or an
+ * admin's manual trigger) catches it inside its notify window. Distinct
+ * from sendPaymentConfirmationEmail — that one fires the moment payment is
+ * verified, this one fires separately once the actual start date is known
+ * and approaching, which may be set well after enrollment.
+ */
+export async function sendClassCommencementEmail(params: {
+  to: string;
+  name: string;
+  courseTitle: string;
+  startsAt: Date;
+  duration: string;
+  schedule?: string | null;
+  zoomLink?: string | null;
+  dashboardUrl: string;
+}) {
+  const safeDashboardUrl = escapeHtml(params.dashboardUrl);
+
+  // The academy operates on West Africa Time regardless of a recipient's
+  // own device locale, so the date/time is spelled out unambiguously rather
+  // than left to each student's browser/email client to localize.
+  const formattedDate = params.startsAt.toLocaleString("en-GB", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone: "Africa/Lagos",
+  });
+
+  const zoomRow = params.zoomLink
+    ? `<div style="text-align:center;margin:28px 0;">
+        <a href="${escapeHtml(params.zoomLink)}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
+          Join on Zoom
+        </a>
+      </div>`
+    : "";
+
+  await send(
+    params.to,
+    `Your classes begin soon — ${params.courseTitle}`,
+    emailLayout(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">📖</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Your Classes Are Starting!
+        </h2>
+        <p style="color:${MUTED};margin:8px 0 0;">
+          Here's everything you need to know before your first class.
+        </p>
+      </div>
+
+      <p>
+        Assalamu Alaikum, ${escapeHtml(params.name)}.
+      </p>
+
+      <p>
+        Great news — classes for the course below are about to begin.
+        Here are the details:
+      </p>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
+        <p style="margin:0 0 6px;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:1px;">
+          Course
+        </p>
+        <h3 style="margin:0 0 14px;color:${BRAND_DARK};font-size:21px;">
+          ${escapeHtml(params.courseTitle)}
+        </h3>
+
+        <p style="margin:0 0 8px;font-size:14px;">
+          <strong style="color:${BRAND_DARK};">Starts:</strong>
+          ${escapeHtml(formattedDate)} (WAT)
+        </p>
+        <p style="margin:0 0 8px;font-size:14px;">
+          <strong style="color:${BRAND_DARK};">Duration:</strong>
+          ${escapeHtml(params.duration)}
+        </p>
+        ${
+          params.schedule
+            ? `<p style="margin:0;font-size:14px;">
+                <strong style="color:${BRAND_DARK};">Class schedule:</strong>
+                ${escapeHtml(params.schedule)}
+              </p>`
+            : ""
+        }
+      </div>
+
+      ${zoomRow}
+
+      <p>
+        You can also find these details, and any updates, on your dashboard
+        at any time:
+      </p>
+
+      <p style="word-break:break-all;font-size:13px;">
+        <a href="${safeDashboardUrl}" style="color:${BRAND};">${safeDashboardUrl}</a>
+      </p>
+
+      <p>
+        We look forward to learning with you. May Allah make it easy and
+        beneficial for you.
+      </p>
+
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
+/**
  * Reminder for a student who created an account but has never enrolled in
  * any course — a different gap from sendPaymentReminderEmail, which is for
  * someone who already started enrolling but hasn't paid. Sent by the

@@ -113,6 +113,12 @@ export const courseSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v ? new Date(v) : null)),
+  // datetime-local input value ("YYYY-MM-DDTHH:mm") or empty/undefined when
+  // there's no fixed start (e.g. a rolling/self-paced course).
+  classStartsAt: z
+    .string()
+    .optional()
+    .transform((v) => (v ? new Date(v) : null)),
 });
 
 export const enrollmentInitSchema = z.object({

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils/cn";
 import { ArchiveCourseButton } from "@/components/admin/archive-course-button";
+import { SendClassCommencementButton } from "@/components/admin/send-class-commencement-button";
 
 export default async function AdminCoursesPage() {
   const courses = await prisma.course.findMany({
@@ -20,6 +21,8 @@ export default async function AdminCoursesPage() {
           <Link href="/admin/courses/new">Create Course</Link>
         </Button>
       </div>
+
+      <SendClassCommencementButton />
 
       <Card>
         <CardContent className="p-0 overflow-x-auto">

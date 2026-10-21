@@ -26,6 +26,7 @@ type CourseDefaults = {
   active: boolean;
   enrollmentOpen: boolean;
   registrationClosesAt?: Date | null;
+  classStartsAt?: Date | null;
 };
 
 // datetime-local inputs need "YYYY-MM-DDTHH:mm" in the browser's local time.
@@ -192,6 +193,22 @@ export function CourseForm({
         <p className="text-xs text-muted-foreground mt-1">
           Shows a live countdown on the course page and automatically closes
           enrollment once it passes. Leave blank for no deadline.
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="classStartsAt">Class Starts At (optional)</Label>
+        <Input
+          id="classStartsAt"
+          name="classStartsAt"
+          type="datetime-local"
+          defaultValue={toDatetimeLocalValue(defaults?.classStartsAt)}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Once set, every actively enrolled student is automatically emailed
+          a one-time notice (date, time and duration) as this date
+          approaches. Leave blank for a rolling/self-paced course with no
+          fixed start.
         </p>
       </div>
 
