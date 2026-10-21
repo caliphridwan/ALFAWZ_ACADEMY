@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Globe } from "lucide-react";
-import { DISPLAY_CURRENCIES, type DisplayCurrency, type ExchangeRates } from "@/lib/currency/exchange-rates";
+import { DISPLAY_CURRENCIES, type DisplayCurrency, type ExchangeRates } from "@/lib/currency/types";
 
 const CURRENCY_LABELS: Record<DisplayCurrency, string> = {
   NGN: "Nigerian Naira",

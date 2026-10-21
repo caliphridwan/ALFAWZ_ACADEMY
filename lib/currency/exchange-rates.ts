@@ -1,4 +1,5 @@
 import "server-only";
+import { DISPLAY_CURRENCIES, type DisplayCurrency, type ExchangeRates } from "@/lib/currency/types";
 
 /**
  * Open ER-API (https://www.exchangerate-api.com/docs/free) — free, no API
@@ -9,19 +10,6 @@ import "server-only";
  * are low-stakes.
  */
 const RATES_API_BASE = "https://open.er-api.com/v6/latest";
-
-// Currencies worth offering a diaspora family a conversion into. Extend
-// this list if other regions become relevant — it doesn't need to match
-// every currency the API supports.
-export const DISPLAY_CURRENCIES = ["NGN", "USD", "GBP", "EUR", "CAD"] as const;
-export type DisplayCurrency = (typeof DISPLAY_CURRENCIES)[number];
-
-export type ExchangeRates = {
-  base: string;
-  /** Rate to multiply an amount in `base` by, to get the amount in that currency. */
-  rates: Partial<Record<DisplayCurrency, number>>;
-  fetchedAt: string;
-};
 
 /**
  * Fetches conversion rates from `base` into DISPLAY_CURRENCIES. Cached by
