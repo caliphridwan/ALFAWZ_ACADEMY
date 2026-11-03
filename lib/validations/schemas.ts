@@ -187,6 +187,15 @@ export const siteSettingsSchema = z.object({
   studentsCount: z.coerce.number().int().min(0).optional(),
   countriesCount: z.coerce.number().int().min(0).optional(),
   classesDelivered: z.coerce.number().int().min(0).optional(),
+  bankName: z.string().trim().max(100).optional(),
+  bankAccountName: z.string().trim().max(150).optional(),
+  bankAccountNumber: z
+    .string()
+    .trim()
+    .max(30)
+    .regex(/^[0-9 -]*$/, "Account number should contain digits only")
+    .optional(),
+  bankTransferNote: z.string().trim().max(500).optional(),
 });
 
 export const adminCreateStudentSchema = z.object({

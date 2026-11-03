@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 import { SponsorshipCalculator } from "@/components/sponsorship/calculator";
 import { SponsorsList } from "@/components/sponsorship/sponsors-list";
 import { Button } from "@/components/ui/button";
+import { BankTransferDetails } from "@/components/payments/bank-transfer-details";
+import { getBankTransferInfo } from "@/lib/bank-details";
 import { formatCurrency } from "@/lib/utils/cn";
 
 export const metadata: Metadata = {
@@ -13,9 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SponsorPage() {
-  const [settings, sponsorCount] = await Promise.all([
+  const [settings, sponsorCount, bankInfo] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
     prisma.sponsorship.count({ where: { status: "ACTIVE" } }),
+    getBankTransferInfo(),
   ]);
 
   const pricePerStudent = Number(settings?.sponsorshipPrice ?? 30000);
@@ -63,6 +66,12 @@ export default async function SponsorPage() {
           maxStudents={maxStudents}
         />
       </div>
+
+      {bankInfo && (
+        <div className="max-w-4xl mx-auto mt-8">
+          <BankTransferDetails info={bankInfo} purpose="student sponsorship" />
+        </div>
+      )}
 
       {sponsorCount > 0 && (
         <div className="mt-20">

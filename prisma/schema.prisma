@@ -411,6 +411,13 @@ model SiteSettings {
   studentsCount      Int      @default(0)
   countriesCount     Int      @default(0)
   classesDelivered   Int      @default(0)
+  // Optional manual bank-transfer details, shown as a fallback next to the
+  // Paystack checkout (sponsor page, course page, student dashboard). All
+  // blank = the fallback box simply isn't shown.
+  bankName           String?
+  bankAccountName    String?
+  bankAccountNumber  String?
+  bankTransferNote   String?
   updatedAt          DateTime @updatedAt
 }
 

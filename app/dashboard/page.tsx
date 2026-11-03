@@ -8,18 +8,21 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils/cn";
 import { ExamResultModal } from "@/components/dashboard/exam-result-modal";
 import { EnrollmentGate } from "@/components/courses/enrollment-gate";
+import { BankTransferDetails } from "@/components/payments/bank-transfer-details";
+import { getBankTransferInfo } from "@/lib/bank-details";
 
 export default async function DashboardOverviewPage() {
   const session = await getServerSession(authOptions);
   const userId = session!.user.id;
 
-  const [enrollments, payments] = await Promise.all([
+  const [enrollments, payments, bankInfo] = await Promise.all([
     prisma.enrollment.findMany({
       where: { studentId: userId },
       include: { course: { include: { instructor: true } } },
       orderBy: { enrolledAt: "desc" },
     }),
     prisma.payment.findMany({ where: { userId } }),
+    getBankTransferInfo(),
   ]);
 
   const unseenResults = enrollments
@@ -110,6 +113,9 @@ export default async function DashboardOverviewPage() {
                         pendingLabel="Preparing checkout..."
                         closedMessage="Registration has closed for this course. Contact support if you still wish to enroll."
                       />
+                      <div className="mt-3 max-w-sm">
+                        <BankTransferDetails info={bankInfo} purpose={e.course.title} compact />
+                      </div>
                     </div>
                   )}
                 </div>

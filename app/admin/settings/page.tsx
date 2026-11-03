@@ -22,6 +22,10 @@ export default async function AdminSettingsPage() {
           studentsCount: settings?.studentsCount,
           countriesCount: settings?.countriesCount,
           classesDelivered: settings?.classesDelivered,
+          bankName: settings?.bankName,
+          bankAccountName: settings?.bankAccountName,
+          bankAccountNumber: settings?.bankAccountNumber,
+          bankTransferNote: settings?.bankTransferNote,
         }}
       />
     </div>

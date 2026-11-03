@@ -21,6 +21,10 @@ type Defaults = {
   studentsCount?: number | null;
   countriesCount?: number | null;
   classesDelivered?: number | null;
+  bankName?: string | null;
+  bankAccountName?: string | null;
+  bankAccountNumber?: string | null;
+  bankTransferNote?: string | null;
 };
 
 function SaveButton() {
@@ -83,6 +87,41 @@ export function SettingsForm({ defaults }: { defaults: Defaults }) {
             <Label htmlFor="phoneNumber">Phone Number</Label>
             <Input id="phoneNumber" name="phoneNumber" defaultValue={defaults.phoneNumber ?? ""} />
           </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-4">
+        <legend className="font-semibold mb-2">Bank Transfer (alternative to Paystack)</legend>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Shown on the sponsor page, course pages and student dashboard for
+          anyone who prefers to pay by direct transfer or if Paystack is
+          unavailable. Leave all blank to hide it. You confirm these
+          payments manually (Students → manual enrollment, Sponsors →
+          status).
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="bankName">Bank Name</Label>
+            <Input id="bankName" name="bankName" defaultValue={defaults.bankName ?? ""} />
+          </div>
+          <div>
+            <Label htmlFor="bankAccountNumber">Account Number</Label>
+            <Input id="bankAccountNumber" name="bankAccountNumber" inputMode="numeric" defaultValue={defaults.bankAccountNumber ?? ""} />
+            <FieldError messages={state.fieldErrors?.bankAccountNumber} />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="bankAccountName">Account Name</Label>
+          <Input id="bankAccountName" name="bankAccountName" defaultValue={defaults.bankAccountName ?? ""} />
+        </div>
+        <div>
+          <Label htmlFor="bankTransferNote">Extra instructions (optional)</Label>
+          <Input
+            id="bankTransferNote"
+            name="bankTransferNote"
+            defaultValue={defaults.bankTransferNote ?? ""}
+            placeholder="e.g. Use your full name as the transfer narration"
+          />
         </div>
       </fieldset>
 

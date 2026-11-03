@@ -38,6 +38,10 @@ export async function updateSiteSettings(
     studentsCount: formData.get("studentsCount") || undefined,
     countriesCount: formData.get("countriesCount") || undefined,
     classesDelivered: formData.get("classesDelivered") || undefined,
+    bankName: formData.get("bankName") || undefined,
+    bankAccountName: formData.get("bankAccountName") || undefined,
+    bankAccountNumber: formData.get("bankAccountNumber") || undefined,
+    bankTransferNote: formData.get("bankTransferNote") || undefined,
   });
 
   if (!parsed.success) {
@@ -48,6 +52,12 @@ export async function updateSiteSettings(
     ...parsed.data,
     logoUrl: parsed.data.logoUrl || null,
     heroImageUrl: parsed.data.heroImageUrl || null,
+    // Blank clears the field (unlike the stats above) so an admin can
+    // remove the bank-transfer box entirely.
+    bankName: parsed.data.bankName || null,
+    bankAccountName: parsed.data.bankAccountName || null,
+    bankAccountNumber: parsed.data.bankAccountNumber || null,
+    bankTransferNote: parsed.data.bankTransferNote || null,
   };
 
   await prisma.siteSettings.upsert({
@@ -59,6 +69,8 @@ export async function updateSiteSettings(
   revalidatePath("/admin/settings");
   revalidatePath("/sponsor");
   revalidatePath("/sponsors");
+  revalidatePath("/courses", "layout");
+  revalidatePath("/dashboard");
   revalidatePath("/", "layout"); // logo lives in the root layout, hero image on "/"
   return { success: true };
 }

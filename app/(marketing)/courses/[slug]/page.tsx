@@ -8,6 +8,8 @@ import { CurrencyConverter } from "@/components/courses/currency-converter";
 import { getExchangeRates } from "@/lib/currency/exchange-rates";
 import { formatCurrency } from "@/lib/utils/cn";
 import { JsonLd } from "@/components/shared/json-ld";
+import { BankTransferDetails } from "@/components/payments/bank-transfer-details";
+import { getBankTransferInfo } from "@/lib/bank-details";
 
 type Props = { params: { slug: string } };
 
@@ -49,6 +51,7 @@ export default async function CourseDetailPage({ params }: Props) {
   const isDiasporaCourse =
     course.slug.toLowerCase().includes("diaspora") || course.title.toLowerCase().includes("diaspora");
   const exchangeRates = isDiasporaCourse ? await getExchangeRates(course.currency) : null;
+  const bankInfo = registrationOpen ? await getBankTransferInfo() : null;
 
   return (
     <article className="container py-16 grid lg:grid-cols-3 gap-12">
@@ -171,6 +174,7 @@ export default async function CourseDetailPage({ params }: Props) {
           closesAt={course.registrationClosesAt ? course.registrationClosesAt.toISOString() : null}
           closesAtPassedOnServer={closesAtPassedOnServer}
         />
+        <BankTransferDetails info={bankInfo} purpose={course.title} compact />
       </aside>
     </article>
   );
