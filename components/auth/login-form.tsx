@@ -53,6 +53,8 @@ export function LoginForm() {
         ? "/admin"
         : role === "SPONSOR"
         ? "/sponsor/dashboard"
+        : role === "TEACHER"
+        ? "/teacher"
         : "/dashboard";
 
     router.push(destination);

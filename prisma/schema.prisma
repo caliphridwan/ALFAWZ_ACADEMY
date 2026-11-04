@@ -17,6 +17,7 @@ enum Role {
   SPONSOR
   ADMIN
   SUPER_ADMIN
+  TEACHER
 }
 
 enum Gender {
@@ -162,6 +163,8 @@ model User {
   attendance   Attendance[]
   pushSubscriptions PushSubscription[]
   bankClaims        BankTransferClaim[]
+  teacherProfile    Teacher?
+  recitationSubmissions RecitationSubmission[]
   scholarshipApplications ScholarshipApplication[]
 
   // Sponsor-specific relations
@@ -226,6 +229,7 @@ model Course {
   materials   CourseMaterial[]
   sessions    ClassSession[]
   announcements Announcement[]
+  recitationTasks RecitationTask[]
   bankClaims    BankTransferClaim[]
   scholarshipApplications ScholarshipApplication[]
 
@@ -387,6 +391,10 @@ model Teacher {
   biography      String?  @db.Text
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())
+
+  // Optional login account (role TEACHER) so the teacher can sign in to /teacher.
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   courses Course[]
 }
@@ -578,5 +586,43 @@ model ScholarshipApplication {
   createdAt    DateTime          @default(now())
 
   @@index([status, createdAt])
+  @@index([studentId])
+}
+
+// A recitation exercise a teacher sets for a course ("Recite Surah An-Naba 1-10").
+model RecitationTask {
+  id           String   @id @default(cuid())
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title        String
+  instructions String?  @db.Text
+  dueAt        DateTime?
+  createdAt    DateTime @default(now())
+
+  submissions RecitationSubmission[]
+
+  @@index([courseId, createdAt])
+}
+
+// A student's audio recording for a task, plus the teacher's feedback.
+// One per student per task: sending again replaces the recording.
+model RecitationSubmission {
+  id          String         @id @default(cuid())
+  taskId      String
+  task        RecitationTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  audioUrl    String
+  durationSec Int?
+  note        String?
+  submittedAt DateTime       @default(now())
+  // Review (null until a teacher has listened)
+  rating      Int?
+  feedback    String?        @db.Text
+  reviewedAt  DateTime?
+  reviewedById String?
+
+  @@unique([taskId, studentId])
+  @@index([taskId, reviewedAt])
   @@index([studentId])
 }

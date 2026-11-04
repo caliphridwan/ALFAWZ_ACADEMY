@@ -17,10 +17,17 @@ export default withAuth(
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
+    if (pathname.startsWith("/teacher") && role !== "TEACHER") {
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    }
+
     if (pathname.startsWith("/dashboard") && role !== "STUDENT") {
       // Sponsors and admins have their own areas; students only in /dashboard.
       if (role === "SPONSOR") {
         return NextResponse.redirect(new URL("/sponsor/dashboard", req.url));
+      }
+      if (role === "TEACHER") {
+        return NextResponse.redirect(new URL("/teacher", req.url));
       }
       if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
         return NextResponse.redirect(new URL("/unauthorized", req.url));
@@ -43,5 +50,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/sponsor/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/teacher/:path*", "/sponsor/dashboard/:path*"],
 };

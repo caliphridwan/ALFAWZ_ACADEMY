@@ -43,6 +43,8 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
       ? "/admin"
       : session?.user?.role === "SPONSOR"
       ? "/sponsor/dashboard"
+      : session?.user?.role === "TEACHER"
+      ? "/teacher"
       : "/dashboard";
 
   return (

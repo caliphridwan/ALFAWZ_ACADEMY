@@ -3,9 +3,13 @@ import { prisma } from "@/lib/db/prisma";
 import { TeacherForm } from "@/components/admin/teacher-form";
 import { upsertTeacher, deleteTeacher } from "@/app/admin/teachers/actions";
 import { Button } from "@/components/ui/button";
+import { TeacherLoginCard } from "@/components/admin/teacher-login-card";
 
 export default async function EditTeacherPage({ params }: { params: { id: string } }) {
-  const teacher = await prisma.teacher.findUnique({ where: { id: params.id } });
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: params.id },
+    include: { user: { select: { email: true } } },
+  });
   if (!teacher) notFound();
 
   const action = upsertTeacher.bind(null, teacher.id);
@@ -35,6 +39,7 @@ export default async function EditTeacherPage({ params }: { params: { id: string
           active: teacher.active,
         }}
       />
+      <TeacherLoginCard teacherId={teacher.id} loginEmail={teacher.user?.email ?? null} />
     </div>
   );
 }

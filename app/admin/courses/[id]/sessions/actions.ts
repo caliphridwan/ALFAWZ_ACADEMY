@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { requireCourseStaff, requireStaff } from "@/lib/auth/course-access";
 import { classSessionSchema } from "@/lib/validations/schemas";
 import { createNotification } from "@/lib/notifications";
 
@@ -23,6 +24,7 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function revalidateSessionPages(courseId: string) {
   revalidatePath(`/admin/courses/${courseId}/sessions`);
+  revalidatePath(`/teacher/courses/${courseId}`);
   revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/courses");
 }
@@ -98,7 +100,7 @@ export async function deleteClassSession(sessionId: string) {
  * time a link is added, the class's students are told it's available.
  */
 export async function setSessionRecording(sessionId: string, url: string): Promise<{ ok: boolean; error?: string }> {
-  await requireAdmin();
+  await requireStaff();
 
   const clean = url.trim();
   if (clean && !/^https:\/\/\S+$/.test(clean)) {
@@ -110,6 +112,7 @@ export async function setSessionRecording(sessionId: string, url: string): Promi
     select: { recordingUrl: true, topic: true, startsAt: true, course: { select: { id: true, title: true } } },
   });
   if (!before) return { ok: false, error: "Class not found." };
+  await requireCourseStaff(before.course.id);
 
   await prisma.classSession.update({ where: { id: sessionId }, data: { recordingUrl: clean || null } });
 
@@ -142,7 +145,7 @@ export async function saveAttendance(
   _prev: AttendanceFormState,
   formData: FormData
 ): Promise<AttendanceFormState> {
-  await requireAdmin();
+  await requireStaff();
 
   const sessionId = String(formData.get("sessionId") ?? "");
   const session = await prisma.classSession.findUnique({
@@ -150,6 +153,7 @@ export async function saveAttendance(
     select: { id: true, courseId: true },
   });
   if (!session) return { success: false, formError: "Class not found." };
+  await requireCourseStaff(session.courseId);
 
   // Only students actually enrolled in this course can be marked.
   const enrollments = await prisma.enrollment.findMany({
@@ -177,5 +181,6 @@ export async function saveAttendance(
 
   revalidateSessionPages(session.courseId);
   revalidatePath(`/admin/courses/${session.courseId}/sessions/${sessionId}`);
+  revalidatePath(`/teacher/courses/${session.courseId}/sessions/${sessionId}`);
   return { success: true, saved };
 }
