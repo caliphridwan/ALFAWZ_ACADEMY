@@ -91,11 +91,10 @@ export function AnimatedCounter({
   const digits = formattedNumber.split("");
 
   return (
-    <span
-      ref={ref}
-      className="inline-flex items-center tabular-nums"
-      aria-label={`${value.toLocaleString()}${suffix}`}
-    >
+    <span ref={ref} className="inline-flex items-center tabular-nums">
+      {/* Screen readers get the final value once; the rolling digits are decoration. */}
+      <span className="sr-only">{`${value.toLocaleString()}${suffix}`}</span>
+      <span aria-hidden="true" className="inline-flex items-center">
       {digits.map((character, index) => {
         if (character === ",") {
           return (
@@ -118,6 +117,7 @@ export function AnimatedCounter({
       })}
 
       <span className="ml-[0.03em]">{suffix}</span>
+      </span>
     </span>
   );
 }

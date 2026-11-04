@@ -645,7 +645,10 @@ export default async function HomePage() {
             },
           ].map((item) => (
             <StaggerItem key={item.title}>
-              <div className="group h-full rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
+              <Link
+                href="/courses"
+                className="group block h-full rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 focus-visible:-translate-y-2 focus-visible:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
                 <span className="text-sm font-bold text-primary">
                   {item.number}
                 </span>
@@ -658,11 +661,11 @@ export default async function HomePage() {
                   {item.text}
                 </p>
 
-                <div className="mt-7 flex translate-y-2 items-center gap-2 text-sm font-semibold text-primary opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <div className="mt-7 flex translate-y-2 items-center gap-2 text-sm font-semibold text-primary opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
                   Learn more
-                  <span>→</span>
+                  <span aria-hidden="true">→</span>
                 </div>
-              </div>
+              </Link>
             </StaggerItem>
           ))}
         </StaggerContainer>

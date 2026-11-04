@@ -19,10 +19,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/register`, changeFrequency: "yearly", priority: 0.5 },
   ];
 
-  const [courses, events] = await Promise.all([
-    prisma.course.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }),
-    prisma.event.findMany({ where: { published: true }, select: { slug: true, date: true } }),
-  ]);
+  const courses = await prisma.course.findMany({
+    where: { active: true },
+    select: { slug: true, updatedAt: true },
+  });
 
   const courseRoutes: MetadataRoute.Sitemap = courses.map((c) => ({
     url: `${baseUrl}/courses/${c.slug}`,
@@ -31,12 +31,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const eventRoutes: MetadataRoute.Sitemap = events.map((e) => ({
-    url: `${baseUrl}/events/${e.slug}`,
-    lastModified: e.date,
-    changeFrequency: "weekly",
-    priority: 0.5,
-  }));
-
-  return [...staticRoutes, ...courseRoutes, ...eventRoutes];
+  // Events have a listing page only (no /events/<slug> detail route), so just the list is indexed.
+  return [...staticRoutes, ...courseRoutes];
 }

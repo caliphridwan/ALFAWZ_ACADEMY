@@ -3,7 +3,7 @@ import { BookOpenText, Facebook, Instagram, Youtube, MessageCircle, Twitter } fr
 
 const PROGRAMS = [
   { label: "Beginners", href: "/courses/beginners-quran" },
-  { label: "Tahfeez", href: "/courses/tahfeezul-quran" },
+  { label: "Tahfeez", href: "/courses/tahfeez" },
   { label: "Intermediate", href: "/courses/intermediate-tajweed" },
   { label: "Advanced", href: "/courses/advanced-studies" },
   { label: "Under-9", href: "/courses/under-9-program" },
