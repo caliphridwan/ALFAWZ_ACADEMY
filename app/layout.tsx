@@ -15,6 +15,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 // local font slot in case the institution supplies a licensed Arabic font.
 const arabicFallback = Inter({ subsets: ["latin"], variable: "--font-arabic", display: "swap" });
 
+// Pages read the database (settings, courses, teachers...). Rendering them
+// per request instead of at build time means a slow or sleeping database can
+// never make a deploy fail again.
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = {
   themeColor: "#1e3a8a",
 };

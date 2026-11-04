@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
 import { ensureStudentNumber } from "@/lib/student-number";
 import { qrDataUrl } from "@/lib/qr";
+import { DEFAULT_LOGO } from "@/lib/pwa-icons";
 import { PrintButton } from "@/components/shared/print-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { IdCardBack, IdCardFront, type IdCardData } from "@/components/student-id/id-card";
@@ -66,7 +67,7 @@ export default async function IdCardPage() {
     photoUrl: user.profileImage || null,
     programme: extra > 0 ? `${shown} +${extra} more` : shown,
     memberSince: user.createdAt.getFullYear(),
-    logoUrl: settings?.logoUrl || null,
+    logoUrl: settings?.logoUrl || DEFAULT_LOGO,
     verifyUrl,
     qrDataUrl: await qrDataUrl(verifyUrl),
     contactEmail: settings?.contactEmail || null,

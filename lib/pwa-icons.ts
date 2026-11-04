@@ -5,7 +5,7 @@
  */
 
 // Same file the site header uses, in case no logo is set in Settings.
-const DEFAULT_LOGO =
+export const DEFAULT_LOGO =
   "https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/alfawz1.jpg";
 
 const MARKER = "/image/upload/";
