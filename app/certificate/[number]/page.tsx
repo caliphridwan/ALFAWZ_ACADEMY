@@ -32,7 +32,7 @@ function Corner({ className }: { className: string }) {
 function Seal() {
   const rays = Array.from({ length: 24 }, (_, i) => i);
   return (
-    <svg viewBox="0 0 120 150" aria-hidden="true" className="h-24 w-20 sm:h-32 sm:w-28">
+    <svg viewBox="0 0 120 150" aria-hidden="true" className="cert-seal h-24 w-20 sm:h-32 sm:w-28">
       <path d="M38 85 L24 142 L44 130 L56 146 L64 92 Z" fill={NAVY} />
       <path d="M82 85 L96 142 L76 130 L64 146 L56 92 Z" fill="#2748b0" />
       <g transform="translate(60 56)">
@@ -87,6 +87,19 @@ export default async function CertificatePage({ params }: { params: { number: st
           .container { padding: 0 !important; max-width: none !important; }
           .certificate-frame { box-shadow: none !important; margin: 0 !important; max-width: none !important; width: 100% !important; }
           * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; overflow: visible !important; }
+          /* A4 landscape minus 8mm margins is 281 x 194mm; stay a hair under so it never spills to page 2. */
+          .certificate-frame { height: 190mm !important; width: 277mm !important; overflow: hidden !important; break-inside: avoid; page-break-inside: avoid; border-width: 8px !important; }
+          .cert-inner { padding: 8mm 22mm 0 !important; }
+          .cert-logo { height: 14mm !important; }
+          .cert-bismillah { margin-top: 2mm !important; font-size: 14px !important; }
+          .cert-title { margin-top: 2mm !important; font-size: 30px !important; }
+          .cert-name { margin-top: 1mm !important; font-size: 40px !important; padding-bottom: 1mm !important; }
+          .cert-course { margin-top: 1mm !important; font-size: 26px !important; }
+          .cert-inner p.mt-6 { margin-top: 3mm !important; }
+          .cert-signs { margin-top: 5mm !important; }
+          .cert-seal { height: 24mm !important; width: 20mm !important; }
+          .cert-foot { margin-top: 3mm !important; padding-top: 2mm !important; }
         }
         @page { size: A4 landscape; margin: 8mm; }
       `}</style>
@@ -117,21 +130,21 @@ export default async function CertificatePage({ params }: { params: { number: st
         <Corner className="bottom-5 right-5 rotate-180" />
         <Corner className="bottom-5 left-5 -rotate-90" />
 
-        <div className="relative px-8 py-12 text-center sm:px-24 sm:py-14">
+        <div className="cert-inner relative px-8 py-12 text-center sm:px-24 sm:py-14">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="AlFawz Academy" className="mx-auto h-16 w-auto object-contain sm:h-20" />
+            <img src={logoUrl} alt="AlFawz Academy" className="cert-logo mx-auto h-16 w-auto object-contain sm:h-20" />
           ) : (
             <p className="text-lg font-bold uppercase tracking-[0.35em]" style={{ color: NAVY }}>
               AlFawz Academy
             </p>
           )}
 
-          <p className="mt-4 font-serif text-lg" style={{ color: GOLD }} dir="rtl" lang="ar">
+          <p className="cert-bismillah mt-4 font-serif text-lg" style={{ color: GOLD }} dir="rtl" lang="ar">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
           </p>
 
-          <h1 className="mt-3 font-serif text-3xl font-bold uppercase tracking-[0.12em] sm:text-5xl" style={{ color: NAVY }}>
+          <h1 className="cert-title mt-3 font-serif text-3xl font-bold uppercase tracking-[0.12em] sm:text-5xl" style={{ color: NAVY }}>
             Certificate of Completion
           </h1>
           <div className="mx-auto mt-3 flex items-center justify-center gap-3" aria-hidden="true">
@@ -142,7 +155,7 @@ export default async function CertificatePage({ params }: { params: { number: st
 
           <p className="mt-6 font-serif text-sm italic text-slate-600 sm:text-base">This is proudly presented to</p>
           <p
-            className="mx-auto mt-2 max-w-3xl border-b pb-2 font-serif text-4xl italic sm:text-6xl"
+            className="cert-name mx-auto mt-2 max-w-3xl border-b pb-2 font-serif text-4xl italic sm:text-6xl"
             style={{ color: NAVY, borderColor: GOLD }}
           >
             {enrollment.student.name}
@@ -151,12 +164,12 @@ export default async function CertificatePage({ params }: { params: { number: st
           <p className="mt-6 font-serif text-sm italic text-slate-600 sm:text-base">
             for successfully completing the course
           </p>
-          <p className="mt-2 font-serif text-2xl font-bold text-slate-900 sm:text-4xl">{enrollment.course.title}</p>
+          <p className="cert-course mt-2 font-serif text-2xl font-bold text-slate-900 sm:text-4xl">{enrollment.course.title}</p>
           {enrollment.course.duration && (
             <p className="mt-1 text-sm text-slate-500">Course duration: {enrollment.course.duration}</p>
           )}
 
-          <div className="mt-10 grid grid-cols-3 items-end gap-4 text-center">
+          <div className="cert-signs mt-10 grid grid-cols-3 items-end gap-4 text-center">
             {/* Date */}
             <div className="text-xs text-slate-600 sm:text-sm">
               <p className="font-serif text-base text-slate-900 sm:text-lg">
@@ -188,7 +201,7 @@ export default async function CertificatePage({ params }: { params: { number: st
             </div>
           </div>
 
-          <div className="mt-8 border-t pt-3 text-[11px] text-slate-500 sm:text-xs" style={{ borderColor: `${GOLD}66` }}>
+          <div className="cert-foot mt-8 border-t pt-3 text-[11px] text-slate-500 sm:text-xs" style={{ borderColor: `${GOLD}66` }}>
             Certificate No. <span className="font-mono text-slate-700">{enrollment.certificateNumber}</span> · Verify
             authenticity by opening this certificate&apos;s web address at alfawzacademy.com
           </div>
