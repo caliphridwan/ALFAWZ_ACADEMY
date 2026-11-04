@@ -89,7 +89,7 @@ export function Hero({ imageUrl }: HeroProps) {
   const heroImage =
     imageUrl && imageUrl.trim().length > 0
       ? imageUrl
-      : "/images/hero.jpg";
+      : "https://res.cloudinary.com/tpkzrkj7/image/upload/f_auto/q_auto/D4D4D98A-261B-4963-A4E0-5A5383F3DE7A.jpg";
 
   return (
     <section className="relative overflow-hidden bg-background">

@@ -27,7 +27,15 @@ export const metadata: Metadata = {
     title: "AlFawz Academy — Online Islamic Education",
     description:
       "Structured online Qur'an and Islamic education for children, youth and adults, worldwide.",
-    images: ["/images/og-default.jpg"],
+    images: [
+      {
+        // 1200x630 crop of the homepage hero, served from Cloudinary.
+        url: "https://res.cloudinary.com/tpkzrkj7/image/upload/c_fill,g_auto,w_1200,h_630,q_auto,f_jpg/D4D4D98A-261B-4963-A4E0-5A5383F3DE7A.jpg",
+        width: 1200,
+        height: 630,
+        alt: "AlFawz Academy",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
