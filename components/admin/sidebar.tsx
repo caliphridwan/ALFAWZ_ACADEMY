@@ -17,6 +17,7 @@ import {
   Megaphone,
   Landmark,
   Gift,
+  BarChart3,
   Settings,
   User,
   LogOut,
@@ -26,6 +27,7 @@ import { cn } from "@/lib/utils/cn";
 const LINKS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/students", label: "Students", icon: Users },
+  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
   { href: "/admin/courses", label: "Courses", icon: BookOpen },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/bank-transfers", label: "Bank Transfers", icon: Landmark },
