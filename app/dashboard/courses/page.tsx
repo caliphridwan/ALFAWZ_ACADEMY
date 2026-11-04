@@ -5,7 +5,9 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Video } from "lucide-react";
+import { Video, Award } from "lucide-react";
+import { ProgressSummary } from "@/components/dashboard/progress-summary";
+import { getProgressForEnrollments } from "@/lib/progress-data";
 
 export default async function MyCoursesPage() {
   const session = await getServerSession(authOptions);
@@ -14,6 +16,13 @@ export default async function MyCoursesPage() {
     include: { course: { include: { instructor: true } } },
     orderBy: { enrolledAt: "desc" },
   });
+
+  const progress = await getProgressForEnrollments(
+    session!.user.id,
+    enrollments
+      .filter((e) => e.status === "ACTIVE" || e.status === "COMPLETED")
+      .map((e) => ({ id: e.id, courseId: e.courseId, enrolledAt: e.enrolledAt }))
+  );
 
   return (
     <div className="max-w-3xl">
@@ -41,6 +50,7 @@ export default async function MyCoursesPage() {
                   <Badge variant={e.status === "ACTIVE" ? "default" : "muted"} className="mt-2">
                     {e.status}
                   </Badge>
+                  {progress.get(e.id) && <ProgressSummary progress={progress.get(e.id)!} />}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   {/* ACTIVE is only ever reached after a verified Paystack payment
@@ -51,6 +61,14 @@ export default async function MyCoursesPage() {
                         <Video size={16} className="mr-1" />
                         Join Class
                       </a>
+                    </Button>
+                  )}
+                  {e.certificateNumber && (
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/certificate/${e.certificateNumber}`} target="_blank">
+                        <Award size={16} className="mr-1" />
+                        Certificate
+                      </Link>
                     </Button>
                   )}
                   <Button asChild size="sm" variant="outline">

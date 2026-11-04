@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field-error";
 import type { CourseFormState } from "@/app/admin/courses/actions";
+import { toAcademyInputValue } from "@/lib/utils/datetime";
 
 type Teacher = { id: string; name: string };
 type CourseDefaults = {
@@ -29,13 +30,9 @@ type CourseDefaults = {
   classStartsAt?: Date | null;
 };
 
-// datetime-local inputs need "YYYY-MM-DDTHH:mm" in the browser's local time.
-function toDatetimeLocalValue(date?: Date | null): string {
-  if (!date) return "";
-  const d = new Date(date);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+// datetime-local inputs need "YYYY-MM-DDTHH:mm". Shown and saved in West
+// Africa Time regardless of the admin's device or the server's timezone.
+const toDatetimeLocalValue = toAcademyInputValue;
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();

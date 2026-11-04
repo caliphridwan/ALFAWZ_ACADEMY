@@ -44,6 +44,12 @@ enum EnrollmentSource {
   OFFLINE_PAYMENT
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
 enum ExamResult {
   PASSED
   FAILED
@@ -141,10 +147,15 @@ model User {
   enrollmentReminderSentAt DateTime?
   enrollmentReminderCount  Int        @default(0)
 
+  // Secret token behind a read-only "parent progress" link the student can
+  // create or revoke from their profile. null = no link exists.
+  parentShareToken String? @unique
+
   // Student-specific relations
   guardian     Guardian?
   enrollments  Enrollment[]
   payments     Payment[]
+  attendance   Attendance[]
 
   // Sponsor-specific relations
   sponsorProfile SponsorProfile?
@@ -206,6 +217,7 @@ model Course {
   enrollments Enrollment[]
   payments    Payment[]
   materials   CourseMaterial[]
+  sessions    ClassSession[]
 
   @@index([slug])
   @@index([active])
@@ -256,8 +268,48 @@ model Enrollment {
   // per course, regardless of how many times the check runs.
   commencementNotifiedAt DateTime?
 
+  // Set when an admin issues a completion certificate. The number is what
+  // appears on the certificate and in its public verification URL.
+  certificateNumber   String?   @unique
+  certificateIssuedAt DateTime?
+
   @@unique([studentId, courseId])
   @@index([status])
+}
+
+// One dated live class for a course. Reminders, the student schedule and
+// attendance all hang off these (Course.schedule stays as free-text info).
+model ClassSession {
+  id              String   @id @default(cuid())
+  courseId        String
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  startsAt        DateTime
+  durationMinutes Int      @default(60)
+  topic           String?
+  // Overrides Course.zoomLink for this one class when set.
+  zoomLink        String?
+  cancelled       Boolean  @default(false)
+  // Set once the "class starts soon" reminder has gone out.
+  reminderSentAt  DateTime?
+  createdAt       DateTime @default(now())
+
+  attendance Attendance[]
+
+  @@index([courseId, startsAt])
+  @@index([startsAt])
+}
+
+model Attendance {
+  id        String               @id @default(cuid())
+  sessionId String
+  session   ClassSession         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus
+  markedAt  DateTime             @default(now())
+
+  @@unique([sessionId, studentId])
+  @@index([studentId])
 }
 
 model Payment {

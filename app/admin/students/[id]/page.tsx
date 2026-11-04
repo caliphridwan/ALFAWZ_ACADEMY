@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { StudentStatusToggle } from "@/components/admin/student-status-toggle";
 import { ExamResultControls } from "@/components/admin/exam-result-controls";
 import { ManualEnrollmentForm } from "@/components/admin/manual-enrollment-form";
+import { CertificateControls } from "@/components/admin/certificate-controls";
 import { formatCurrency } from "@/lib/utils/cn";
 
 export default async function AdminStudentDetailPage({ params }: { params: { id: string } }) {
@@ -75,6 +76,7 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
                 <th className="p-4">Source</th>
                 <th className="p-4">Enrolled</th>
                 <th className="p-4">Exam Result</th>
+                <th className="p-4">Certificate</th>
               </tr>
             </thead>
             <tbody>
@@ -108,10 +110,20 @@ export default async function AdminStudentDetailPage({ params }: { params: { id:
                       <ExamResultControls enrollmentId={e.id} />
                     </div>
                   </td>
+                  <td className="p-4">
+                    {e.status === "PENDING" || e.status === "CANCELLED" ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : (
+                      <CertificateControls
+                        enrollmentId={e.id}
+                        certificateNumber={e.certificateNumber}
+                      />
+                    )}
+                  </td>
                 </tr>
               ))}
               {student.enrollments.length === 0 && (
-                <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No enrollments yet.</td></tr>
               )}
             </tbody>
           </table>

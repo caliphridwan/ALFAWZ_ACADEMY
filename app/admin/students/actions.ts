@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { randomInt } from "crypto";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { adminCreateStudentSchema, manualEnrollmentSchema } from "@/lib/validations/schemas";
@@ -236,4 +237,75 @@ export async function enrollStudentManually(
   revalidatePath("/admin/payments");
   revalidatePath("/admin");
   return { success: true };
+}
+
+
+// No 0/O/1/I/L so a number read off a printout can't be mistyped.
+const CERT_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+
+function generateCertificateNumber(): string {
+  let code = "";
+  for (let i = 0; i < 8; i++) code += CERT_ALPHABET[randomInt(CERT_ALPHABET.length)];
+  return `AFZ-${new Date().getFullYear()}-${code}`;
+}
+
+/**
+ * Marks the enrollment COMPLETED and issues a certificate number. Safe to
+ * call twice — an enrollment that already has a certificate keeps its
+ * original number (so printed copies stay verifiable).
+ */
+export async function issueCertificate(enrollmentId: string) {
+  await requireAdmin();
+
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { id: enrollmentId },
+    include: { course: { select: { title: true } } },
+  });
+  if (!enrollment) throw new Error("Enrollment not found.");
+  if (enrollment.status === "PENDING" || enrollment.status === "CANCELLED") {
+    throw new Error("Only enrolled (paid) students can receive a certificate.");
+  }
+  if (enrollment.certificateNumber) return;
+
+  let issued = false;
+  for (let attempt = 0; attempt < 5 && !issued; attempt++) {
+    try {
+      await prisma.enrollment.update({
+        where: { id: enrollmentId },
+        data: {
+          status: "COMPLETED",
+          certificateNumber: generateCertificateNumber(),
+          certificateIssuedAt: new Date(),
+        },
+      });
+      issued = true;
+    } catch (err) {
+      // A unique-constraint collision on the random number is astronomically
+      // unlikely, but retrying is cheaper than failing the admin's click.
+      console.error("Certificate number collision, retrying:", err);
+    }
+  }
+  if (!issued) throw new Error("Could not issue a certificate number.");
+
+  await createNotification(
+    enrollment.studentId,
+    "Your certificate is ready",
+    `Congratulations! Your certificate for "${enrollment.course.title}" is available under My Courses.`
+  );
+
+  revalidatePath(`/admin/students/${enrollment.studentId}`);
+  revalidatePath("/dashboard/courses");
+}
+
+export async function revokeCertificate(enrollmentId: string) {
+  await requireAdmin();
+
+  const enrollment = await prisma.enrollment.update({
+    where: { id: enrollmentId },
+    data: { certificateNumber: null, certificateIssuedAt: null },
+    select: { studentId: true },
+  });
+
+  revalidatePath(`/admin/students/${enrollment.studentId}`);
+  revalidatePath("/dashboard/courses");
 }

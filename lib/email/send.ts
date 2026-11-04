@@ -415,6 +415,90 @@ export async function sendClassCommencementEmail(params: {
 }
 
 /**
+ * "Your class starts in about an hour" reminder for one scheduled
+ * ClassSession. Sent by the class-reminders cron job to every actively
+ * enrolled student of the course.
+ */
+export async function sendClassReminderEmail(params: {
+  to: string;
+  name: string;
+  courseTitle: string;
+  startsAt: Date;
+  durationMinutes: number;
+  topic?: string | null;
+  zoomLink?: string | null;
+  dashboardUrl: string;
+}) {
+  const safeDashboardUrl = escapeHtml(params.dashboardUrl);
+
+  const when = params.startsAt.toLocaleString("en-GB", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone: "Africa/Lagos",
+  });
+
+  const joinButton = params.zoomLink
+    ? `<div style="text-align:center;margin:28px 0;">
+        <a href="${escapeHtml(params.zoomLink)}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;">
+          Join Class
+        </a>
+      </div>`
+    : `<p style="text-align:center;color:${MUTED};font-size:13px;">
+        The class link is on your dashboard.
+      </p>`;
+
+  await send(
+    params.to,
+    `Starting soon: ${params.courseTitle}`,
+    emailLayout(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:42px;margin-bottom:8px;">⏰</div>
+        <h2 style="color:${BRAND_DARK};margin:0;">
+          Your Class Starts Soon
+        </h2>
+      </div>
+
+      <p>Assalamu Alaikum, ${escapeHtml(params.name)}.</p>
+
+      <p>This is a reminder that your next class begins in about an hour.</p>
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:24px 0;border-radius:10px;">
+        <h3 style="margin:0 0 12px;color:${BRAND_DARK};font-size:21px;">
+          ${escapeHtml(params.courseTitle)}
+        </h3>
+        <p style="margin:0 0 8px;font-size:14px;">
+          <strong style="color:${BRAND_DARK};">When:</strong>
+          ${escapeHtml(when)} (WAT)
+        </p>
+        <p style="margin:0;font-size:14px;">
+          <strong style="color:${BRAND_DARK};">Length:</strong>
+          ${params.durationMinutes} minutes
+        </p>
+        ${
+          params.topic
+            ? `<p style="margin:8px 0 0;font-size:14px;">
+                <strong style="color:${BRAND_DARK};">Today:</strong>
+                ${escapeHtml(params.topic)}
+              </p>`
+            : ""
+        }
+      </div>
+
+      ${joinButton}
+
+      <p style="word-break:break-all;font-size:13px;">
+        Your schedule: <a href="${safeDashboardUrl}" style="color:${BRAND};">${safeDashboardUrl}</a>
+      </p>
+
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
+/**
  * Reminder for a student who created an account but has never enrolled in
  * any course — a different gap from sendPaymentReminderEmail, which is for
  * someone who already started enrolling but hasn't paid. Sent by the

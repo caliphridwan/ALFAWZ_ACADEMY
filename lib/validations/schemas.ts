@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseAcademyDateTime } from "@/lib/utils/datetime";
 
 /**
  * All server-side validation lives here (Section 57). These schemas are the
@@ -112,13 +113,32 @@ export const courseSchema = z.object({
   registrationClosesAt: z
     .string()
     .optional()
-    .transform((v) => (v ? new Date(v) : null)),
+    .transform((v) => parseAcademyDateTime(v)),
   // datetime-local input value ("YYYY-MM-DDTHH:mm") or empty/undefined when
   // there's no fixed start (e.g. a rolling/self-paced course).
   classStartsAt: z
     .string()
     .optional()
-    .transform((v) => (v ? new Date(v) : null)),
+    .transform((v) => parseAcademyDateTime(v)),
+});
+
+export const classSessionSchema = z.object({
+  // datetime-local value, typed in West Africa Time.
+  startsAt: z
+    .string()
+    .min(1, "Choose a date and time")
+    .transform((v) => parseAcademyDateTime(v))
+    .refine((d): d is Date => d !== null, "Enter a valid date and time"),
+  durationMinutes: z.coerce.number().int().min(10, "At least 10 minutes").max(480, "At most 8 hours"),
+  topic: z.string().trim().max(200).optional(),
+  zoomLink: z
+    .string()
+    .trim()
+    .url("Enter a valid link (starting with https://)")
+    .optional()
+    .or(z.literal("")),
+  // Create the same class every week for this many weeks (1 = just once).
+  repeatWeeks: z.coerce.number().int().min(1).max(26).default(1),
 });
 
 export const enrollmentInitSchema = z.object({

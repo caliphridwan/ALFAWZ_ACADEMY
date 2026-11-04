@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
 import { ProfileForm, PasswordForm } from "./profile-forms";
+import { ParentLinkCard } from "@/components/dashboard/parent-link-card";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -36,6 +37,7 @@ export default async function ProfilePage() {
           </p>
         </div>
       )}
+      <ParentLinkCard token={user.parentShareToken} />
       <PasswordForm />
     </div>
   );
