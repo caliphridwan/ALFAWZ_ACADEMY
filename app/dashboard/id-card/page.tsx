@@ -21,7 +21,7 @@ export default async function IdCardPage() {
     prisma.enrollment.findMany({
       where: { studentId: userId, status: { in: ["ACTIVE", "COMPLETED"] } },
       include: { course: { select: { title: true } } },
-      orderBy: { createdAt: "asc" },
+      orderBy: { enrolledAt: "asc" },
     }),
     prisma.siteSettings.findUnique({
       where: { id: "singleton" },
