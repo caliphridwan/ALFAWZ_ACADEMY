@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { removePushSubscription, savePushSubscription, sendTestPush } from "@/app/dashboard/push-actions";
 
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+// Trim stray spaces/quotes that are easy to paste into an env var by accident.
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim().replace(/^["']|["']$/g, "");
 
 function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
@@ -51,30 +52,60 @@ export function PushNotificationsCard() {
 
   function enable() {
     startTransition(async () => {
+      let step = "permission";
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
           setStatus(permission === "denied" ? "blocked" : "off");
           return;
         }
+
+        step = "service worker";
         const reg = await currentRegistration();
         if (!reg) {
-          toast.error("Notifications will work once the site finishes loading. Refresh and try again.");
+          toast.error("The app is still starting up. Close and reopen it (or refresh), then try again.");
           return;
         }
-        const sub =
-          (await reg.pushManager.getSubscription()) ??
-          (await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY!),
-          }));
+
+        step = "subscribing";
+        let sub = await reg.pushManager.getSubscription();
+        if (!sub) {
+          try {
+            sub = await reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY!),
+            });
+          } catch (err) {
+            // A leftover subscription made with an older key blocks a new one.
+            const old = await reg.pushManager.getSubscription();
+            if (!old) throw err;
+            await old.unsubscribe();
+            sub = await reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY!),
+            });
+          }
+        }
+
         const json = sub.toJSON();
-        if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) throw new Error("Bad subscription");
-        await savePushSubscription({ endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth });
+        if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) throw new Error("Incomplete subscription");
+
+        step = "saving";
+        const saved = await savePushSubscription({
+          endpoint: json.endpoint,
+          p256dh: json.keys.p256dh,
+          auth: json.keys.auth,
+        });
+        if (!saved.ok) {
+          toast.error(saved.error);
+          return;
+        }
         setStatus("on");
         toast.success("Notifications turned on for this device.");
-      } catch {
-        toast.error("Could not turn on notifications. Please try again.");
+      } catch (err) {
+        console.error(`Turning on notifications failed at "${step}":`, err);
+        const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+        toast.error(`Could not turn on notifications (${step}). ${detail}`.slice(0, 200));
       }
     });
   }
