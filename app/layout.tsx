@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { SiteChrome } from "@/components/shared/site-chrome";
 import { JsonLd } from "@/components/shared/json-ld";
+import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
+import { iconUrl } from "@/lib/pwa-icons";
 import { prisma } from "@/lib/db/prisma";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -13,7 +15,17 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 // local font slot in case the institution supplies a licensed Arabic font.
 const arabicFallback = Inter({ subsets: ["latin"], variable: "--font-arabic", display: "swap" });
 
+export const viewport: Viewport = {
+  themeColor: "#1e3a8a",
+};
+
 export const metadata: Metadata = {
+  applicationName: "AlFawz Academy",
+  appleWebApp: { capable: true, title: "AlFawz", statusBarStyle: "default" },
+  icons: {
+    icon: iconUrl(null, 192),
+    apple: iconUrl(null, 180),
+  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: {
     default: "AlFawz Academy — Learn the Qur'an. Understand Your Deen.",
@@ -70,6 +82,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             ...(settings?.phoneNumber ? { telephone: settings.phoneNumber } : {}),
           }}
         />
+        <ServiceWorkerRegister />
         <Providers>
           <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}>
             {children}
