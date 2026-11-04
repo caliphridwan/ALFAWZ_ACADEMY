@@ -42,6 +42,9 @@ export async function updateSiteSettings(
     bankAccountName: formData.get("bankAccountName") || undefined,
     bankAccountNumber: formData.get("bankAccountNumber") || undefined,
     bankTransferNote: formData.get("bankTransferNote") || undefined,
+    directorName: formData.get("directorName") || undefined,
+    directorTitle: formData.get("directorTitle") || undefined,
+    directorSignatureUrl: formData.get("directorSignatureUrl") || "",
   });
 
   if (!parsed.success) {
@@ -58,6 +61,9 @@ export async function updateSiteSettings(
     bankAccountName: parsed.data.bankAccountName || null,
     bankAccountNumber: parsed.data.bankAccountNumber || null,
     bankTransferNote: parsed.data.bankTransferNote || null,
+    directorName: parsed.data.directorName || null,
+    directorTitle: parsed.data.directorTitle || null,
+    directorSignatureUrl: parsed.data.directorSignatureUrl || null,
   };
 
   await prisma.siteSettings.upsert({
@@ -71,6 +77,7 @@ export async function updateSiteSettings(
   revalidatePath("/sponsors");
   revalidatePath("/courses", "layout");
   revalidatePath("/dashboard");
+  revalidatePath("/certificate", "layout");
   revalidatePath("/", "layout"); // logo lives in the root layout, hero image on "/"
   return { success: true };
 }

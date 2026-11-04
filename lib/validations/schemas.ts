@@ -216,6 +216,9 @@ export const siteSettingsSchema = z.object({
     .regex(/^[0-9 -]*$/, "Account number should contain digits only")
     .optional(),
   bankTransferNote: z.string().trim().max(500).optional(),
+  directorName: z.string().trim().max(120).optional(),
+  directorTitle: z.string().trim().max(120).optional(),
+  directorSignatureUrl: imagePathSchema,
 });
 
 export const adminCreateStudentSchema = z.object({

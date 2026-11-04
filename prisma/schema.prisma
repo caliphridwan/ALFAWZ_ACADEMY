@@ -470,6 +470,11 @@ model SiteSettings {
   bankAccountName    String?
   bankAccountNumber  String?
   bankTransferNote   String?
+  // Printed on certificates. The signature is an image (URL, e.g. from
+  // Cloudinary) of the director's real signature on a plain background.
+  directorName         String?
+  directorTitle        String?
+  directorSignatureUrl String?
   updatedAt          DateTime @updatedAt
 }
 

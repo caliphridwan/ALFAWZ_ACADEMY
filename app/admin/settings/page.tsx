@@ -26,6 +26,9 @@ export default async function AdminSettingsPage() {
           bankAccountName: settings?.bankAccountName,
           bankAccountNumber: settings?.bankAccountNumber,
           bankTransferNote: settings?.bankTransferNote,
+          directorName: settings?.directorName,
+          directorTitle: settings?.directorTitle,
+          directorSignatureUrl: settings?.directorSignatureUrl,
         }}
       />
     </div>

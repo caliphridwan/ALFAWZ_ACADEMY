@@ -25,6 +25,9 @@ type Defaults = {
   bankAccountName?: string | null;
   bankAccountNumber?: string | null;
   bankTransferNote?: string | null;
+  directorName?: string | null;
+  directorTitle?: string | null;
+  directorSignatureUrl?: string | null;
 };
 
 function SaveButton() {
@@ -122,6 +125,41 @@ export function SettingsForm({ defaults }: { defaults: Defaults }) {
             defaultValue={defaults.bankTransferNote ?? ""}
             placeholder="e.g. Use your full name as the transfer narration"
           />
+        </div>
+      </fieldset>
+
+      <fieldset className="space-y-4">
+        <legend className="font-semibold mb-2">Certificates</legend>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Printed at the bottom of every certificate, next to the academy
+          logo (set under Branding). For the signature, upload a clear
+          photo or scan of the director&apos;s real signature on a plain
+          white background to Cloudinary and paste its URL.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="directorName">Director&apos;s Name</Label>
+            <Input id="directorName" name="directorName" defaultValue={defaults.directorName ?? ""} />
+          </div>
+          <div>
+            <Label htmlFor="directorTitle">Title</Label>
+            <Input
+              id="directorTitle"
+              name="directorTitle"
+              defaultValue={defaults.directorTitle ?? ""}
+              placeholder="e.g. Director, AlFawz Academy"
+            />
+          </div>
+        </div>
+        <div>
+          <Label htmlFor="directorSignatureUrl">Signature Image URL</Label>
+          <Input
+            id="directorSignatureUrl"
+            name="directorSignatureUrl"
+            defaultValue={defaults.directorSignatureUrl ?? ""}
+            placeholder="https://res.cloudinary.com/your-cloud/image/upload/.../signature.png"
+          />
+          <FieldError messages={state.fieldErrors?.directorSignatureUrl} />
         </div>
       </fieldset>
 
