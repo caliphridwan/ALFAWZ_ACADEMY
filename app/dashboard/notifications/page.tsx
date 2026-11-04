@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkReadButton, MarkAllReadButton } from "@/components/dashboard/notification-buttons";
+import { PushNotificationsCard } from "@/components/dashboard/push-notifications-card";
 
 export default async function NotificationsPage() {
   const session = await getServerSession(authOptions);
@@ -21,6 +22,8 @@ export default async function NotificationsPage() {
         <h1 className="text-2xl font-bold">Notifications</h1>
         {unread > 0 && <MarkAllReadButton />}
       </div>
+
+      <PushNotificationsCard />
 
       {notifications.length === 0 ? (
         <Card>

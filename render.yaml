@@ -62,6 +62,17 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
 
+      # --- Web push notifications ---
+      # Generate once with: npx web-push generate-vapid-keys
+      # The PUBLIC key must be set before the build (it is baked into the
+      # browser bundle); keep the PRIVATE key secret.
+      - key: NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        value: "mailto:contact@alfawzacademy.com" # change to a monitored address
+
       # --- Payment reminder cron ---
       # Shared secret the cron job below sends as a Bearer token. Render
       # generates one value here and the cron service pulls the same value

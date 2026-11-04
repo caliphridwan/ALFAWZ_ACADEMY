@@ -1,4 +1,4 @@
-/* AlFawz Academy service worker.
+/* AlFawz Academy service worker (also receives push notifications).
  *
  * Deliberately small and safe: it never caches pages, API calls or anything
  * behind a login (so nobody sees stale or someone else's data). It only
@@ -64,4 +64,38 @@ self.addEventListener("fetch", (event) => {
       )
     );
   }
+});
+
+// ---- Push notifications -------------------------------------------------
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (e) {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = data.title || "AlFawz Academy";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      icon: data.icon,
+      badge: data.icon,
+      data: { url: data.url || "/dashboard/notifications" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL((event.notification.data && event.notification.data.url) || "/", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      for (const client of windows) {
+        if (client.url.startsWith(self.location.origin) && "focus" in client) {
+          return client.focus().then((c) => (c && "navigate" in c ? c.navigate(target) : c));
+        }
+      }
+      return self.clients.openWindow(target);
+    })
+  );
 });

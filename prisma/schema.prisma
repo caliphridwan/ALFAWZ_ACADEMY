@@ -156,6 +156,7 @@ model User {
   enrollments  Enrollment[]
   payments     Payment[]
   attendance   Attendance[]
+  pushSubscriptions PushSubscription[]
 
   // Sponsor-specific relations
   sponsorProfile SponsorProfile?
@@ -490,4 +491,20 @@ model Notification {
   createdAt DateTime @default(now())
 
   @@index([userId, read])
+}
+
+// One row per browser/device a user has turned push notifications on for.
+// `endpoint` is the push service address the browser gave us; p256dh/auth
+// are the keys needed to encrypt messages to that device.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
