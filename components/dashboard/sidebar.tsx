@@ -15,6 +15,7 @@ import {
   HeartHandshake,
   Receipt,
   FileText,
+  Contact,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -24,6 +25,7 @@ const STUDENT_LINKS = [
   { href: "/dashboard/materials", label: "Class Materials", icon: FileText },
   { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
   { href: "/dashboard/schedule", label: "Schedule", icon: CalendarDays },
+  { href: "/dashboard/id-card", label: "ID Card", icon: Contact },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
   { href: "/dashboard/support", label: "Support", icon: LifeBuoy },

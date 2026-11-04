@@ -151,6 +151,10 @@ model User {
   // create or revoke from their profile. null = no link exists.
   parentShareToken String? @unique
 
+  // Printed on the student ID card and used by its QR verification page
+  // (AFZ-S-XXXXXX). Assigned the first time the student opens their card.
+  studentNumber String? @unique
+
   // Student-specific relations
   guardian     Guardian?
   enrollments  Enrollment[]
