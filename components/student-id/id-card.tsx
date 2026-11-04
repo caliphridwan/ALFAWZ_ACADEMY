@@ -169,7 +169,7 @@ export function IdCardFront({ d }: { d: IdCardData }) {
         }}
       >
         <span>Learn the Qur&apos;an. Understand Your Deen.</span>
-        <span>Since {d.memberSince}</span>
+        <span>Since 2023</span>
       </div>
     </div>
   );
