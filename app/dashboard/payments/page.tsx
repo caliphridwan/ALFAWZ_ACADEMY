@@ -23,7 +23,17 @@ export default async function PaymentsHistoryPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-8">Payment History</h1>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">Payment History</h1>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link href="/dashboard/bank-transfer">Paid by bank transfer?</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/dashboard/scholarship">Apply for a scholarship</Link>
+          </Button>
+        </div>
+      </div>
 
       {payments.length === 0 ? (
         <p className="text-muted-foreground">No transactions yet.</p>

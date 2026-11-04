@@ -174,7 +174,12 @@ export default async function CourseDetailPage({ params }: Props) {
           closesAt={course.registrationClosesAt ? course.registrationClosesAt.toISOString() : null}
           closesAtPassedOnServer={closesAtPassedOnServer}
         />
-        <BankTransferDetails info={bankInfo} purpose={course.title} compact />
+        <BankTransferDetails
+          info={bankInfo}
+          purpose={course.title}
+          compact
+          claimHref={`/dashboard/bank-transfer?course=${course.id}`}
+        />
       </aside>
     </article>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Check, Copy, Landmark } from "lucide-react";
 import type { BankTransferInfo } from "@/lib/bank-details";
 
@@ -13,11 +14,14 @@ export function BankTransferDetails({
   info,
   purpose,
   compact = false,
+  claimHref,
 }: {
   info: BankTransferInfo | null;
   /** What the transfer is for, e.g. the course title or "Student sponsorship". */
   purpose?: string;
   compact?: boolean;
+  /** When set, shows a button to submit proof of payment (students only). */
+  claimHref?: string;
 }) {
   const [copied, setCopied] = useState(false);
   if (!info) return null;
@@ -104,6 +108,15 @@ export function BankTransferDetails({
         {!whatsappDigits && !info.contactEmail && " to the academy"}
         . Your enrollment or sponsorship is confirmed once we verify the payment.
       </p>
+
+      {claimHref && (
+        <Link
+          href={claimHref}
+          className="mt-3 inline-flex h-9 items-center rounded-md bg-brand px-4 text-sm font-medium text-brand-foreground hover:opacity-90"
+        >
+          I&apos;ve paid — submit my receipt
+        </Link>
+      )}
     </div>
   );
 }

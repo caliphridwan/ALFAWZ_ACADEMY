@@ -114,7 +114,12 @@ export default async function DashboardOverviewPage() {
                         closedMessage="Registration has closed for this course. Contact support if you still wish to enroll."
                       />
                       <div className="mt-3 max-w-sm">
-                        <BankTransferDetails info={bankInfo} purpose={e.course.title} compact />
+                        <BankTransferDetails
+                          info={bankInfo}
+                          purpose={e.course.title}
+                          compact
+                          claimHref={`/dashboard/bank-transfer?course=${e.courseId}`}
+                        />
                       </div>
                     </div>
                   )}
