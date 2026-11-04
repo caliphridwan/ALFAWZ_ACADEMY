@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { classSessionSchema } from "@/lib/validations/schemas";
+import { createNotification } from "@/lib/notifications";
 
 export type SessionFormState = {
   success: boolean;
@@ -90,6 +91,44 @@ export async function deleteClassSession(sessionId: string) {
   });
 
   revalidateSessionPages(session.courseId);
+}
+
+/**
+ * Saves (or clears, when empty) the recording link for a class. The first
+ * time a link is added, the class's students are told it's available.
+ */
+export async function setSessionRecording(sessionId: string, url: string): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  const clean = url.trim();
+  if (clean && !/^https:\/\/\S+$/.test(clean)) {
+    return { ok: false, error: "Enter a full link starting with https://" };
+  }
+
+  const before = await prisma.classSession.findUnique({
+    where: { id: sessionId },
+    select: { recordingUrl: true, topic: true, startsAt: true, course: { select: { id: true, title: true } } },
+  });
+  if (!before) return { ok: false, error: "Class not found." };
+
+  await prisma.classSession.update({ where: { id: sessionId }, data: { recordingUrl: clean || null } });
+
+  if (clean && !before.recordingUrl) {
+    const enrollments = await prisma.enrollment.findMany({
+      where: { courseId: before.course.id, status: { in: ["ACTIVE", "COMPLETED"] } },
+      select: { studentId: true },
+    });
+    for (const { studentId } of enrollments) {
+      await createNotification(
+        studentId,
+        "Class recording available",
+        `The recording of "${before.course.title}"${before.topic ? ` (${before.topic})` : ""} is ready. Open Schedule to watch it.`
+      );
+    }
+  }
+
+  revalidateSessionPages(before.course.id);
+  return { ok: true };
 }
 
 const ATTENDANCE_VALUES = ["PRESENT", "ABSENT", "EXCUSED"] as const;

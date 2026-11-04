@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SessionForm } from "@/components/admin/session-form";
 import { SessionRowControls } from "@/components/admin/session-row-controls";
+import { RecordingControl } from "@/components/admin/recording-control";
 import { formatAcademyDateTime } from "@/lib/utils/datetime";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +69,7 @@ export default async function CourseSessionsPage({ params }: { params: { id: str
                       <Button asChild size="sm" variant="outline">
                         <Link href={`/admin/courses/${course!.id}/sessions/${s.id}`}>Attendance</Link>
                       </Button>
+                      <RecordingControl sessionId={s.id} initialUrl={s.recordingUrl} />
                       <SessionRowControls sessionId={s.id} cancelled={s.cancelled} />
                     </div>
                   </td>

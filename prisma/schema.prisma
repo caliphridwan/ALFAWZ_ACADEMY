@@ -223,6 +223,7 @@ model Course {
   payments    Payment[]
   materials   CourseMaterial[]
   sessions    ClassSession[]
+  announcements Announcement[]
 
   @@index([slug])
   @@index([active])
@@ -294,6 +295,8 @@ model ClassSession {
   // Overrides Course.zoomLink for this one class when set.
   zoomLink        String?
   cancelled       Boolean  @default(false)
+  // Link to the Zoom/Drive recording, added after the class so absent students can catch up.
+  recordingUrl    String?
   // Set once the "class starts soon" reminder has gone out.
   reminderSentAt  DateTime?
   createdAt       DateTime @default(now())
@@ -511,4 +514,18 @@ model PushSubscription {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// A message an admin sent to a course's students (or everyone). Kept as a
+// history; delivery itself goes out as in-app notification + push + email.
+model Announcement {
+  id         String   @id @default(cuid())
+  courseId   String?
+  course     Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  title      String
+  message    String   @db.Text
+  recipients Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
 }

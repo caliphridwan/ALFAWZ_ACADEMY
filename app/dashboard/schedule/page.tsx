@@ -33,6 +33,15 @@ export default async function SchedulePage() {
       })
     : [];
 
+  // Past classes that have a recording, newest first.
+  const recordings = courseIds.length
+    ? await prisma.classSession.findMany({
+        where: { courseId: { in: courseIds }, recordingUrl: { not: null }, cancelled: false },
+        orderBy: { startsAt: "desc" },
+        take: 20,
+      })
+    : [];
+
   const upcoming = sessions.filter(
     (s) => s.startsAt.getTime() + s.durationMinutes * 60000 >= now.getTime()
   );
@@ -98,6 +107,33 @@ export default async function SchedulePage() {
               </Card>
             )}
           </div>
+
+          {recordings.length > 0 && (
+            <>
+              <h2 className="font-semibold mb-3">Class recordings</h2>
+              <div className="space-y-3 mb-10">
+                {recordings.map((r) => (
+                  <Card key={r.id}>
+                    <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <p className="font-medium">{courseById.get(r.courseId)?.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {formatAcademyDateTime(r.startsAt)} (WAT)
+                          {r.topic ? ` · ${r.topic}` : ""}
+                        </p>
+                      </div>
+                      <Button asChild size="sm" variant="outline">
+                        <a href={r.recordingUrl!} target="_blank" rel="noopener noreferrer">
+                          <Video size={16} className="mr-1" />
+                          Watch recording
+                        </a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
 
           <h2 className="font-semibold mb-3">Your courses</h2>
           <div className="space-y-3">

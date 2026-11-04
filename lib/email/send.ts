@@ -498,6 +498,47 @@ export async function sendClassReminderEmail(params: {
   );
 }
 
+/** An admin announcement to a course's students (or everyone). */
+export async function sendAnnouncementEmail(params: {
+  to: string;
+  name: string;
+  title: string;
+  message: string;
+  courseTitle?: string | null;
+  dashboardUrl: string;
+}) {
+  const safeDashboardUrl = escapeHtml(params.dashboardUrl);
+  const body = escapeHtml(params.message).replace(/\n/g, "<br />");
+
+  await send(
+    params.to,
+    params.title,
+    emailLayout(`
+      <h2 style="color:${BRAND_DARK};margin-top:0;">${escapeHtml(params.title)}</h2>
+      <p>Assalamu Alaikum, ${escapeHtml(params.name)}.</p>
+
+      ${
+        params.courseTitle
+          ? `<p style="margin:0 0 12px;color:${MUTED};font-size:13px;">Regarding: ${escapeHtml(params.courseTitle)}</p>`
+          : ""
+      }
+
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:5px solid ${BRAND};padding:20px;margin:20px 0;border-radius:10px;font-size:15px;line-height:1.6;">
+        ${body}
+      </div>
+
+      <p style="word-break:break-all;font-size:13px;">
+        Your dashboard: <a href="${safeDashboardUrl}" style="color:${BRAND};">${safeDashboardUrl}</a>
+      </p>
+
+      <p style="margin-bottom:0;">
+        With warm regards,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
 /**
  * Reminder for a student who created an account but has never enrolled in
  * any course — a different gap from sendPaymentReminderEmail, which is for
