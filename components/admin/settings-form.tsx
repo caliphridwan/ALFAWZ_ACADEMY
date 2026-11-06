@@ -50,7 +50,7 @@ export function SettingsForm({ defaults }: { defaults: Defaults }) {
         <legend className="font-semibold mb-2">Sponsorship</legend>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="sponsorshipPrice">Price per student (per month)</Label>
+            <Label htmlFor="sponsorshipPrice">Price per student</Label>
             <Input id="sponsorshipPrice" name="sponsorshipPrice" type="number" step="0.01" required defaultValue={defaults.sponsorshipPrice} />
             <FieldError messages={state.fieldErrors?.sponsorshipPrice} />
           </div>
