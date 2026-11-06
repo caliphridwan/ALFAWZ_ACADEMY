@@ -93,10 +93,7 @@ services:
     branch: main
     schedule: "0 */6 * * *" # every 6 hours; adjust in the Render dashboard if you want a different cadence
     buildCommand: "echo 'no build needed'"
-    startCommand: >
-      curl -fsS -X POST
-      -H "Authorization: Bearer $CRON_SECRET"
-      "$APP_URL/api/cron/payment-reminders"
+    startCommand: "node scripts/cron-ping.mjs payment-reminders"
     envVars:
       - key: CRON_SECRET
         fromService:
@@ -118,10 +115,7 @@ services:
     branch: main
     schedule: "0 */6 * * *" # adjust in the Render dashboard if you want a different cadence
     buildCommand: "echo 'no build needed'"
-    startCommand: >
-      curl -fsS -X POST
-      -H "Authorization: Bearer $CRON_SECRET"
-      "$APP_URL/api/cron/enrollment-reminders"
+    startCommand: "node scripts/cron-ping.mjs enrollment-reminders"
     envVars:
       - key: CRON_SECRET
         fromService:
@@ -144,10 +138,7 @@ services:
     branch: main
     schedule: "0 */6 * * *" # adjust in the Render dashboard if you want a different cadence
     buildCommand: "echo 'no build needed'"
-    startCommand: >
-      curl -fsS -X POST
-      -H "Authorization: Bearer $CRON_SECRET"
-      "$APP_URL/api/cron/class-commencement"
+    startCommand: "node scripts/cron-ping.mjs class-commencement"
     envVars:
       - key: CRON_SECRET
         fromService:
@@ -169,10 +160,7 @@ services:
     branch: main
     schedule: "*/15 * * * *"
     buildCommand: "echo 'no build needed'"
-    startCommand: >
-      curl -fsS -X POST
-      -H "Authorization: Bearer $CRON_SECRET"
-      "$APP_URL/api/cron/class-reminders"
+    startCommand: "node scripts/cron-ping.mjs class-reminders"
     envVars:
       - key: CRON_SECRET
         fromService:
