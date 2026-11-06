@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 
 import { Hero } from "@/components/marketing/hero";
 import { StatsSection } from "@/components/marketing/stats-section";
+import { ExplainerVideo } from "@/components/marketing/explainer-video";
 import { CourseCard } from "@/components/courses/course-card";
 import { SponsorshipCta } from "@/components/marketing/sponsorship-cta";
 
@@ -84,6 +85,8 @@ export default async function HomePage() {
       ========================================================== */}
 
       <StatsSection stats={stats} />
+
+      <ExplainerVideo />
 
       {/* =========================================================
           FEATURED COURSES
