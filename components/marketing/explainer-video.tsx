@@ -11,17 +11,26 @@ const POSTER_SRC = "/videos/how-it-works-poster.jpg";
  * loads the video file when someone presses play, so it never slows the page down
  * for visitors on slow mobile data. No autoplay, and no sound until the visitor starts it.
  */
-export function ExplainerVideo() {
+export function ExplainerVideo({
+  eyebrow = "How it works",
+  title = "See how AlFawz Academy works",
+  description = "From choosing a course to your certificate, in under two minutes.",
+  bare = false,
+}: {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  /** True when the page already supplies the container and spacing (courses, sponsor). */
+  bare?: boolean;
+}) {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className="container py-16 sm:py-20">
+    <section className={bare ? "mb-14" : "container py-16 sm:py-20"}>
       <div className="mx-auto mb-8 max-w-2xl text-center">
-        <span className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">How it works</span>
-        <h2 className="mt-3 text-2xl font-bold sm:text-4xl">See how AlFawz Academy works</h2>
-        <p className="mt-3 text-muted-foreground">
-          From choosing a course to your certificate, in under two minutes.
-        </p>
+        <span className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</span>
+        <h2 className="mt-3 text-2xl font-bold sm:text-4xl">{title}</h2>
+        <p className="mt-3 text-muted-foreground">{description}</p>
       </div>
 
       <div className="relative mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border bg-black shadow-xl">

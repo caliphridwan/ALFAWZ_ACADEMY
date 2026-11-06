@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { SponsorshipCalculator } from "@/components/sponsorship/calculator";
 import { SponsorsList } from "@/components/sponsorship/sponsors-list";
 import { Button } from "@/components/ui/button";
+import { ExplainerVideo } from "@/components/marketing/explainer-video";
 import { BankTransferDetails } from "@/components/payments/bank-transfer-details";
 import { getBankTransferInfo } from "@/lib/bank-details";
 import { formatCurrency } from "@/lib/utils/cn";
@@ -44,6 +45,13 @@ export default async function SponsorPage() {
           Academy&apos;s classes and teachers.
         </p>
       </div>
+
+      <ExplainerVideo
+        bare
+        eyebrow="Where your gift goes"
+        title="How your sponsorship helps"
+        description="See how a sponsored student learns, and how you can follow their progress."
+      />
 
       <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-16">
         {impactTiers.map((tier) => (

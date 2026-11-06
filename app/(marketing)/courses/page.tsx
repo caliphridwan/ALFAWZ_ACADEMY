@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db/prisma";
 import { CourseCard } from "@/components/courses/course-card";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
+import { ExplainerVideo } from "@/components/marketing/explainer-video";
 
 export const metadata: Metadata = {
   title: "Courses",
@@ -25,6 +26,13 @@ export default async function CoursesPage() {
           and level, taught by qualified teachers, delivered online.
         </p>
       </div>
+
+      <ExplainerVideo
+        bare
+        eyebrow="Before you enrol"
+        title="How your child learns with us"
+        description="Live classes, recitation feedback, progress reports and a certificate."
+      />
 
       {courses.length === 0 ? (
         <p className="text-muted-foreground">
