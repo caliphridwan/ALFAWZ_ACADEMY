@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
 
-const VIDEO_SRC = "/videos/how-it-works.mp4";
-const POSTER_SRC = "/videos/how-it-works-poster.jpg";
+const DEFAULT_VIDEO = "/videos/how-it-works.mp4";
+const DEFAULT_POSTER = "/videos/how-it-works-poster.jpg";
 
 /**
  * "How AlFawz Academy works" explainer. Shows a poster with a play button and only
@@ -16,12 +16,16 @@ export function ExplainerVideo({
   title = "See how AlFawz Academy works",
   description = "From choosing a course to your certificate, in under two minutes.",
   bare = false,
+  videoSrc = DEFAULT_VIDEO,
+  posterSrc = DEFAULT_POSTER,
 }: {
   eyebrow?: string;
   title?: string;
   description?: string;
   /** True when the page already supplies the container and spacing (courses, sponsor). */
   bare?: boolean;
+  videoSrc?: string;
+  posterSrc?: string;
 }) {
   const [playing, setPlaying] = useState(false);
 
@@ -36,8 +40,8 @@ export function ExplainerVideo({
       <div className="relative mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-2xl border bg-black shadow-xl">
         {playing ? (
           <video
-            src={VIDEO_SRC}
-            poster={POSTER_SRC}
+            src={videoSrc}
+            poster={posterSrc}
             controls
             autoPlay
             playsInline
@@ -54,7 +58,7 @@ export function ExplainerVideo({
             className="group absolute inset-0 h-full w-full"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={POSTER_SRC} alt="" loading="lazy" className="h-full w-full object-cover" />
+            <img src={posterSrc} alt="" loading="lazy" className="h-full w-full object-cover" />
             <span className="absolute inset-0 bg-black/20 transition group-hover:bg-black/30" />
             <span className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-primary shadow-lg transition group-hover:scale-105">
               <Play className="ml-1 h-9 w-9" fill="currentColor" />

@@ -48,9 +48,11 @@ export default async function SponsorPage() {
 
       <ExplainerVideo
         bare
+        videoSrc="/videos/sponsor-explainer.mp4"
+        posterSrc="/videos/sponsor-explainer-poster.jpg"
         eyebrow="Where your gift goes"
-        title="How your sponsorship helps"
-        description="See how a sponsored student learns, and how you can follow their progress."
+        title="See what your sponsorship makes possible"
+        description="A short film on how a sponsored student learns, and how you follow their progress."
       />
 
       <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-16">
