@@ -1,7 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db/prisma";
 import { sendPushToUser } from "@/lib/push";
-import { notificationHref } from "@/lib/notification-links";
 
 /**
  * Notifications are a convenience, never a dependency: if creating one
@@ -10,11 +9,23 @@ import { notificationHref } from "@/lib/notification-links";
  * have turned that on (a no-op for everyone else).
  */
 export async function createNotification(userId: string, title: string, message: string, href?: string) {
+  let id: string | null = null;
   try {
-    await prisma.notification.create({ data: { userId, title, message } });
+    const created = await prisma.notification.create({ data: { userId, title, message }, select: { id: true } });
+    id = created.id;
   } catch (err) {
     console.error("Failed to create notification:", err);
   }
-  // Tapping the phone notification opens the page it is about.
-  await sendPushToUser(userId, { title, body: message, url: href ?? notificationHref(title) ?? "/dashboard/notifications" });
+
+  // Tapping the phone notification opens that exact message (students), or the
+  // given page / the person's own area for staff and sponsors.
+  let url = href;
+  if (!url) {
+    const role = await prisma.user
+      .findUnique({ where: { id: userId }, select: { role: true } })
+      .then((u) => u?.role)
+      .catch(() => undefined);
+    url = role === "STUDENT" ? (id ? `/dashboard/notifications/${id}` : "/dashboard/notifications") : role === "SPONSOR" ? "/sponsor/dashboard" : "/";
+  }
+  await sendPushToUser(userId, { title, body: message, url });
 }
