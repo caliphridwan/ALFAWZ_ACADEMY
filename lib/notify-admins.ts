@@ -9,5 +9,5 @@ export async function notifyAdmins(title: string, message: string) {
     select: { id: true },
     take: 10,
   });
-  for (const a of admins) await createNotification(a.id, title, message);
+  for (const a of admins) await createNotification(a.id, title, message, "/admin");
 }

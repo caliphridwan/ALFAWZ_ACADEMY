@@ -71,7 +71,7 @@ export async function submitRecitation(
   const student = await prisma.user.findUnique({ where: { id: studentId }, select: { name: true } });
   const message = `${student?.name ?? "A student"} sent a recitation for "${task.title}" (${task.course.title}).`;
   const teacherUserId = task.course.instructor?.userId;
-  if (teacherUserId) await createNotification(teacherUserId, "New recitation to review", message);
+  if (teacherUserId) await createNotification(teacherUserId, "New recitation to review", message, "/teacher");
   else await notifyAdmins("New recitation to review", message);
 
   revalidatePath("/dashboard/recitations");

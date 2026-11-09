@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MarkReadButton, MarkAllReadButton } from "@/components/dashboard/notification-buttons";
 import { PushNotificationsCard } from "@/components/dashboard/push-notifications-card";
+import { NotificationLink } from "@/components/dashboard/notification-link";
+import { notificationHref } from "@/lib/notification-links";
 
 export default async function NotificationsPage() {
   const session = await getServerSession(authOptions);
@@ -33,23 +35,36 @@ export default async function NotificationsPage() {
         </Card>
       ) : (
         <div className="space-y-3">
-          {notifications.map((n) => (
-            <Card key={n.id} className={n.read ? "opacity-70" : "border-brand/30"}>
-              <CardContent className="p-5 flex items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-medium">{n.title}</p>
-                    {!n.read && <Badge>New</Badge>}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{n.message}</p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {n.createdAt.toLocaleString()}
-                  </p>
+          {notifications.map((n) => {
+            const href = notificationHref(n.title);
+            const body = (
+              <>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-medium">{n.title}</p>
+                  {!n.read && <Badge>New</Badge>}
                 </div>
-                {!n.read && <MarkReadButton id={n.id} />}
-              </CardContent>
-            </Card>
-          ))}
+                <p className="text-sm text-muted-foreground">{n.message}</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {n.createdAt.toLocaleString()}
+                  {href && <span className="ml-2 text-brand">Open →</span>}
+                </p>
+              </>
+            );
+            return (
+              <Card key={n.id} className={n.read ? "opacity-70" : "border-brand/30"}>
+                <CardContent className="p-5 flex items-start justify-between gap-4">
+                  {href ? (
+                    <NotificationLink id={n.id} href={href} read={n.read}>
+                      {body}
+                    </NotificationLink>
+                  ) : (
+                    <div>{body}</div>
+                  )}
+                  {!n.read && <MarkReadButton id={n.id} />}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
