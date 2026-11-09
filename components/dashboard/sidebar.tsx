@@ -41,7 +41,14 @@ const SPONSOR_LINKS = [
   { href: "/sponsor/dashboard/profile", label: "Profile", icon: User },
 ];
 
-export function DashboardSidebar({ variant = "student" }: { variant?: "student" | "sponsor" }) {
+export function DashboardSidebar({
+  variant = "student",
+  unreadNotifications = 0,
+}: {
+  variant?: "student" | "sponsor";
+  /** Number of unread notifications, shown as a badge on the Notifications link. */
+  unreadNotifications?: number;
+}) {
   const pathname = usePathname();
   const links = variant === "sponsor" ? SPONSOR_LINKS : STUDENT_LINKS;
 
@@ -64,6 +71,17 @@ export function DashboardSidebar({ variant = "student" }: { variant?: "student" 
             >
               <Icon size={18} />
               {link.label}
+              {link.href === "/dashboard/notifications" && unreadNotifications > 0 && (
+                <span
+                  className={cn(
+                    "ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-semibold leading-none",
+                    active ? "bg-brand-foreground text-brand" : "bg-destructive text-destructive-foreground"
+                  )}
+                  aria-label={`${unreadNotifications} unread notification${unreadNotifications === 1 ? "" : "s"}`}
+                >
+                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                </span>
+              )}
             </Link>
           );
         })}

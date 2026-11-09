@@ -14,7 +14,8 @@ export async function markNotificationRead(id: string) {
     where: { id, userId: session.user.id },
     data: { read: true },
   });
-  revalidatePath("/dashboard/notifications");
+  // Layout too, so the unread badge in the sidebar updates straight away.
+  revalidatePath("/dashboard", "layout");
 }
 
 export async function markAllNotificationsRead() {
@@ -25,5 +26,6 @@ export async function markAllNotificationsRead() {
     where: { userId: session.user.id, read: false },
     data: { read: true },
   });
-  revalidatePath("/dashboard/notifications");
+  // Layout too, so the unread badge in the sidebar updates straight away.
+  revalidatePath("/dashboard", "layout");
 }
