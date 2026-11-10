@@ -22,6 +22,13 @@ export async function ResultsView({ courseId }: { courseId: string }) {
         never opened counts as 0 once it has closed. If only one part exists yet, the final uses that part alone.
       </p>
 
+      {results.length > 0 && results.every((r) => r.components.length === 0) && (
+        <div className="rounded-md border border-border bg-muted/40 px-4 py-3 text-sm">
+          Nothing is counted yet. Scores appear here after you publish a quiz, test or exam and students submit it, or after a teacher rates
+          recitations. Only published assessments count; drafts do not.
+        </div>
+      )}
+
       <PublishResultsButton courseId={courseId} />
 
       {results.length === 0 ? (
@@ -46,10 +53,14 @@ export async function ResultsView({ courseId }: { courseId: string }) {
                     <details className="mt-1 text-xs text-muted-foreground">
                       <summary className="cursor-pointer">Breakdown</summary>
                       <ul className="mt-1 space-y-0.5">
-                        {r.components.length === 0 && <li>Nothing counted yet</li>}
+                        {r.components.length === 0 && (
+                          <li>Nothing counted yet: no quiz or test has been published, and no recitation has been rated.</li>
+                        )}
                         {r.components.map((c, i) => (
                           <li key={i}>
-                            {c.label}: {c.pending ? "waiting for marks" : fmt(c.percent)}
+                            {c.label}
+                            {c.kind === "EXAM" ? " (exam)" : c.kind === "RECITATION" ? " (average rating)" : ""}:{" "}
+                            {c.pending ? "taken, waiting for marks" : c.percent === null ? "not taken yet (still open)" : fmt(c.percent)}
                           </li>
                         ))}
                       </ul>
