@@ -900,7 +900,7 @@ export async function sendSponsorImpactEmail(params: {
       <p>
         Thank you for your support. Sponsors give into one pooled fund and the
         Academy chooses the students who receive places. Here is where the fund
-        stands today. To protect the children, we share group figures only.
+        stands today. To protect the lucky candidates/children's privacies, we share group figures only.
       </p>
       <table style="width:100%;border-collapse:collapse;margin:16px 0;">${rows}</table>
       ${noteHtml}
@@ -909,7 +909,7 @@ export async function sendSponsorImpactEmail(params: {
           See full update
         </a>
       </div>
-      <p>May Allah ﷻ reward you for every student who benefits. Ameen.</p>
+      <p>May Allah ﷻ reward you for every student who benefits. Ameen. Jazaakumullahu Khayra</p>
       <p style="margin-bottom:0;">
         With sincere appreciation,<br />
         <strong style="color:${BRAND};">The AlFawz Academy Team</strong>

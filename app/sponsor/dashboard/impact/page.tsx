@@ -51,7 +51,7 @@ export default async function SponsorImpactPage() {
 
       <h2 className="font-semibold mb-1">What the fund is doing</h2>
       <p className="mb-4 text-sm text-muted-foreground">
-        Sponsors give into one pooled fund, and the Academy chooses the students who receive places. To protect the children, we share
+        Sponsors give into one pooled fund, and the Academy chooses the students who receive places. To protect the candidates/children's privacies, we share
         group figures only, never individual names or results.
       </p>
 
