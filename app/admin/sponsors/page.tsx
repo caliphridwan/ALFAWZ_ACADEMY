@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils/cn";
+import { SendImpactButton } from "@/components/admin/send-impact-button";
 import { SponsorshipRowControls } from "@/components/admin/sponsorship-row-controls";
 
 export default async function AdminSponsorsPage() {
@@ -12,7 +13,10 @@ export default async function AdminSponsorsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Sponsors &amp; Sponsorships</h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">Sponsors &amp; Sponsorships</h1>
+        <SendImpactButton />
+      </div>
 
       <Card>
         <CardContent className="p-0 overflow-x-auto">

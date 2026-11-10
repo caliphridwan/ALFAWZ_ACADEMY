@@ -861,6 +861,57 @@ export async function sendSponsorWelcomeEmail(params: {
 }
 
 /**
+ * Termly impact update for a sponsor. Group figures only: sponsors give into a
+ * pooled fund and no individual child is named or identifiable.
+ */
+export async function sendSponsorImpactEmail(params: {
+  to: string;
+  name: string;
+  myPlaces: number;
+  supported: number;
+  completed: number;
+  attendancePct: number | null;
+  passRatePct: number | null;
+  dashboardUrl: string;
+}) {
+  const stat = (label: string, value: string) =>
+    `<tr><td style="padding:8px 0;color:#555;">${escapeHtml(label)}</td><td style="padding:8px 0;text-align:right;font-weight:bold;color:${BRAND_DARK};">${escapeHtml(value)}</td></tr>`;
+  const rows = [
+    stat("Places you fund", String(params.myPlaces)),
+    stat("Students supported by the fund", String(params.supported)),
+    params.completed >= 3 ? stat("Courses completed", String(params.completed)) : "",
+    params.attendancePct !== null ? stat("Average class attendance", `${params.attendancePct}%`) : "",
+    params.passRatePct !== null ? stat("Passed their assessments", `${params.passRatePct}%`) : "",
+  ].join("");
+  const url = escapeHtml(params.dashboardUrl);
+
+  await send(
+    params.to,
+    "Your Impact at AlFawz Academy",
+    emailLayout(`
+      <h2 style="color:${BRAND_DARK};margin:0 0 16px;">What your support is doing</h2>
+      <p>Assalamu Alaikum, ${escapeHtml(params.name)}.</p>
+      <p>
+        Thank you for your support. Sponsors give into one pooled fund and the
+        Academy chooses the students who receive places. Here is where the fund
+        stands today. To protect the children, we share group figures only.
+      </p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;">${rows}</table>
+      <div style="text-align:center;margin:28px 0;">
+        <a href="${url}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 26px;border-radius:8px;font-weight:bold;">
+          See full update
+        </a>
+      </div>
+      <p>May Allah ﷻ reward you for every student who benefits. Ameen.</p>
+      <p style="margin-bottom:0;">
+        With sincere appreciation,<br />
+        <strong style="color:${BRAND};">The AlFawz Academy Team</strong>
+      </p>
+    `)
+  );
+}
+
+/**
  * Notify the administrator when someone submits the contact form.
  */
 export async function sendContactNotificationToAdmin(params: {
