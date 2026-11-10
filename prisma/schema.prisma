@@ -191,6 +191,7 @@ model User {
   bankClaims        BankTransferClaim[]
   teacherProfile    Teacher?
   recitationSubmissions RecitationSubmission[]
+  sponsorImpact SponsorImpact? @relation("SponsorImpactSponsor")
   assessmentAttempts    AssessmentAttempt[]
   scholarshipApplications ScholarshipApplication[]
 
@@ -761,4 +762,20 @@ model SponsorImpactSettings {
   passRateOverride    Int?
   note                String?  @db.Text
   updatedAt           DateTime @updatedAt
+}
+
+// Per-sponsor impact figures. Layered over the fund-wide SponsorImpactSettings:
+// a blank (null) field falls back to the fund-wide figure, then the automatic one.
+model SponsorImpact {
+  id                   String   @id @default(cuid())
+  sponsorId            String   @unique
+  sponsor              User     @relation("SponsorImpactSponsor", fields: [sponsorId], references: [id], onDelete: Cascade)
+  supportedOverride    Int?
+  completedOverride    Int?
+  certificatesOverride Int?
+  attendanceOverride   Int?
+  recitationOverride   Float?
+  passRateOverride     Int?
+  note                 String?  @db.Text
+  updatedAt            DateTime @updatedAt
 }

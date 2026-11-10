@@ -27,7 +27,7 @@ export default async function SponsorImpactPage() {
       where: { sponsorId: session!.user.id },
       orderBy: { createdAt: "desc" },
     }),
-    getFundImpact(),
+    getFundImpact(session!.user.id),
   ]);
 
   const active = sponsorships.filter((s) => s.status === "ACTIVE");

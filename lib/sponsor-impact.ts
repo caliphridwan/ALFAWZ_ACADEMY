@@ -126,8 +126,17 @@ export type ImpactOverrides = {
   note: string | null;
 };
 
-export async function getImpactOverrides(): Promise<ImpactOverrides> {
-  const row = await prisma.sponsorImpactSettings.findUnique({ where: { id: "singleton" } });
+const EMPTY: ImpactOverrides = {
+  supportedOverride: null,
+  completedOverride: null,
+  certificatesOverride: null,
+  attendanceOverride: null,
+  recitationOverride: null,
+  passRateOverride: null,
+  note: null,
+};
+
+function pick(row: Partial<ImpactOverrides> | null | undefined): ImpactOverrides {
   return {
     supportedOverride: row?.supportedOverride ?? null,
     completedOverride: row?.completedOverride ?? null,
@@ -139,9 +148,30 @@ export async function getImpactOverrides(): Promise<ImpactOverrides> {
   };
 }
 
-/** What sponsors see: the automatic figures, with the admin's own numbers laid over them. */
-export async function getFundImpact(): Promise<FundImpact & { note: string | null }> {
-  const [auto, o] = await Promise.all([getAutoFundImpact(), getImpactOverrides()]);
+/** Fund-wide overrides (applies to every sponsor unless they have their own). */
+export async function getImpactOverrides(): Promise<ImpactOverrides> {
+  return pick(await prisma.sponsorImpactSettings.findUnique({ where: { id: "singleton" } }));
+}
+
+/** Overrides set for one sponsor only. */
+export async function getSponsorOverrides(sponsorId: string): Promise<ImpactOverrides> {
+  return pick(await prisma.sponsorImpact.findUnique({ where: { sponsorId } }));
+}
+
+/** Per-sponsor value wins, then fund-wide, then automatic. */
+export function mergeOverrides(sponsor: ImpactOverrides, fund: ImpactOverrides): ImpactOverrides {
+  return {
+    supportedOverride: sponsor.supportedOverride ?? fund.supportedOverride,
+    completedOverride: sponsor.completedOverride ?? fund.completedOverride,
+    certificatesOverride: sponsor.certificatesOverride ?? fund.certificatesOverride,
+    attendanceOverride: sponsor.attendanceOverride ?? fund.attendanceOverride,
+    recitationOverride: sponsor.recitationOverride ?? fund.recitationOverride,
+    passRateOverride: sponsor.passRateOverride ?? fund.passRateOverride,
+    note: sponsor.note ?? fund.note,
+  };
+}
+
+export function applyOverrides(auto: FundImpact, o: ImpactOverrides): FundImpact & { note: string | null } {
   const pass = o.passRateOverride;
   const completed = o.completedOverride ?? auto.completed;
   return {
@@ -158,4 +188,20 @@ export async function getFundImpact(): Promise<FundImpact & { note: string | nul
     detailed: auto.detailed || Object.values(o).some((v) => typeof v === "number"),
     note: o.note,
   };
+}
+
+/**
+ * What a sponsor sees. Pass a sponsorId to include that sponsor's own figures;
+ * pass `auto` / `fundWide` if already loaded to avoid repeating the queries.
+ */
+export async function getFundImpact(
+  sponsorId?: string,
+  preloaded?: { auto?: FundImpact; fundWide?: ImpactOverrides }
+): Promise<FundImpact & { note: string | null }> {
+  const [auto, fundWide, own] = await Promise.all([
+    preloaded?.auto ?? getAutoFundImpact(),
+    preloaded?.fundWide ?? getImpactOverrides(),
+    sponsorId ? getSponsorOverrides(sponsorId) : Promise.resolve(EMPTY),
+  ]);
+  return applyOverrides(auto, mergeOverrides(own, fundWide));
 }

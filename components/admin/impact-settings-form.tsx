@@ -25,7 +25,17 @@ const FIELDS: { key: keyof Omit<ImpactOverrides, "note">; autoKey: keyof Auto; l
   { key: "passRateOverride", autoKey: "passRatePct", label: "Passed their assessments", unit: "%" },
 ];
 
-export function ImpactSettingsForm({ overrides, auto }: { overrides: ImpactOverrides; auto: Auto }) {
+export function ImpactSettingsForm({
+  overrides,
+  auto,
+  sponsorId = null,
+  baseLabel = "Automatic",
+}: {
+  overrides: ImpactOverrides;
+  auto: Auto;
+  sponsorId?: string | null;
+  baseLabel?: string;
+}) {
   const [values, setValues] = useState<Record<string, string>>(() =>
     Object.fromEntries(FIELDS.map((f) => [f.key, overrides[f.key] === null ? "" : String(overrides[f.key])]))
   );
@@ -42,8 +52,8 @@ export function ImpactSettingsForm({ overrides, auto }: { overrides: ImpactOverr
     }
     startTransition(async () => {
       try {
-        const res = await saveImpactSettings({ ...(parsed as any), note });
-        if (res.ok) toast.success("Saved. Sponsors will see these figures.");
+        const res = await saveImpactSettings({ ...(parsed as any), note }, sponsorId);
+        if (res.ok) toast.success(sponsorId ? "Saved for this sponsor." : "Saved for all sponsors.");
         else toast.error(res.error ?? "Could not save.");
       } catch {
         toast.error("Could not save.");
@@ -62,7 +72,7 @@ export function ImpactSettingsForm({ overrides, auto }: { overrides: ImpactOverr
                 <label htmlFor={f.key} className="text-sm font-medium">
                   {f.label}
                   <span className="block text-xs font-normal text-muted-foreground">
-                    Automatic: {a === null ? "not enough data yet" : `${a}${f.unit && f.unit !== "/ 5" ? f.unit : f.unit ? ` ${f.unit}` : ""}`}
+                    {baseLabel}: {a === null ? "not enough data yet" : `${a}${f.unit && f.unit !== "/ 5" ? f.unit : f.unit ? ` ${f.unit}` : ""}`}
                   </span>
                 </label>
                 <div className="flex items-center gap-2">

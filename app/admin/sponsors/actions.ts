@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { getFundImpact } from "@/lib/sponsor-impact";
+import { getAutoFundImpact, getImpactOverrides, getFundImpact } from "@/lib/sponsor-impact";
 import { sendSponsorImpactEmail } from "@/lib/email/send";
 import { createNotification } from "@/lib/notifications";
 
@@ -39,8 +39,9 @@ export async function setSponsorshipStatus(
 export async function sendImpactUpdates(): Promise<{ ok: boolean; sent: number; failed: number; error?: string }> {
   await requireAdmin();
 
-  const [fund, sponsorships] = await Promise.all([
-    getFundImpact(),
+  const [auto, fundWide, sponsorships] = await Promise.all([
+    getAutoFundImpact(),
+    getImpactOverrides(),
     prisma.sponsorship.findMany({
       where: { status: "ACTIVE" },
       select: { numberOfStudents: true, sponsor: { select: { id: true, name: true, email: true } } },
@@ -54,13 +55,17 @@ export async function sendImpactUpdates(): Promise<{ ok: boolean; sent: number; 
     else bySponsor.set(s.sponsor.id, { name: s.sponsor.name ?? "Sponsor", email: s.sponsor.email, places: s.numberOfStudents });
   }
   if (bySponsor.size === 0) return { ok: false, sent: 0, failed: 0, error: "There are no active sponsors." };
-  if (fund.supported === 0) return { ok: false, sent: 0, failed: 0, error: "No students have been placed from the fund yet." };
+  if (auto.supported === 0 && fundWide.supportedOverride === null && !(await prisma.sponsorImpact.findFirst({ where: { supportedOverride: { gt: 0 } } }))) {
+    return { ok: false, sent: 0, failed: 0, error: "No students have been placed from the fund yet." };
+  }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   let sent = 0;
   let failed = 0;
   for (const [id, sp] of Array.from(bySponsor.entries())) {
     try {
+      // Each sponsor gets their own figures (their overrides, then fund-wide, then automatic).
+      const fund = await getFundImpact(id, { auto, fundWide });
       await sendSponsorImpactEmail({
         to: sp.email,
         name: sp.name,
@@ -93,7 +98,7 @@ type ImpactInput = {
 };
 
 /** Save the figures sponsors will see. A null number means "use the automatic figure". */
-export async function saveImpactSettings(input: ImpactInput): Promise<{ ok: boolean; error?: string }> {
+export async function saveImpactSettings(input: ImpactInput, sponsorId: string | null = null): Promise<{ ok: boolean; error?: string }> {
   await requireAdmin();
 
   const whole = (v: number | null, max: number) => v === null || (Number.isInteger(v) && v >= 0 && v <= max);
@@ -118,12 +123,22 @@ export async function saveImpactSettings(input: ImpactInput): Promise<{ ok: bool
     passRateOverride: input.passRateOverride,
     note: input.note.trim().slice(0, 2000) || null,
   };
-  await prisma.sponsorImpactSettings.upsert({
-    where: { id: "singleton" },
-    update: data,
-    create: { id: "singleton", ...data },
-  });
+  if (sponsorId) {
+    const exists = await prisma.user.findUnique({ where: { id: sponsorId }, select: { id: true } });
+    if (!exists) return { ok: false, error: "Sponsor not found." };
+    await prisma.sponsorImpact.upsert({
+      where: { sponsorId },
+      update: data,
+      create: { sponsorId, ...data },
+    });
+  } else {
+    await prisma.sponsorImpactSettings.upsert({
+      where: { id: "singleton" },
+      update: data,
+      create: { id: "singleton", ...data },
+    });
+  }
   revalidatePath("/sponsor/dashboard/impact");
-  revalidatePath("/admin/sponsors/impact");
+  revalidatePath("/admin/sponsors/impact", "layout");
   return { ok: true };
 }
