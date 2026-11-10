@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,12 @@ export default async function AdminSponsorsPage() {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Sponsors &amp; Sponsorships</h1>
-        <SendImpactButton />
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/sponsors/impact" className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-muted">
+            Edit impact figures
+          </Link>
+          <SendImpactButton />
+        </div>
       </div>
 
       <Card>

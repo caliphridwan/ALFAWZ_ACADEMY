@@ -748,3 +748,17 @@ model AssessmentAnswer {
   @@unique([attemptId, questionId])
   @@index([questionId])
 }
+
+// Figures the admin chooses to show sponsors. A blank (null) field means
+// "use the automatic figure"; a number replaces it.
+model SponsorImpactSettings {
+  id                  String   @id @default("singleton")
+  supportedOverride   Int?
+  completedOverride   Int?
+  certificatesOverride Int?
+  attendanceOverride  Int?
+  recitationOverride  Float?
+  passRateOverride    Int?
+  note                String?  @db.Text
+  updatedAt           DateTime @updatedAt
+}

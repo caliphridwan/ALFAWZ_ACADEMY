@@ -869,9 +869,11 @@ export async function sendSponsorImpactEmail(params: {
   name: string;
   myPlaces: number;
   supported: number;
-  completed: number;
+  completed: number | null;
   attendancePct: number | null;
+  recitationAvg?: number | null;
   passRatePct: number | null;
+  note?: string | null;
   dashboardUrl: string;
 }) {
   const stat = (label: string, value: string) =>
@@ -879,10 +881,14 @@ export async function sendSponsorImpactEmail(params: {
   const rows = [
     stat("Places you fund", String(params.myPlaces)),
     stat("Students supported by the fund", String(params.supported)),
-    params.completed >= 3 ? stat("Courses completed", String(params.completed)) : "",
+    params.completed !== null ? stat("Courses completed", String(params.completed)) : "",
     params.attendancePct !== null ? stat("Average class attendance", `${params.attendancePct}%`) : "",
+    params.recitationAvg != null ? stat("Average recitation rating", `${params.recitationAvg} / 5`) : "",
     params.passRatePct !== null ? stat("Passed their assessments", `${params.passRatePct}%`) : "",
   ].join("");
+  const noteHtml = params.note
+    ? `<p style="white-space:pre-line;">${escapeHtml(params.note)}</p>`
+    : "";
   const url = escapeHtml(params.dashboardUrl);
 
   await send(
@@ -897,6 +903,7 @@ export async function sendSponsorImpactEmail(params: {
         stands today. To protect the children, we share group figures only.
       </p>
       <table style="width:100%;border-collapse:collapse;margin:16px 0;">${rows}</table>
+      ${noteHtml}
       <div style="text-align:center;margin:28px 0;">
         <a href="${url}" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;padding:14px 26px;border-radius:8px;font-weight:bold;">
           See full update

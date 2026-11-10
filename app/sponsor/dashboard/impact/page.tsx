@@ -65,14 +65,20 @@ export default async function SponsorImpactPage() {
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <Stat label="Students supported now" value={String(fund.supported)} hint={`${fund.fundedPlaces} places funded by all sponsors`} />
-            <Stat label="Courses completed" value={fund.completed < MIN_GROUP && fund.completed > 0 ? `Fewer than ${MIN_GROUP}` : String(fund.completed)} />
+            <Stat label="Courses completed" value={fund.completedSmall ? `Fewer than ${MIN_GROUP}` : String(fund.completed)} />
             {fund.attendancePct !== null && <Stat label="Average class attendance" value={`${fund.attendancePct}%`} />}
             {fund.recitationAvg !== null && <Stat label="Average recitation rating" value={`${fund.recitationAvg} / 5`} hint="Rated by teachers" />}
             {fund.passRatePct !== null && (
               <Stat label="Passed their assessments" value={`${fund.passRatePct}%`} hint={`${fund.passedCount} of ${fund.assessedCount} results`} />
             )}
-            {fund.certificates >= MIN_GROUP && <Stat label="Certificates earned" value={String(fund.certificates)} />}
+            {fund.certificates !== null && <Stat label="Certificates earned" value={String(fund.certificates)} />}
           </div>
+
+          {fund.note && (
+            <Card>
+              <CardContent className="p-5 text-sm whitespace-pre-line">{fund.note}</CardContent>
+            </Card>
+          )}
 
           {!fund.detailed && (
             <p className="text-xs text-muted-foreground">

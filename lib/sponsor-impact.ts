@@ -16,7 +16,9 @@ export type FundImpact = {
   /** Students currently supported by the fund (scholarship enrolments). */
   supported: number;
   completed: number;
-  certificates: number;
+  /** Automatic completed count is 1 or 2 and not overridden: shown as "fewer than 3". */
+  completedSmall: boolean;
+  certificates: number | null;
   byLevel: { level: string; count: number; small: boolean }[];
   /** All of the following are null until enough students are supported. */
   attendancePct: number | null;
@@ -28,7 +30,7 @@ export type FundImpact = {
   detailed: boolean;
 };
 
-export async function getFundImpact(): Promise<FundImpact> {
+export async function getAutoFundImpact(): Promise<FundImpact> {
   const [placesAgg, enrollments] = await Promise.all([
     prisma.sponsorship.aggregate({ where: { status: "ACTIVE" }, _sum: { numberOfStudents: true } }),
     prisma.enrollment.findMany({
@@ -99,7 +101,11 @@ export async function getFundImpact(): Promise<FundImpact> {
     fundedPlaces: placesAgg._sum.numberOfStudents ?? 0,
     supported,
     completed: enrollments.filter((e) => e.status === "COMPLETED").length,
-    certificates: enrollments.filter((e) => e.certificateIssuedAt !== null).length,
+    completedSmall: false,
+    certificates: (() => {
+      const n = enrollments.filter((e) => e.certificateIssuedAt !== null).length;
+      return n >= MIN_GROUP ? n : null;
+    })(),
     byLevel,
     attendancePct,
     recitationAvg,
@@ -107,5 +113,49 @@ export async function getFundImpact(): Promise<FundImpact> {
     passedCount,
     assessedCount,
     detailed,
+  };
+}
+
+export type ImpactOverrides = {
+  supportedOverride: number | null;
+  completedOverride: number | null;
+  certificatesOverride: number | null;
+  attendanceOverride: number | null;
+  recitationOverride: number | null;
+  passRateOverride: number | null;
+  note: string | null;
+};
+
+export async function getImpactOverrides(): Promise<ImpactOverrides> {
+  const row = await prisma.sponsorImpactSettings.findUnique({ where: { id: "singleton" } });
+  return {
+    supportedOverride: row?.supportedOverride ?? null,
+    completedOverride: row?.completedOverride ?? null,
+    certificatesOverride: row?.certificatesOverride ?? null,
+    attendanceOverride: row?.attendanceOverride ?? null,
+    recitationOverride: row?.recitationOverride ?? null,
+    passRateOverride: row?.passRateOverride ?? null,
+    note: row?.note ?? null,
+  };
+}
+
+/** What sponsors see: the automatic figures, with the admin's own numbers laid over them. */
+export async function getFundImpact(): Promise<FundImpact & { note: string | null }> {
+  const [auto, o] = await Promise.all([getAutoFundImpact(), getImpactOverrides()]);
+  const pass = o.passRateOverride;
+  const completed = o.completedOverride ?? auto.completed;
+  return {
+    ...auto,
+    supported: o.supportedOverride ?? auto.supported,
+    completed,
+    completedSmall: o.completedOverride === null && completed > 0 && completed < MIN_GROUP,
+    certificates: o.certificatesOverride ?? auto.certificates,
+    attendancePct: o.attendanceOverride ?? auto.attendancePct,
+    recitationAvg: o.recitationOverride ?? auto.recitationAvg,
+    passRatePct: pass ?? auto.passRatePct,
+    passedCount: pass !== null ? null : auto.passedCount,
+    assessedCount: pass !== null ? null : auto.assessedCount,
+    detailed: auto.detailed || Object.values(o).some((v) => typeof v === "number"),
+    note: o.note,
   };
 }
