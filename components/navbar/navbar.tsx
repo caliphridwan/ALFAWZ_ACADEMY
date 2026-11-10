@@ -32,6 +32,11 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
   // overlaps page text — always solid on those instead.
   const isHome = pathname === "/";
 
+  // Close the mobile menu whenever the page changes, whichever link was tapped.
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener("scroll", onScroll);
@@ -149,7 +154,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                   {status === "authenticated" ? (
                     <>
                       <Button asChild>
-                        <Link href={dashboardHref}>Dashboard</Link>
+                        <Link href={dashboardHref} onClick={() => setMobileOpen(false)}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={() => signOut({ callbackUrl: "https://alfawzacademy.com" })}>
                         Logout
@@ -158,10 +163,10 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                   ) : (
                     <>
                       <Button asChild variant="outline">
-                        <Link href="/login">Login</Link>
+                        <Link href="/login" onClick={() => setMobileOpen(false)}>Login</Link>
                       </Button>
                       <Button asChild variant="gold">
-                        <Link href="/register">Enroll Now</Link>
+                        <Link href="/register" onClick={() => setMobileOpen(false)}>Enroll Now</Link>
                       </Button>
                     </>
                   )}
