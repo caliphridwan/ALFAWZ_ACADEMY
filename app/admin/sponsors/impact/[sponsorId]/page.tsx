@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { applyOverrides, getAutoFundImpact, getImpactOverrides, getSponsorOverrides, mergeOverrides } from "@/lib/sponsor-impact";
+import { SendImpactButton } from "@/components/admin/send-impact-button";
 import { ImpactSettingsForm } from "@/components/admin/impact-settings-form";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,10 @@ export default async function SponsorImpactEditPage({ params }: { params: { spon
       <p className="text-sm text-muted-foreground mb-6">
         Only {sponsor.name} will see these. Leave a box empty to use the default (grey). Their own places funded are always counted automatically.
       </p>
+      <div className="mb-6">
+        <SendImpactButton sponsorId={sponsor.id} sponsorName={sponsor.name} />
+        <p className="mt-1 text-xs text-muted-foreground">Save your changes first, then send.</p>
+      </div>
       <ImpactSettingsForm
         sponsorId={sponsor.id}
         baseLabel="Default"

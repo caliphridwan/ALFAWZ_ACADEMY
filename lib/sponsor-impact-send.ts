@@ -5,12 +5,12 @@ import { sendSponsorImpactEmail } from "@/lib/email/send";
 import { createNotification } from "@/lib/notifications";
 
 /** Email every active sponsor their own impact figures, plus an in-app notification. */
-export async function sendImpactUpdatesToSponsors(): Promise<{ ok: boolean; sent: number; failed: number; error?: string }> {
+export async function sendImpactUpdatesToSponsors(onlySponsorId?: string): Promise<{ ok: boolean; sent: number; failed: number; error?: string }> {
   const [auto, fundWide, sponsorships] = await Promise.all([
     getAutoFundImpact(),
     getImpactOverrides(),
     prisma.sponsorship.findMany({
-      where: { status: "ACTIVE" },
+      where: { status: "ACTIVE", ...(onlySponsorId ? { sponsorId: onlySponsorId } : {}) },
       select: { numberOfStudents: true, sponsor: { select: { id: true, name: true, email: true } } },
     }),
   ]);
@@ -21,7 +21,7 @@ export async function sendImpactUpdatesToSponsors(): Promise<{ ok: boolean; sent
     if (cur) cur.places += s.numberOfStudents;
     else bySponsor.set(s.sponsor.id, { name: s.sponsor.name ?? "Sponsor", email: s.sponsor.email, places: s.numberOfStudents });
   }
-  if (bySponsor.size === 0) return { ok: false, sent: 0, failed: 0, error: "There are no active sponsors." };
+  if (bySponsor.size === 0) return { ok: false, sent: 0, failed: 0, error: onlySponsorId ? "This sponsor has no active sponsorship." : "There are no active sponsors." };
   if (auto.supported === 0 && fundWide.supportedOverride === null && !(await prisma.sponsorImpact.findFirst({ where: { supportedOverride: { gt: 0 } } }))) {
     return { ok: false, sent: 0, failed: 0, error: "No students have been placed from the fund yet." };
   }
@@ -52,4 +52,14 @@ export async function sendImpactUpdatesToSponsors(): Promise<{ ok: boolean; sent
     }
   }
   return { ok: true, sent, failed };
+}
+
+/** When the last impact update went out, if ever. */
+export async function lastImpactUpdateAt(): Promise<Date | null> {
+  const row = await prisma.notification.findFirst({
+    where: { title: "Your impact update" },
+    orderBy: { createdAt: "desc" },
+    select: { createdAt: true },
+  });
+  return row?.createdAt ?? null;
 }

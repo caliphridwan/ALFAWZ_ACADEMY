@@ -5,17 +5,17 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { sendImpactUpdates } from "@/app/admin/sponsors/actions";
 
-export function SendImpactButton() {
+export function SendImpactButton({ sponsorId, sponsorName }: { sponsorId?: string; sponsorName?: string }) {
   const [pending, startTransition] = useTransition();
   return (
     <Button
       variant="outline"
       disabled={pending}
       onClick={() => {
-        if (!window.confirm("Email every active sponsor the current impact figures?")) return;
+        if (!window.confirm(sponsorId ? `Email ${sponsorName ?? "this sponsor"} their impact figures now?` : "Email every active sponsor their impact figures now?")) return;
         startTransition(async () => {
           try {
-            const res = await sendImpactUpdates();
+            const res = await sendImpactUpdates(sponsorId);
             if (!res.ok) toast.error(res.error ?? "Could not send.");
             else toast.success(`Sent to ${res.sent} sponsor${res.sent === 1 ? "" : "s"}${res.failed ? `, ${res.failed} failed` : ""}.`);
           } catch {
@@ -24,7 +24,7 @@ export function SendImpactButton() {
         });
       }}
     >
-      {pending ? "Sending…" : "Send impact update to sponsors"}
+      {pending ? "Sending…" : sponsorId ? "Send to this sponsor" : "Send impact update to sponsors"}
     </Button>
   );
 }

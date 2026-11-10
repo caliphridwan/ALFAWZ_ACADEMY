@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { lastImpactUpdateAt } from "@/lib/sponsor-impact-send";
 import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,10 +8,13 @@ import { SendImpactButton } from "@/components/admin/send-impact-button";
 import { SponsorshipRowControls } from "@/components/admin/sponsorship-row-controls";
 
 export default async function AdminSponsorsPage() {
-  const sponsorships = await prisma.sponsorship.findMany({
-    include: { sponsor: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [sponsorships, lastSent] = await Promise.all([
+    prisma.sponsorship.findMany({
+      include: { sponsor: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    lastImpactUpdateAt(),
+  ]);
 
   return (
     <div>
@@ -23,6 +27,10 @@ export default async function AdminSponsorsPage() {
           <SendImpactButton />
         </div>
       </div>
+
+      <p className="mb-4 text-sm text-muted-foreground">
+        {lastSent ? `Last impact update sent ${lastSent.toLocaleDateString()}.` : "No impact update has been sent yet."} Updates only go out when you press send.
+      </p>
 
       <Card>
         <CardContent className="p-0 overflow-x-auto">

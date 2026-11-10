@@ -34,9 +34,9 @@ export async function setSponsorshipStatus(
 }
 
 /** Email every active sponsor their impact figures (button on /admin/sponsors). */
-export async function sendImpactUpdates(): Promise<{ ok: boolean; sent: number; failed: number; error?: string }> {
+export async function sendImpactUpdates(sponsorId?: string): Promise<{ ok: boolean; sent: number; failed: number; error?: string }> {
   await requireAdmin();
-  return sendImpactUpdatesToSponsors();
+  return sendImpactUpdatesToSponsors(sponsorId);
 }
 
 type ImpactInput = {
