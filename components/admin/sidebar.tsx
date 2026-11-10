@@ -43,7 +43,7 @@ const LINKS = [
   { href: "/admin/profile", label: "Profile", icon: User },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ counts = {} }: { counts?: Record<string, number> }) {
   const pathname = usePathname();
 
   return (
@@ -52,6 +52,7 @@ export function AdminSidebar() {
         {LINKS.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href);
           const Icon = link.icon;
+          const count = counts[link.href] ?? 0;
           return (
             <Link
               key={link.href}
@@ -65,6 +66,17 @@ export function AdminSidebar() {
             >
               <Icon size={18} />
               {link.label}
+              {count > 0 && (
+                <span
+                  className={cn(
+                    "ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-semibold leading-none",
+                    active ? "bg-brand-foreground text-brand" : "bg-destructive text-destructive-foreground"
+                  )}
+                  aria-label={`${count} waiting`}
+                >
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
             </Link>
           );
         })}
