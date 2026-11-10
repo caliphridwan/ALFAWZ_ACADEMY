@@ -181,3 +181,25 @@ services:
 #   - name: alfawz-academy-db
 #     plan: starter
 #     region: oregon
+
+  # Emails every active sponsor their impact figures on the 1st of each month
+  # (08:00 UTC = 09:00 Nigeria time). The figures come from Sponsors > Edit
+  # impact figures, so update them before the 1st. The route skips itself if an
+  # update already went out in the last 20 days.
+  - type: cron
+    runtime: node
+    name: alfawz-academy-sponsor-impact
+    plan: starter
+    region: oregon
+    branch: main
+    schedule: "0 8 1 * *"
+    buildCommand: "echo 'no build needed'"
+    startCommand: "node scripts/cron-ping.mjs sponsor-impact"
+    envVars:
+      - key: CRON_SECRET
+        fromService:
+          type: web
+          name: alfawz-academy
+          envVarKey: CRON_SECRET
+      - key: APP_URL
+        sync: false # same value as NEXT_PUBLIC_APP_URL on the web service
