@@ -15,17 +15,40 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Session only carries id/role (Section: JWT keeps the token small) — the
   // profile photo lives on the full User record.
-  const [user, unreadNotifications] = await Promise.all([
+  const studentId = session.user.id;
+  const now = new Date();
+  const enrolledCourses = { enrollments: { some: { studentId, status: { in: ["ACTIVE", "COMPLETED"] as ("ACTIVE" | "COMPLETED")[] } } } };
+  const [user, unreadNotifications, pendingRecitations, pendingAssessments] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: { name: true, profileImage: true },
     }),
     prisma.notification.count({ where: { userId: session.user.id, read: false } }),
+    // Recitation tasks in the student's courses that they haven't recorded yet.
+    prisma.recitationTask.count({
+      where: { course: enrolledCourses, submissions: { none: { studentId } } },
+    }),
+    // Published tests/exams that are open right now and not yet started.
+    prisma.assessment.count({
+      where: {
+        course: enrolledCourses,
+        status: "PUBLISHED",
+        AND: [
+          { OR: [{ opensAt: null }, { opensAt: { lte: now } }] },
+          { OR: [{ closesAt: null }, { closesAt: { gte: now } }] },
+        ],
+        attempts: { none: { studentId } },
+      },
+    }),
   ]);
 
   return (
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
-      <DashboardSidebar unreadNotifications={unreadNotifications} />
+      <DashboardSidebar
+        unreadNotifications={unreadNotifications}
+        pendingRecitations={pendingRecitations}
+        pendingAssessments={pendingAssessments}
+      />
       <div className="flex-1 p-6 lg:p-10">
         <div className="flex justify-end mb-4">
           <Link

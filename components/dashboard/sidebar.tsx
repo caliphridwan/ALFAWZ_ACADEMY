@@ -46,10 +46,14 @@ const SPONSOR_LINKS = [
 export function DashboardSidebar({
   variant = "student",
   unreadNotifications = 0,
+  pendingRecitations = 0,
+  pendingAssessments = 0,
 }: {
   variant?: "student" | "sponsor";
   /** Number of unread notifications, shown as a badge on the Notifications link. */
   unreadNotifications?: number;
+  pendingRecitations?: number;
+  pendingAssessments?: number;
 }) {
   const pathname = usePathname();
   const links = variant === "sponsor" ? SPONSOR_LINKS : STUDENT_LINKS;
@@ -60,6 +64,20 @@ export function DashboardSidebar({
         {links.map((link) => {
           const active = pathname === link.href;
           const Icon = link.icon;
+          const badgeCount =
+            link.href === "/dashboard/notifications"
+              ? unreadNotifications
+              : link.href === "/dashboard/recitations"
+                ? pendingRecitations
+                : link.href === "/dashboard/assessments"
+                  ? pendingAssessments
+                  : 0;
+          const badgeNoun =
+            link.href === "/dashboard/notifications"
+              ? "unread notifications"
+              : link.href === "/dashboard/recitations"
+                ? "recitations to do"
+                : "assessments to take";
           return (
             <Link
               key={link.href}
@@ -73,15 +91,15 @@ export function DashboardSidebar({
             >
               <Icon size={18} />
               {link.label}
-              {link.href === "/dashboard/notifications" && unreadNotifications > 0 && (
+              {badgeCount > 0 && (
                 <span
                   className={cn(
                     "ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-semibold leading-none",
                     active ? "bg-brand-foreground text-brand" : "bg-destructive text-destructive-foreground"
                   )}
-                  aria-label={`${unreadNotifications} unread notification${unreadNotifications === 1 ? "" : "s"}`}
+                  aria-label={`${badgeCount} ${badgeNoun}`}
                 >
-                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                  {badgeCount > 99 ? "99+" : badgeCount}
                 </span>
               )}
             </Link>
