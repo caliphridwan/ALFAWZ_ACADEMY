@@ -38,9 +38,14 @@ export default async function TeacherCoursePage({ params }: { params: { id: stri
       </Link>
       <div className="mt-2 mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">{course.title}</h1>
-        <Button asChild size="sm" variant="outline">
-          <Link href={`/teacher/courses/${course.id}/recitations`}>Recitations</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/teacher/courses/${course.id}/assessments`}>Assessments</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/teacher/courses/${course.id}/recitations`}>Recitations</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-3">

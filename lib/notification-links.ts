@@ -7,6 +7,7 @@ export function notificationTarget(title: string): { href: string; label: string
   const t = title.toLowerCase();
   if (/recording|class starting|classes are starting|missed you in class/.test(t))
     return { href: "/dashboard/schedule", label: "Open my schedule" };
+  if (/\b(assessment|final result|exam|quiz|test)s?\b/.test(t)) return { href: "/dashboard/assessments", label: "Open assessments" };
   if (/recitation/.test(t)) return { href: "/dashboard/recitations", label: "Open recitations" };
   if (/scholarship/.test(t)) return { href: "/dashboard/scholarship", label: "Open scholarship" };
   if (/certificate|enrollment confirmed/.test(t)) return { href: "/dashboard/courses", label: "Open my courses" };

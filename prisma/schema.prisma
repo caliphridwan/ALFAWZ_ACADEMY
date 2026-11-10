@@ -56,6 +56,32 @@ enum ExamResult {
   FAILED
 }
 
+// QUIZ and TEST count toward continuous assessment (CA); EXAM is the final exam.
+enum AssessmentKind {
+  QUIZ
+  TEST
+  EXAM
+}
+
+enum AssessmentStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  LONG_ANSWER
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+
 enum PaymentType {
   COURSE
   SPONSORSHIP
@@ -165,6 +191,7 @@ model User {
   bankClaims        BankTransferClaim[]
   teacherProfile    Teacher?
   recitationSubmissions RecitationSubmission[]
+  assessmentAttempts    AssessmentAttempt[]
   scholarshipApplications ScholarshipApplication[]
 
   // Sponsor-specific relations
@@ -221,9 +248,15 @@ model Course {
   // start date is confirmed; leaving it blank just means no commencement
   // notice goes out (e.g. a rolling/self-paced course with no fixed start).
   classStartsAt    DateTime?
+  // How the final result is worked out (percent weights of continuous
+  // assessment and the exam, and the pass mark out of 100).
+  caWeight         Int      @default(40)
+  examWeight       Int      @default(60)
+  passMark         Int      @default(50)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  assessments Assessment[]
   enrollments Enrollment[]
   payments    Payment[]
   materials   CourseMaterial[]
@@ -270,6 +303,8 @@ model Enrollment {
   // dismisses it, so it shows exactly once per result.
   examResult     ExamResult?
   examResultSeen Boolean     @default(false)
+  // Final percentage (0-100) recorded when the teacher publishes results.
+  finalScore     Float?
 
   // Tracks the "complete your payment" reminder email so the cron job (or
   // the admin's manual trigger) doesn't re-send it every run — null means
@@ -625,4 +660,91 @@ model RecitationSubmission {
   @@unique([taskId, studentId])
   @@index([taskId, reviewedAt])
   @@index([studentId])
+}
+
+// ---------------------------------------------------------------------------
+// Examinations and continuous assessment
+// ---------------------------------------------------------------------------
+
+model Assessment {
+  id               String           @id @default(cuid())
+  courseId         String
+  course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title            String
+  instructions     String?          @db.Text
+  kind             AssessmentKind   @default(QUIZ)
+  status           AssessmentStatus @default(DRAFT)
+  durationMinutes  Int              @default(30)
+  // Optional window in which students may start it.
+  opensAt          DateTime?
+  closesAt         DateTime?
+  shuffleQuestions Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  questions AssessmentQuestion[]
+  attempts  AssessmentAttempt[]
+
+  @@index([courseId, status])
+}
+
+model AssessmentQuestion {
+  id           String       @id @default(cuid())
+  assessmentId String
+  assessment   Assessment   @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  position     Int          @default(0)
+  type         QuestionType
+  prompt       String       @db.Text
+  // MULTIPLE_CHOICE: the list of choices (JSON array of strings).
+  options      Json?
+  // MULTIPLE_CHOICE: index of the right choice ("0", "1", ...). TRUE_FALSE:
+  // "true" or "false". SHORT_ANSWER: accepted answers separated by "|"
+  // (blank = marked by hand). LONG_ANSWER: unused.
+  correct      String?
+  points       Int          @default(1)
+
+  answers AssessmentAnswer[]
+
+  @@index([assessmentId, position])
+}
+
+// A student's single attempt at an assessment.
+model AssessmentAttempt {
+  id           String        @id @default(cuid())
+  assessmentId String
+  assessment   Assessment    @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  startedAt    DateTime      @default(now())
+  // Hard stop: start + duration, never later than the assessment's closing time.
+  deadlineAt   DateTime
+  submittedAt  DateTime?
+  status       AttemptStatus @default(IN_PROGRESS)
+  // Points awarded so far (auto-marked + hand-marked), and the most available.
+  score        Int           @default(0)
+  maxScore     Int           @default(0)
+  // True while some answers still wait for a teacher's mark.
+  needsMarking Boolean       @default(false)
+  gradedAt     DateTime?
+
+  answers AssessmentAnswer[]
+
+  @@unique([assessmentId, studentId])
+  @@index([studentId])
+  @@index([assessmentId, status])
+}
+
+model AssessmentAnswer {
+  id         String             @id @default(cuid())
+  attemptId  String
+  attempt    AssessmentAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  response   String?            @db.Text
+  // null = not marked yet.
+  score      Int?
+  feedback   String?            @db.Text
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
 }

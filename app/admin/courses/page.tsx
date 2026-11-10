@@ -59,6 +59,9 @@ export default async function AdminCoursesPage() {
                       <Link href={`/admin/courses/${c.id}/sessions`}>Sessions</Link>
                     </Button>
                     <Button asChild size="sm" variant="outline">
+                      <Link href={`/admin/courses/${c.id}/assessments`}>Assessments</Link>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
                       <Link href={`/admin/courses/${c.id}/recitations`}>Recitations</Link>
                     </Button>
                     <Button asChild size="sm" variant="outline">
