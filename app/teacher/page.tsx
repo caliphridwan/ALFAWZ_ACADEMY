@@ -34,12 +34,23 @@ export default async function TeacherHomePage() {
       })
     : 0;
 
+  const toMark = courseIds.length
+    ? await prisma.assessmentAttempt.count({
+        where: { needsMarking: true, status: { not: "IN_PROGRESS" }, assessment: { courseId: { in: courseIds } } },
+      })
+    : 0;
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-2">My courses</h1>
-      {toReview > 0 && (
-        <p className="mb-6 text-sm">
-          <Badge variant="gold">{toReview} recitation{toReview === 1 ? "" : "s"} waiting for your feedback</Badge>
+      {(toReview > 0 || toMark > 0) && (
+        <p className="mb-6 flex flex-wrap gap-2 text-sm">
+          {toReview > 0 && (
+            <Badge variant="gold">{toReview} recitation{toReview === 1 ? "" : "s"} waiting for your feedback</Badge>
+          )}
+          {toMark > 0 && (
+            <Badge variant="gold">{toMark} test{toMark === 1 ? "" : "s"} waiting for your marks</Badge>
+          )}
         </p>
       )}
 

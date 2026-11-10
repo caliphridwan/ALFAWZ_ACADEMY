@@ -4,7 +4,28 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
-export function TeacherNav({ name }: { name: string }) {
+function Count({ n, label }: { n: number; label: string }) {
+  if (n <= 0) return null;
+  return (
+    <span
+      className="ml-2 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-xs font-semibold leading-none text-destructive-foreground"
+      aria-label={`${n} ${label}`}
+      title={`${n} ${label}`}
+    >
+      {n > 99 ? "99+" : n}
+    </span>
+  );
+}
+
+export function TeacherNav({
+  name,
+  recitationsToReview = 0,
+  assessmentsToMark = 0,
+}: {
+  name: string;
+  recitationsToReview?: number;
+  assessmentsToMark?: number;
+}) {
   return (
     <div className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
       <div>
@@ -15,7 +36,10 @@ export function TeacherNav({ name }: { name: string }) {
       </div>
       <div className="flex gap-2">
         <Button asChild size="sm" variant="outline">
-          <Link href="/teacher">My courses</Link>
+          <Link href="/teacher">
+            My courses
+            <Count n={recitationsToReview + assessmentsToMark} label="items waiting for you" />
+          </Link>
         </Button>
         <Button size="sm" variant="ghost" onClick={() => signOut({ callbackUrl: "/" })}>
           Sign out
