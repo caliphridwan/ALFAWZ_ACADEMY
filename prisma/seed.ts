@@ -22,7 +22,7 @@ async function main() {
       minSponsorStudents: 1,
       maxSponsorStudents: 100,
       whatsappNumber: "+2349038543371", // placeholder — set real number in /admin/settings
-      contactEmail: "caliphridwan93@gmail.com",
+      contactEmail: "info@alfawzacademy.com",
       studentsCount: 0, // real counts should come from live data, not this seed
       countriesCount: 0,
       classesDelivered: 0,

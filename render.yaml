@@ -71,7 +71,7 @@ services:
       - key: VAPID_PRIVATE_KEY
         sync: false
       - key: VAPID_SUBJECT
-        value: "mailto:contact@alfawzacademy.com" # change to a monitored address
+        value: "mailto:info@alfawzacademy.com"
 
       # --- Payment reminder cron ---
       # Shared secret the cron job below sends as a Bearer token. Render

@@ -23,7 +23,7 @@ function configure(): boolean {
   }
   try {
     webpush.setVapidDetails(
-      process.env.VAPID_SUBJECT || "mailto:contact@alfawzacademy.com",
+      process.env.VAPID_SUBJECT || "mailto:info@alfawzacademy.com",
       publicKey,
       privateKey
     );
