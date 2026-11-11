@@ -5,6 +5,7 @@
 const NAVY = "#1e3a8a";
 const DEEP = "#14275f";
 const GOLD = "#c9a24b";
+const ARABIC_FONT = "Amiri, 'Noto Naskh Arabic', 'Geeza Pro', 'Traditional Arabic', 'Times New Roman', serif";
 
 export type IdCardData = {
   name: string;
@@ -87,10 +88,13 @@ export function IdCardFront({ d }: { d: IdCardData }) {
           />
         ) : null}
         <div style={{ color: "#fff", lineHeight: 1.1 }}>
-          <div style={{ fontSize: "4.4cqw", fontWeight: 700, letterSpacing: "0.04em", fontFamily: "Georgia, serif" }}>
+          <div dir="rtl" lang="ar" style={{ fontSize: "4.4cqw", fontWeight: 700, fontFamily: ARABIC_FONT, lineHeight: 1.2 }}>
+            أكاديمية الفوز
+          </div>
+          <div style={{ fontSize: "3.6cqw", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "Georgia, serif" }}>
             AlFawz Academy
           </div>
-          <div style={{ fontSize: "2.1cqw", letterSpacing: "0.3em", color: GOLD, marginTop: "0.6cqw", fontWeight: 600 }}>
+          <div style={{ fontSize: "1.9cqw", letterSpacing: "0.3em", color: GOLD, marginTop: "0.5cqw", fontWeight: 600 }}>
             STUDENT IDENTITY CARD
           </div>
         </div>
@@ -178,7 +182,16 @@ export function IdCardFront({ d }: { d: IdCardData }) {
 export function IdCardBack({ d }: { d: IdCardData }) {
   return (
     <div className="id-card" style={{ ...shell, background: "#fffdf7", border: "1px solid #e5dcc3" }}>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: "6cqw", background: NAVY }} />
+      <div
+        style={{
+          position: "absolute", left: 0, right: 0, top: 0, height: "6cqw", background: NAVY, color: "#fff",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "2cqw", fontWeight: 700,
+        }}
+      >
+        <span dir="rtl" lang="ar" style={{ fontSize: "3.4cqw", fontFamily: ARABIC_FONT }}>أكاديمية الفوز</span>
+        <span style={{ color: GOLD }}>•</span>
+        <span style={{ fontSize: "2.6cqw", letterSpacing: "0.14em", textTransform: "uppercase" }}>AlFawz Academy</span>
+      </div>
       <div style={{ position: "absolute", left: 0, right: 0, top: "6cqw", height: "0.7cqw", background: GOLD }} />
 
       <div style={{ position: "absolute", left: "5cqw", right: "5cqw", top: "10cqw", display: "flex", gap: "4cqw" }}>

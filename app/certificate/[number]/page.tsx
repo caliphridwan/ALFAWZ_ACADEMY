@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 const NAVY = "#1e3a8a";
 const GOLD = "#b8892b";
+const ARABIC_FONT = "Amiri, 'Noto Naskh Arabic', 'Geeza Pro', 'Traditional Arabic', 'Times New Roman', serif";
 
 /** One corner flourish; rotated into the four corners by the caller. */
 function Corner({ className }: { className: string }) {
@@ -99,7 +100,9 @@ export default async function CertificatePage({ params }: { params: { number: st
           }
           .certificate-frame > svg { width: 9cqw !important; height: 9cqw !important; }
           .cert-inner { padding: 3cqw 8cqw 0 !important; }
-          .cert-logo { height: 5.5cqw !important; }
+          .cert-logo { height: 4.6cqw !important; }
+          .cert-name-ar { margin-top: 0.5cqw !important; font-size: 3.4cqw !important; line-height: 1.25 !important; }
+          .cert-name-en { font-size: 1.9cqw !important; line-height: 1.2 !important; }
           .cert-bismillah { margin-top: 0.8cqw !important; font-size: 1.5cqw !important; }
           .cert-title { margin-top: 0.8cqw !important; font-size: 3.2cqw !important; }
           .cert-sub { margin-top: 1.4cqw !important; font-size: 1.4cqw !important; }
@@ -145,14 +148,21 @@ export default async function CertificatePage({ params }: { params: { number: st
         <Corner className="bottom-5 left-5 -rotate-90" />
 
         <div className="cert-inner relative px-8 py-12 text-center sm:px-24 sm:py-14">
-          {logoUrl ? (
+          {logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="AlFawz Academy" className="cert-logo mx-auto h-16 w-auto object-contain sm:h-20" />
-          ) : (
-            <p className="text-lg font-bold uppercase tracking-[0.35em]" style={{ color: NAVY }}>
-              AlFawz Academy
-            </p>
+            <img src={logoUrl} alt="" className="cert-logo mx-auto h-14 w-auto object-contain sm:h-16" />
           )}
+          <p
+            className="cert-name-ar mt-2 text-3xl font-bold sm:text-4xl"
+            style={{ color: NAVY, fontFamily: ARABIC_FONT }}
+            dir="rtl"
+            lang="ar"
+          >
+            أكاديمية الفوز
+          </p>
+          <p className="cert-name-en text-lg font-extrabold uppercase tracking-[0.3em] sm:text-xl" style={{ color: NAVY }}>
+            AlFawz Academy
+          </p>
 
           <p className="cert-bismillah mt-4 font-serif text-lg" style={{ color: GOLD }} dir="rtl" lang="ar">
             بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
