@@ -13,19 +13,40 @@ const fmt = (n: number | null) => (n === null ? "—" : `${n}%`);
 export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?: string }) {
   const caItems = data.components.filter((c) => c.kind !== "EXAM");
   const examItems = data.components.filter((c) => c.kind === "EXAM");
+  // About 14 rows fit comfortably at full size; beyond that, shrink a little per row (never below 55%).
+  const slipZoom = Math.max(0.55, Math.min(1, 1 - (data.components.length - 14) * 0.035));
 
   return (
     <div className="container py-8">
       <style>{`
         @media print {
           header, footer, nav, aside, a[href*="wa.me"], .no-print { display: none !important; }
-          body { background: #fff !important; }
+          html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; background: #fff !important; }
           main { padding: 0 !important; }
           .container { padding: 0 !important; max-width: none !important; }
-          .slip { box-shadow: none !important; border: 0 !important; margin: 0 !important; max-width: none !important; }
           * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          /* Everything is tightened so the slip always fits one A4 page. The zoom is
+             set from the number of rows, so a long list of assessments shrinks to fit. */
+          .slip {
+            box-shadow: none !important; margin: 0 !important; max-width: none !important;
+            padding: 7mm 9mm !important; font-size: 11px !important; line-height: 1.35 !important;
+            zoom: var(--slip-zoom, 1);
+            break-inside: avoid; page-break-inside: avoid; page-break-after: avoid;
+          }
+          .slip-logo { height: 40px !important; }
+          .slip-title { margin-top: 6px !important; font-size: 18px !important; }
+          .slip-sec { margin-top: 12px !important; }
+          .slip-sec-lg { margin-top: 18px !important; }
+          .slip-table td, .slip-table th { padding-top: 3px !important; padding-bottom: 3px !important; }
+          .slip-final { padding: 10px !important; }
+          .slip-final-num { font-size: 28px !important; }
+          .slip-final-num span { font-size: 18px !important; }
+          .slip-final-res { margin-top: 4px !important; font-size: 14px !important; }
+          .slip-sign { margin-top: 20px !important; }
+          .slip-sigbox { height: 36px !important; }
+          .slip-sigimg { max-height: 36px !important; }
         }
-        @page { size: A4 portrait; margin: 14mm; }
+        @page { size: A4 portrait; margin: 10mm; }
       `}</style>
 
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -39,23 +60,26 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
         <PrintButton label="Print / Save as PDF" />
       </div>
 
-      <div className="slip mx-auto max-w-[210mm] bg-white p-8 sm:p-12 text-[#1f2937] shadow-xl" style={{ border: `3px double ${NAVY}` }}>
+      <div
+        className="slip mx-auto max-w-[210mm] bg-white p-8 sm:p-12 text-[#1f2937] shadow-xl"
+        style={{ border: `3px double ${NAVY}`, ["--slip-zoom" as string]: slipZoom }}
+      >
         <div className="text-center">
           {data.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={data.logoUrl} alt="AlFawz Academy" className="mx-auto h-16 w-auto object-contain" />
+            <img src={data.logoUrl} alt="AlFawz Academy" className="slip-logo mx-auto h-16 w-auto object-contain" />
           ) : (
             <p className="text-xl font-bold" style={{ color: NAVY }}>
               AlFawz Academy
             </p>
           )}
-          <h1 className="mt-3 text-2xl font-bold tracking-wide" style={{ color: NAVY }}>
+          <h1 className="slip-title mt-3 text-2xl font-bold tracking-wide" style={{ color: NAVY }}>
             STATEMENT OF RESULTS
           </h1>
           <div className="mx-auto mt-2 h-0.5 w-24" style={{ background: GOLD }} />
         </div>
 
-        <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+        <dl className="slip-sec-lg mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
           <dt className="text-gray-500">Student</dt>
           <dd className="font-semibold">{data.studentName}</dd>
           <dt className="text-gray-500">Course</dt>
@@ -67,7 +91,7 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
           <dd>{formatAcademyDate(new Date())}</dd>
         </dl>
 
-        <table className="mt-8 w-full text-sm">
+        <table className="slip-table slip-sec-lg mt-8 w-full text-sm">
           <thead>
             <tr className="border-b-2 text-left text-xs uppercase tracking-wide text-gray-500" style={{ borderColor: NAVY }}>
               <th className="py-2">Component</th>
@@ -93,7 +117,7 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
           </tbody>
         </table>
 
-        <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+        <div className="slip-sec mt-6 grid grid-cols-2 gap-4 text-sm">
           <div className="rounded border border-gray-200 p-3">
             <p className="text-xs uppercase tracking-wide text-gray-500">Continuous assessment ({data.caWeight}%)</p>
             <p className="mt-1 text-lg font-semibold">{fmt(data.ca)}</p>
@@ -104,27 +128,27 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
           </div>
         </div>
 
-        <div className="mt-6 rounded-lg p-5 text-center" style={{ background: "#f4f6fb", border: `1px solid ${NAVY}` }}>
+        <div className="slip-final slip-sec mt-6 rounded-lg p-5 text-center" style={{ background: "#f4f6fb", border: `1px solid ${NAVY}` }}>
           <p className="text-xs uppercase tracking-widest text-gray-500">Final score</p>
-          <p className="mt-1 text-4xl font-bold" style={{ color: NAVY }}>
+          <p className="slip-final-num mt-1 text-4xl font-bold" style={{ color: NAVY }}>
             {data.final}% <span className="text-2xl">({gradeLetter(data.final)})</span>
           </p>
-          <p className="mt-2 text-lg font-semibold" style={{ color: data.passed ? "#15803d" : "#6b7280" }}>
+          <p className="slip-final-res mt-2 text-lg font-semibold" style={{ color: data.passed ? "#15803d" : "#6b7280" }}>
             {data.passed ? "PASSED" : "NOT PASSED"}
           </p>
           <p className="mt-1 text-xs text-gray-500">Pass mark {data.passMark}%</p>
         </div>
 
-        <div className="mt-12 flex items-end justify-between gap-6 text-sm">
+        <div className="slip-sign mt-12 flex items-end justify-between gap-6 text-sm">
           <p className="max-w-[55%] text-xs text-gray-500">
             Final score = continuous assessment × {data.caWeight}% + exam × {data.examWeight}%. This slip reflects the results published by the
             academy on the date of issue.
           </p>
           <div className="text-center">
-            <div className="flex h-14 items-end justify-center">
+            <div className="slip-sigbox flex h-14 items-end justify-center">
               {data.directorSignatureUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.directorSignatureUrl} alt="" className="max-h-14 w-auto object-contain" />
+                <img src={data.directorSignatureUrl} alt="" className="slip-sigimg max-h-14 w-auto object-contain" />
               ) : null}
             </div>
             <div className="mt-1 w-48 border-t border-gray-400 pt-1">
