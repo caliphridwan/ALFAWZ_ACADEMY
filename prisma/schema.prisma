@@ -192,6 +192,12 @@ model User {
   teacherProfile    Teacher?
   recitationSubmissions RecitationSubmission[]
   sponsorImpact SponsorImpact? @relation("SponsorImpactSponsor")
+
+  // Referral tracking: the code this person arrived through (first touch),
+  // and the personal code they can share with friends.
+  referralCodeId String?
+  referredBy     ReferralCode? @relation("ReferredBy", fields: [referralCodeId], references: [id], onDelete: SetNull)
+  ownReferralCode ReferralCode? @relation("ReferralOwner")
   assessmentAttempts    AssessmentAttempt[]
   scholarshipApplications ScholarshipApplication[]
 
@@ -778,4 +784,19 @@ model SponsorImpact {
   passRateOverride     Int?
   note                 String?  @db.Text
   updatedAt            DateTime @updatedAt
+}
+
+// A trackable sign-up link (/r/CODE). Either a campaign code the admin creates
+// (ownerId null, e.g. "WhatsApp group") or a student's personal invite code.
+model ReferralCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  label     String
+  ownerId   String?  @unique
+  owner     User?    @relation("ReferralOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  active    Boolean  @default(true)
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  referredUsers User[] @relation("ReferredBy")
 }

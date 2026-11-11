@@ -18,6 +18,7 @@ import {
   Contact,
   Mic,
   ClipboardCheck,
+  Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { SidebarShell } from "@/components/ui/sidebar-shell";
@@ -33,6 +34,7 @@ const STUDENT_LINKS = [
   { href: "/dashboard/id-card", label: "ID Card", icon: Contact },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
+  { href: "/dashboard/refer", label: "Invite Friends", icon: Share2 },
   { href: "/dashboard/support", label: "Support", icon: LifeBuoy },
 ];
 

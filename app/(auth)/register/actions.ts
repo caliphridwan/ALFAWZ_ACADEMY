@@ -1,9 +1,11 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/db/prisma";
 import { registerSchema } from "@/lib/validations/schemas";
 import { sendWelcomeEmail } from "@/lib/email/send";
+import { REFERRAL_COOKIE, normalizeCode } from "@/lib/referral-code";
 
 export type RegisterFormState = {
   success: boolean;
@@ -54,6 +56,18 @@ export async function registerStudent(
 
   const passwordHash = await bcrypt.hash(data.password, 12);
 
+  // Credit the sign-up to the referral link they arrived through, if any.
+  let referralCodeId: string | null = null;
+  try {
+    const code = normalizeCode(cookies().get(REFERRAL_COOKIE)?.value);
+    if (code) {
+      const ref = await prisma.referralCode.findUnique({ where: { code }, select: { id: true, active: true } });
+      if (ref?.active) referralCodeId = ref.id;
+    }
+  } catch {
+    // Never let referral tracking block a registration.
+  }
+
   const user = await prisma.user.create({
     data: {
       name: data.fullName,
@@ -66,6 +80,7 @@ export async function registerStudent(
       profileImage: data.profileImage || null,
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
+      referralCodeId,
       ...(data.guardian
         ? {
             guardian: {
@@ -80,6 +95,10 @@ export async function registerStudent(
         : {}),
     },
   });
+
+  try {
+    cookies().delete(REFERRAL_COOKIE);
+  } catch {}
 
   await sendWelcomeEmail({ to: user.email, name: user.name }).catch((err) => {
     // Registration should not fail just because the email provider hiccuped.
