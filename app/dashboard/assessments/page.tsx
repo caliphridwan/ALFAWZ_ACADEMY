@@ -83,6 +83,9 @@ export default async function StudentAssessmentsPage() {
                       {e.examResult === "PASSED" ? "Passed" : "Not passed"}
                     </span>
                   </p>
+                  <Button asChild size="sm" variant="outline" className="mt-3">
+                    <Link href={`/dashboard/assessments/slip/${e.courseId}`}>Print result slip</Link>
+                  </Button>
                   {results && (
                     <p className="mt-2 text-sm text-muted-foreground">
                       Continuous assessment {results.ca === null ? "—" : `${results.ca}%`} · Exam {results.exam === null ? "—" : `${results.exam}%`} · Pass mark {e.course.passMark}%

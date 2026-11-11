@@ -15,7 +15,7 @@ export default async function AdminResultsPage({ params }: { params: { id: strin
         ← Assessments
       </Link>
       <h1 className="mt-2 mb-6 text-2xl font-bold">Results — {course.title}</h1>
-      <ResultsView courseId={course.id} />
+      <ResultsView courseId={course.id} slipBase={`/admin/courses/${course.id}/assessments/slip`} />
     </div>
   );
 }

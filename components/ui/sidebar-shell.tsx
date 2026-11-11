@@ -38,7 +38,7 @@ export function SidebarShell({
   return (
     <>
       {/* Phones: slim bar under the site header */}
-      <div className="lg:hidden sticky top-16 z-40 flex items-center border-b border-border bg-card px-4 py-2">
+      <div className="lg:hidden print:hidden sticky top-16 z-40 flex items-center border-b border-border bg-card px-4 py-2">
         <button
           onClick={() => setOpen(true)}
           aria-label="Open menu"
@@ -92,7 +92,7 @@ export function SidebarShell({
       </AnimatePresence>
 
       {/* Desktop: the normal side column */}
-      <aside className="hidden lg:block w-64 shrink-0 border-r border-border bg-card">{children}</aside>
+      <aside className="hidden lg:block print:hidden w-64 shrink-0 border-r border-border bg-card">{children}</aside>
     </>
   );
 }

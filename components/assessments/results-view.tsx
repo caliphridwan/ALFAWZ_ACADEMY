@@ -1,13 +1,14 @@
 import { courseResults, finalizeOverdueForCourse } from "@/lib/assessment/service";
 import { gradeLetter } from "@/lib/assessment/grading";
 import { prisma } from "@/lib/db/prisma";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { PublishResultsButton } from "@/components/assessments/publish-results-button";
 
 const fmt = (n: number | null) => (n === null ? "—" : `${n}%`);
 
 /** Shared by the admin and teacher pages: CA, exam and final for every student. */
-export async function ResultsView({ courseId }: { courseId: string }) {
+export async function ResultsView({ courseId, slipBase }: { courseId: string; slipBase: string }) {
   await finalizeOverdueForCourse(courseId);
   const [course, results] = await Promise.all([
     prisma.course.findUnique({ where: { id: courseId }, select: { caWeight: true, examWeight: true, passMark: true } }),
@@ -85,6 +86,14 @@ export async function ResultsView({ courseId }: { courseId: string }) {
                       )}
                       {r.published && <Badge variant="muted">Published</Badge>}
                     </div>
+                    {r.published && (
+                      <Link
+                        href={`${slipBase}/${r.studentId}`}
+                        className="mt-1 inline-block text-xs text-brand hover:underline"
+                      >
+                        Result slip
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}

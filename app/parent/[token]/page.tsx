@@ -75,6 +75,16 @@ export default async function ParentViewPage({ params }: { params: { token: stri
               </Badge>
             </div>
             {progress.get(e.id) && <ProgressSummary progress={progress.get(e.id)!} />}
+            {e.examResult !== null && (
+              <a
+                href={`/parent/${params.token}/slip/${e.courseId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 mr-4 inline-block text-sm text-brand hover:underline"
+              >
+                View result slip
+              </a>
+            )}
             {e.certificateNumber && (
               <a
                 href={`/certificate/${e.certificateNumber}`}
