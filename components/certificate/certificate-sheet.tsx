@@ -83,69 +83,6 @@ function Divider({ width = "34cqw" }: { width?: string }) {
   );
 }
 
-/** A faded open Qur'an on a rehal (stand), with a halo of small stars, drawn as a watermark. */
-function QuranWatermark() {
-  // Lines of text on one page; the right page is the mirror image.
-  const lines = Array.from({ length: 11 }, (_, i) => 84 + i * 10.2);
-  const page = "M200 66 C 160 46, 100 46, 38 66 L 38 206 C 100 186, 160 186, 200 206 Z";
-  const inner = "M192 80 C 156 63, 106 63, 50 80 L 50 192 C 106 177, 156 177, 192 192 Z";
-  return (
-    <svg
-      viewBox="0 0 400 290"
-      aria-hidden="true"
-      style={{ position: "absolute", left: "50%", top: "52%", width: "60cqw", transform: "translate(-50%, -50%)", opacity: 0.075 }}
-    >
-      <defs>
-        <clipPath id="afz-q-left"><path d={inner} /></clipPath>
-        <clipPath id="afz-q-right"><path d={inner} transform="translate(400 0) scale(-1 1)" /></clipPath>
-      </defs>
-
-      {/* halo: ring of small stars behind the book */}
-      <g fill={GOLD}>
-        {Array.from({ length: 28 }, (_, i) => {
-          const a = (i / 28) * Math.PI * 2;
-          return <circle key={i} cx={200 + Math.cos(a) * 178} cy={140 + Math.sin(a) * 124} r={i % 2 ? 1.6 : 2.6} />;
-        })}
-      </g>
-      <ellipse cx="200" cy="140" rx="168" ry="114" fill="none" stroke={GOLD} strokeWidth="1.2" />
-
-      {/* rehal: the crossed wooden stand */}
-      <g stroke={DEEP} strokeWidth="9" strokeLinecap="round" fill="none">
-        <path d="M118 262 L 282 206" />
-        <path d="M282 262 L 118 206" />
-      </g>
-      <path d="M96 205 L 304 205" stroke={DEEP} strokeWidth="7" strokeLinecap="round" />
-
-      {/* cover edge */}
-      <path d="M200 74 C 158 54, 96 54, 30 74 L 30 214 C 96 194, 158 194, 200 214 C 242 194, 304 194, 370 214 L 370 74 C 304 54, 242 54, 200 74 Z" fill={DEEP} />
-
-      {/* pages */}
-      <path d={page} fill="#fff" stroke={NAVY} strokeWidth="2" />
-      <path d={page} transform="translate(400 0) scale(-1 1)" fill="#fff" stroke={NAVY} strokeWidth="2" />
-
-      {/* framed text area, as on a printed mushaf */}
-      <path d={inner} fill="none" stroke={GOLD} strokeWidth="2.2" />
-      <path d={inner} transform="translate(400 0) scale(-1 1)" fill="none" stroke={GOLD} strokeWidth="2.2" />
-
-      {/* lines of text */}
-      <g clipPath="url(#afz-q-left)" stroke={NAVY} strokeWidth="1.7" strokeLinecap="round">
-        {lines.map((y, i) => (
-          <path key={i} d={`M ${56 + (i % 3) * 3} ${y} q 70 -${9 - i * 0.2} ${134 - (i % 4) * 4} -${12 - i * 0.2}`} fill="none" />
-        ))}
-      </g>
-      <g clipPath="url(#afz-q-right)" stroke={NAVY} strokeWidth="1.7" strokeLinecap="round">
-        {lines.map((y, i) => (
-          <path key={i} d={`M ${344 - (i % 3) * 3} ${y} q -70 -${9 - i * 0.2} -${134 - (i % 4) * 4} -${12 - i * 0.2}`} fill="none" />
-        ))}
-      </g>
-
-      {/* spine, and a gold ribbon marker */}
-      <path d="M200 66 L200 206" stroke={NAVY} strokeWidth="2.5" />
-      <path d="M208 70 L208 222 L216 212 L224 222 L224 74 Z" fill={GOLD} />
-    </svg>
-  );
-}
-
 export function CertificateSheet({ d }: { d: CertificateData }) {
   const nameSize = d.studentName.length > 34 ? "3.5cqw" : d.studentName.length > 24 ? "4.7cqw" : "5.8cqw";
   const courseSize = d.courseTitle.length > 44 ? "2.5cqw" : "3.2cqw";
@@ -177,7 +114,14 @@ export function CertificateSheet({ d }: { d: CertificateData }) {
       <Corner style={{ right: "2.4cqw", bottom: "2.4cqw", transform: "rotate(180deg)" }} />
       <Corner style={{ left: "2.4cqw", bottom: "2.4cqw", transform: "rotate(-90deg)" }} />
 
-      <QuranWatermark />
+      {/* faded photo of an open Qur'an on a rehal, softened at the edges so it sits behind the text */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/quran-rehal-watermark.webp"
+        alt=""
+        aria-hidden="true"
+        style={{ position: "absolute", left: "50%", top: "53%", width: "64cqw", transform: "translate(-50%, -50%)", pointerEvents: "none" }}
+      />
 
       <div
         style={{
