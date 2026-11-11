@@ -35,19 +35,23 @@ export default async function SponsorPage() {
 
   return (
     <div className="container py-16">
-      <div className="relative isolate max-w-2xl mx-auto text-center mb-14">
-        {/* faded open Qur'an behind the heading */}
+      <div className="relative isolate mx-auto mb-14 max-w-3xl overflow-hidden rounded-3xl px-6 py-14 text-center">
+        {/* faded open Qur'an behind the heading, kept inside this block and softened at the edges */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/quran-rehal-watermark.webp"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-90 dark:opacity-20"
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-[center_30%] opacity-100 dark:opacity-15"
+          style={{
+            WebkitMaskImage: "radial-gradient(ellipse at center, #000 55%, transparent 96%)",
+            maskImage: "radial-gradient(ellipse at center, #000 55%, transparent 96%)",
+          }}
         />
         <h1 className="text-3xl sm:text-4xl font-bold mb-4">
           Sponsor a Student. Change a Life.
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-foreground/75">
           Many students cannot afford structured Islamic education on their
           own. Your sponsorship gives a student full access to AlFawz
           Academy&apos;s classes and teachers.
