@@ -64,9 +64,17 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
       </div>
 
       <div
-        className="slip mx-auto max-w-[210mm] bg-white p-8 sm:p-12 text-[#1f2937] shadow-xl"
+        className="slip relative isolate mx-auto max-w-[210mm] overflow-hidden bg-white p-8 sm:p-12 text-[#1f2937] shadow-xl"
         style={{ border: `3px double ${NAVY}`, ["--slip-zoom" as string]: slipZoom }}
       >
+        {/* faded open Qur'an behind the results */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/quran-rehal-watermark.webp"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-[55%] -z-10 w-[88%] -translate-x-1/2 -translate-y-1/2 opacity-60"
+        />
         <div className="text-center">
           {data.logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element

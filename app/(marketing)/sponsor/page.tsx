@@ -35,7 +35,15 @@ export default async function SponsorPage() {
 
   return (
     <div className="container py-16">
-      <div className="max-w-2xl mx-auto text-center mb-14">
+      <div className="relative isolate max-w-2xl mx-auto text-center mb-14">
+        {/* faded open Qur'an behind the heading */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/quran-rehal-watermark.webp"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-90 dark:opacity-20"
+        />
         <h1 className="text-3xl sm:text-4xl font-bold mb-4">
           Sponsor a Student. Change a Life.
         </h1>
