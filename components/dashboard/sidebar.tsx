@@ -20,6 +20,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { SidebarShell } from "@/components/ui/sidebar-shell";
 
 const STUDENT_LINKS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -59,8 +60,8 @@ export function DashboardSidebar({
   const links = variant === "sponsor" ? SPONSOR_LINKS : STUDENT_LINKS;
 
   return (
-    <aside className="w-full lg:w-64 shrink-0 border-r border-border bg-card">
-      <nav className="p-4 space-y-1 sticky top-16">
+    <SidebarShell badge={unreadNotifications + pendingRecitations + pendingAssessments}>
+      <nav className="p-4 space-y-1 lg:sticky lg:top-16">
         {links.map((link) => {
           const active = pathname === link.href;
           const Icon = link.icon;
@@ -113,6 +114,6 @@ export function DashboardSidebar({
           Logout
         </button>
       </nav>
-    </aside>
+    </SidebarShell>
   );
 }

@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { SidebarShell } from "@/components/ui/sidebar-shell";
 
 const LINKS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -47,8 +48,8 @@ export function AdminSidebar({ counts = {} }: { counts?: Record<string, number> 
   const pathname = usePathname();
 
   return (
-    <aside className="w-full lg:w-64 shrink-0 border-r border-border bg-card">
-      <nav className="p-4 space-y-1 sticky top-16">
+    <SidebarShell badge={Object.values(counts).reduce((a, b) => a + b, 0)}>
+      <nav className="p-4 space-y-1 lg:sticky lg:top-16">
         {LINKS.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href);
           const Icon = link.icon;
@@ -88,6 +89,6 @@ export function AdminSidebar({ counts = {} }: { counts?: Record<string, number> 
           Logout
         </button>
       </nav>
-    </aside>
+    </SidebarShell>
   );
 }
