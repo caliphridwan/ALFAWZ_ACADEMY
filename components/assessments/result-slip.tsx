@@ -5,6 +5,7 @@ import type { ResultSlipData } from "@/lib/assessment/slip";
 
 const NAVY = "#1e3a8a";
 const GOLD = "#b8892b";
+const ARABIC_FONT = "Amiri, 'Noto Naskh Arabic', 'Geeza Pro', 'Traditional Arabic', 'Times New Roman', serif";
 const KIND: Record<string, string> = { QUIZ: "Quiz", TEST: "Test", EXAM: "Final exam", RECITATION: "Recitation (average rating)" };
 
 const fmt = (n: number | null) => (n === null ? "—" : `${n}%`);
@@ -13,8 +14,8 @@ const fmt = (n: number | null) => (n === null ? "—" : `${n}%`);
 export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?: string }) {
   const caItems = data.components.filter((c) => c.kind !== "EXAM");
   const examItems = data.components.filter((c) => c.kind === "EXAM");
-  // About 14 rows fit comfortably at full size; beyond that, shrink a little per row (never below 55%).
-  const slipZoom = Math.max(0.55, Math.min(1, 1 - (data.components.length - 14) * 0.035));
+  // About 12 rows fit comfortably at full size; beyond that, shrink a little per row (never below 55%).
+  const slipZoom = Math.max(0.55, Math.min(1, 1 - (data.components.length - 12) * 0.035));
 
   return (
     <div className="container py-8">
@@ -34,7 +35,9 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
             break-inside: avoid; page-break-inside: avoid; page-break-after: avoid;
           }
           .slip-logo { height: 40px !important; }
-          .slip-title { margin-top: 6px !important; font-size: 18px !important; }
+          .slip-name-ar { margin-top: 4px !important; font-size: 26px !important; line-height: 1.3 !important; }
+          .slip-name-en { font-size: 20px !important; line-height: 1.2 !important; }
+          .slip-title { margin-top: 8px !important; font-size: 13px !important; }
           .slip-sec { margin-top: 12px !important; }
           .slip-sec-lg { margin-top: 18px !important; }
           .slip-table td, .slip-table th { padding-top: 3px !important; padding-bottom: 3px !important; }
@@ -65,15 +68,17 @@ export function ResultSlip({ data, backHref }: { data: ResultSlipData; backHref?
         style={{ border: `3px double ${NAVY}`, ["--slip-zoom" as string]: slipZoom }}
       >
         <div className="text-center">
-          {data.logoUrl ? (
+          {data.logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={data.logoUrl} alt="AlFawz Academy" className="slip-logo mx-auto h-16 w-auto object-contain" />
-          ) : (
-            <p className="text-xl font-bold" style={{ color: NAVY }}>
-              AlFawz Academy
-            </p>
+            <img src={data.logoUrl} alt="" className="slip-logo mx-auto h-16 w-auto object-contain" />
           )}
-          <h1 className="slip-title mt-3 text-2xl font-bold tracking-wide" style={{ color: NAVY }}>
+          <p dir="rtl" lang="ar" className="slip-name-ar mt-2 text-3xl font-bold" style={{ color: NAVY, fontFamily: ARABIC_FONT }}>
+            أكاديمية الفوز
+          </p>
+          <p className="slip-name-en text-2xl font-extrabold uppercase tracking-wide" style={{ color: NAVY }}>
+            AlFawz Academy
+          </p>
+          <h1 className="slip-title mt-4 text-lg font-bold tracking-wide" style={{ color: NAVY }}>
             STATEMENT OF RESULTS
           </h1>
           <div className="mx-auto mt-2 h-0.5 w-24" style={{ background: GOLD }} />
