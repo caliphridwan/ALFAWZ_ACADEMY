@@ -29,3 +29,30 @@ export function referralLink(baseUrl: string, code: string, to?: string): string
   const base = baseUrl.replace(/\/+$/, "");
   return `${base}/r/${code}${to ? `?to=${encodeURIComponent(to)}` : ""}`;
 }
+
+/**
+ * The public address of the site for building a redirect. Behind a host's proxy, the
+ * request's own URL can be an internal address (localhost:10000), which would send the
+ * visitor somewhere unreachable. Prefer the configured site address, then the proxy's
+ * forwarded headers, then the request URL.
+ */
+export function publicOrigin(opts: {
+  appUrl?: string | null;
+  forwardedHost?: string | null;
+  forwardedProto?: string | null;
+  host?: string | null;
+  requestUrl: string;
+}): string {
+  const clean = (v?: string | null) => (v ?? "").trim().replace(/^["']+|["']+$/g, "").trim();
+  const configured = clean(opts.appUrl);
+  if (configured) {
+    const withProto = /^https?:\/\//i.test(configured) ? configured : `https://${configured}`;
+    return withProto.replace(/\/+$/, "");
+  }
+  const host = clean(opts.forwardedHost).split(",")[0].trim() || clean(opts.host);
+  if (host && !/^(localhost|0\.0\.0\.0|127\.0\.0\.1)(:|$)/.test(host)) {
+    const proto = clean(opts.forwardedProto).split(",")[0].trim() || "https";
+    return `${proto}://${host}`;
+  }
+  return new URL(opts.requestUrl).origin;
+}

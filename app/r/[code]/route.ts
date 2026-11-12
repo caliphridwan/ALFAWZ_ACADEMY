@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { REFERRAL_COOKIE, REFERRAL_COOKIE_DAYS, normalizeCode, safeRedirectPath } from "@/lib/referral-code";
+import { REFERRAL_COOKIE, REFERRAL_COOKIE_DAYS, normalizeCode, publicOrigin, safeRedirectPath } from "@/lib/referral-code";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,14 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest, { params }: { params: { code: string } }) {
   const dest = safeRedirectPath(req.nextUrl.searchParams.get("to"));
-  const res = NextResponse.redirect(new URL(dest, req.url));
+  const origin = publicOrigin({
+    appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    forwardedHost: req.headers.get("x-forwarded-host"),
+    forwardedProto: req.headers.get("x-forwarded-proto"),
+    host: req.headers.get("host"),
+    requestUrl: req.url,
+  });
+  const res = NextResponse.redirect(new URL(dest, origin));
 
   const code = normalizeCode(params.code);
   if (!code) return res;
