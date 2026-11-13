@@ -191,6 +191,8 @@ model User {
   bankClaims        BankTransferClaim[]
   teacherProfile    Teacher?
   recitationSubmissions RecitationSubmission[]
+  chatMessages  CourseMessage[]
+  chatMemberships CourseChatMember[]
   sponsorImpact SponsorImpact? @relation("SponsorImpactSponsor")
 
   // Referral tracking: the code this person arrived through (first touch),
@@ -272,6 +274,8 @@ model Course {
   recitationTasks RecitationTask[]
   bankClaims    BankTransferClaim[]
   scholarshipApplications ScholarshipApplication[]
+  chatMessages  CourseMessage[]
+  chatMembers   CourseChatMember[]
 
   @@index([slug])
   @@index([active])
@@ -799,4 +803,39 @@ model ReferralCode {
   createdAt DateTime @default(now())
 
   referredUsers User[] @relation("ReferredBy")
+}
+
+// ---------------------------------------------------------------------------
+// Course group chat
+// ---------------------------------------------------------------------------
+
+// One message in a course's group chat: text, a voice note (Cloudinary URL), or
+// both. Deleting is soft (deletedAt) so a moderator's removal is reversible.
+model CourseMessage {
+  id          String    @id @default(cuid())
+  courseId    String
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  senderId    String
+  sender      User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body        String?   @db.Text
+  audioUrl    String?
+  durationSec Int?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+
+  @@index([courseId, createdAt])
+}
+
+// Per person, per course: when they last read the chat (drives the unread
+// counter) and whether a teacher/admin has muted them there.
+model CourseChatMember {
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt DateTime @default(now())
+  muted      Boolean  @default(false)
+
+  @@id([courseId, userId])
+  @@index([userId])
 }

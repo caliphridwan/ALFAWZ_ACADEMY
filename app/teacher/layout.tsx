@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
+import { totalUnreadChat } from "@/lib/chat";
 import { TeacherNav } from "@/components/teacher/teacher-nav";
 
 export default async function TeacherLayout({ children }: { children: React.ReactNode }) {
@@ -12,11 +13,12 @@ export default async function TeacherLayout({ children }: { children: React.Reac
 
   // Work waiting on this teacher, in their own courses only.
   const own = { course: { instructor: { is: { userId: session.user.id } } } };
-  const [recitationsToReview, assessmentsToMark] = await Promise.all([
+  const [recitationsToReview, assessmentsToMark, unreadChat] = await Promise.all([
     prisma.recitationSubmission.count({ where: { reviewedAt: null, task: own } }),
     prisma.assessmentAttempt.count({
       where: { needsMarking: true, status: { not: "IN_PROGRESS" }, assessment: own },
     }),
+    totalUnreadChat(session.user.id, "TEACHER").catch(() => 0),
   ]);
 
   return (
@@ -25,6 +27,7 @@ export default async function TeacherLayout({ children }: { children: React.Reac
         name={session.user.name ?? "Teacher"}
         recitationsToReview={recitationsToReview}
         assessmentsToMark={assessmentsToMark}
+        unreadChat={unreadChat}
       />
       {children}
     </div>

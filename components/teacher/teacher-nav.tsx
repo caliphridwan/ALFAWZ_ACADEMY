@@ -21,10 +21,12 @@ export function TeacherNav({
   name,
   recitationsToReview = 0,
   assessmentsToMark = 0,
+  unreadChat = 0,
 }: {
   name: string;
   recitationsToReview?: number;
   assessmentsToMark?: number;
+  unreadChat?: number;
 }) {
   return (
     <div className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -38,7 +40,7 @@ export function TeacherNav({
         <Button asChild size="sm" variant="outline">
           <Link href="/teacher">
             My courses
-            <Count n={recitationsToReview + assessmentsToMark} label="items waiting for you" />
+            <Count n={recitationsToReview + assessmentsToMark + unreadChat} label="items waiting for you" />
           </Link>
         </Button>
         <Button size="sm" variant="ghost" onClick={() => signOut({ callbackUrl: "/" })}>

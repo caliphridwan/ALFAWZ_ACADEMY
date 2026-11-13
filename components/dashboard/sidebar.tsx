@@ -19,6 +19,7 @@ import {
   Mic,
   ClipboardCheck,
   Share2,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { SidebarShell } from "@/components/ui/sidebar-shell";
@@ -29,6 +30,7 @@ const STUDENT_LINKS = [
   { href: "/dashboard/materials", label: "Class Materials", icon: FileText },
   { href: "/dashboard/recitations", label: "Recitations", icon: Mic },
   { href: "/dashboard/assessments", label: "Assessments", icon: ClipboardCheck },
+  { href: "/dashboard/chat", label: "Course Chat", icon: MessageCircle },
   { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
   { href: "/dashboard/schedule", label: "Schedule", icon: CalendarDays },
   { href: "/dashboard/id-card", label: "ID Card", icon: Contact },
@@ -51,21 +53,23 @@ export function DashboardSidebar({
   unreadNotifications = 0,
   pendingRecitations = 0,
   pendingAssessments = 0,
+  unreadChat = 0,
 }: {
   variant?: "student" | "sponsor";
   /** Number of unread notifications, shown as a badge on the Notifications link. */
   unreadNotifications?: number;
   pendingRecitations?: number;
   pendingAssessments?: number;
+  unreadChat?: number;
 }) {
   const pathname = usePathname();
   const links = variant === "sponsor" ? SPONSOR_LINKS : STUDENT_LINKS;
 
   return (
-    <SidebarShell badge={unreadNotifications + pendingRecitations + pendingAssessments}>
+    <SidebarShell badge={unreadNotifications + pendingRecitations + pendingAssessments + unreadChat}>
       <nav className="p-4 space-y-1 lg:sticky lg:top-16">
         {links.map((link) => {
-          const active = pathname === link.href;
+          const active = pathname === link.href || (link.href === "/dashboard/chat" && pathname.startsWith("/dashboard/chat/"));
           const Icon = link.icon;
           const badgeCount =
             link.href === "/dashboard/notifications"
@@ -74,13 +78,17 @@ export function DashboardSidebar({
                 ? pendingRecitations
                 : link.href === "/dashboard/assessments"
                   ? pendingAssessments
-                  : 0;
+                  : link.href === "/dashboard/chat"
+                    ? unreadChat
+                    : 0;
           const badgeNoun =
             link.href === "/dashboard/notifications"
               ? "unread notifications"
               : link.href === "/dashboard/recitations"
                 ? "recitations to do"
-                : "assessments to take";
+                : link.href === "/dashboard/chat"
+                  ? "unread chat messages"
+                  : "assessments to take";
           return (
             <Link
               key={link.href}

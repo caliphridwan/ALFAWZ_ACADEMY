@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RecordingControl } from "@/components/admin/recording-control";
+import { unreadChatCounts } from "@/lib/chat";
 import { formatAcademyDateTime } from "@/lib/utils/datetime";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +32,8 @@ export default async function TeacherCoursePage({ params }: { params: { id: stri
     where: { courseId: course.id, status: { in: ["ACTIVE", "COMPLETED"] } },
   });
 
+  const chatUnread = (await unreadChatCounts(session!.user.id, "TEACHER")).get(course.id) ?? 0;
+
   return (
     <div className="max-w-3xl">
       <Link href="/teacher" className="text-sm text-muted-foreground hover:text-foreground">
@@ -44,6 +47,16 @@ export default async function TeacherCoursePage({ params }: { params: { id: stri
           </Button>
           <Button asChild size="sm" variant="outline">
             <Link href={`/teacher/courses/${course.id}/recitations`}>Recitations</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/teacher/courses/${course.id}/chat`}>
+              Chat
+              {chatUnread > 0 && (
+                <span className="ml-2 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1.5 py-0.5 text-xs font-semibold leading-none text-destructive-foreground">
+                  {chatUnread > 99 ? "99+" : chatUnread}
+                </span>
+              )}
+            </Link>
           </Button>
         </div>
       </div>

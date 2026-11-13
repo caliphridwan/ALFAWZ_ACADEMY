@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
+import { totalUnreadChat } from "@/lib/chat";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const studentId = session.user.id;
   const now = new Date();
   const enrolledCourses = { enrollments: { some: { studentId, status: { in: ["ACTIVE", "COMPLETED"] as ("ACTIVE" | "COMPLETED")[] } } } };
-  const [user, unreadNotifications, pendingRecitations, pendingAssessments] = await Promise.all([
+  const [user, unreadNotifications, pendingRecitations, pendingAssessments, unreadChat] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: { name: true, profileImage: true },
@@ -40,6 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         attempts: { none: { studentId } },
       },
     }),
+    totalUnreadChat(studentId, "STUDENT").catch(() => 0),
   ]);
 
   return (
@@ -48,6 +50,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         unreadNotifications={unreadNotifications}
         pendingRecitations={pendingRecitations}
         pendingAssessments={pendingAssessments}
+        unreadChat={unreadChat}
       />
       <div className="flex-1 p-6 lg:p-10">
         <div className="flex justify-end mb-4">
