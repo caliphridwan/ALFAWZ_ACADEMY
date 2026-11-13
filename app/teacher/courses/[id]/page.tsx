@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RecordingControl } from "@/components/admin/recording-control";
+import { CountBadge } from "@/components/ui/count-badge";
+import { pendingRecitationsByCourse } from "@/lib/recitations-pending";
 import { unreadChatCounts } from "@/lib/chat";
 import { formatAcademyDateTime } from "@/lib/utils/datetime";
 
@@ -32,6 +34,7 @@ export default async function TeacherCoursePage({ params }: { params: { id: stri
     where: { courseId: course.id, status: { in: ["ACTIVE", "COMPLETED"] } },
   });
 
+  const toReview = (await pendingRecitationsByCourse([course.id])).get(course.id) ?? 0;
   const chatUnread = (await unreadChatCounts(session!.user.id, "TEACHER")).get(course.id) ?? 0;
 
   return (
@@ -46,7 +49,9 @@ export default async function TeacherCoursePage({ params }: { params: { id: stri
             <Link href={`/teacher/courses/${course.id}/assessments`}>Assessments</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href={`/teacher/courses/${course.id}/recitations`}>Recitations</Link>
+            <Link href={`/teacher/courses/${course.id}/recitations`}>Recitations
+              <CountBadge n={toReview} label="recitations to review" />
+            </Link>
           </Button>
           <Button asChild size="sm" variant="outline">
             <Link href={`/teacher/courses/${course.id}/chat`}>

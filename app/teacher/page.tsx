@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatAcademyDateTime } from "@/lib/utils/datetime";
 
+import { CountBadge } from "@/components/ui/count-badge";
+import { pendingRecitationsByCourse } from "@/lib/recitations-pending";
+
 export const dynamic = "force-dynamic";
 
 export default async function TeacherHomePage() {
@@ -33,6 +36,8 @@ export default async function TeacherHomePage() {
         where: { reviewedAt: null, task: { courseId: { in: courseIds } } },
       })
     : 0;
+
+  const pendingByCourse = await pendingRecitationsByCourse(courseIds);
 
   const toMark = courseIds.length
     ? await prisma.assessmentAttempt.count({
@@ -72,7 +77,9 @@ export default async function TeacherHomePage() {
                   <Link href={`/teacher/courses/${c.id}`}>Classes &amp; attendance</Link>
                 </Button>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/teacher/courses/${c.id}/recitations`}>Recitations</Link>
+                  <Link href={`/teacher/courses/${c.id}/recitations`}>Recitations
+                    <CountBadge n={pendingByCourse.get(c.id) ?? 0} label="recitations to review" />
+                  </Link>
                 </Button>
               </div>
             </CardContent>

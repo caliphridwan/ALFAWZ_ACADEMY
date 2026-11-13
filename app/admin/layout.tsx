@@ -14,17 +14,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   // Things waiting for an admin decision, shown as counters on the menu.
-  const [bankTransfers, scholarships, messages, alumni] = await Promise.all([
+  const [bankTransfers, scholarships, messages, alumni, recitationsToReview] = await Promise.all([
     prisma.bankTransferClaim.count({ where: { status: "PENDING" } }),
     prisma.scholarshipApplication.count({ where: { status: "PENDING" } }),
     prisma.contactMessage.count({ where: { status: "NEW" } }),
     prisma.alumnus.count({ where: { status: "PENDING" } }),
+    prisma.recitationSubmission.count({ where: { reviewedAt: null } }),
   ]);
   const counts = {
     "/admin/bank-transfers": bankTransfers,
     "/admin/scholarships": scholarships,
     "/admin/messages": messages,
     "/admin/alumni": alumni,
+    "/admin/courses": recitationsToReview,
   };
 
   return (

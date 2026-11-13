@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CountBadge } from "@/components/ui/count-badge";
+import { pendingRecitationsByCourse } from "@/lib/recitations-pending";
 import { formatCurrency } from "@/lib/utils/cn";
 import { ArchiveCourseButton } from "@/components/admin/archive-course-button";
 import { SendClassCommencementButton } from "@/components/admin/send-class-commencement-button";
@@ -12,6 +14,8 @@ export default async function AdminCoursesPage() {
     include: { instructor: true, _count: { select: { enrollments: true } } },
     orderBy: { createdAt: "desc" },
   });
+
+  const pendingByCourse = await pendingRecitationsByCourse();
 
   return (
     <div>
@@ -62,7 +66,9 @@ export default async function AdminCoursesPage() {
                       <Link href={`/admin/courses/${c.id}/assessments`}>Assessments</Link>
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <Link href={`/admin/courses/${c.id}/recitations`}>Recitations</Link>
+                      <Link href={`/admin/courses/${c.id}/recitations`}>Recitations
+                        <CountBadge n={pendingByCourse.get(c.id) ?? 0} label="recitations to review" />
+                      </Link>
                     </Button>
                     <Button asChild size="sm" variant="outline">
                       <Link href={`/admin/courses/${c.id}/chat`}>Chat</Link>
