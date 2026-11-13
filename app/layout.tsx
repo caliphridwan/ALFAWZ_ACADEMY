@@ -6,6 +6,7 @@ import { Providers } from "@/components/providers";
 import { SiteChrome } from "@/components/shared/site-chrome";
 import { JsonLd } from "@/components/shared/json-ld";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
+import { GoogleAnalytics } from "@/components/shared/google-analytics";
 import { iconUrl } from "@/lib/pwa-icons";
 import { prisma } from "@/lib/db/prisma";
 
@@ -88,6 +89,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
         <ServiceWorkerRegister />
+        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID?.trim()} />
         <Providers>
           <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}>
             {children}
