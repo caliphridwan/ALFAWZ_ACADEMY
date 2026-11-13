@@ -89,7 +89,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
         <ServiceWorkerRegister />
-        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID?.trim()} />
+        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID?.trim() || "G-Y2MN751KZH"} />
         <Providers>
           <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}>
             {children}
