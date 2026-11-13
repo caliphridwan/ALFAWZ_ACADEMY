@@ -58,7 +58,7 @@ export async function RecitationManager({ courseId }: { courseId: string }) {
                     </div>
                     <audio controls preload="none" src={s.audioUrl} className="w-full" />
                     {s.note && <p className="text-sm text-muted-foreground">“{s.note}”</p>}
-                    <ReviewForm submissionId={s.id} initialRating={s.rating} initialFeedback={s.feedback} />
+                    <ReviewForm submissionId={s.id} initialRating={s.rating} initialFeedback={s.feedback} initialAudioUrl={s.feedbackAudioUrl} />
                   </div>
                 ))}
                 {t.submissions.length === 0 && (

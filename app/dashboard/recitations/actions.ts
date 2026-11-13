@@ -63,6 +63,8 @@ export async function submitRecitation(
       submittedAt: new Date(),
       rating: null,
       feedback: null,
+      feedbackAudioUrl: null,
+      feedbackAudioSec: null,
       reviewedAt: null,
       reviewedById: null,
     },

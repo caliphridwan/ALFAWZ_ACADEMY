@@ -82,6 +82,12 @@ export default async function RecitationsPage() {
                           ))}
                         </div>
                         {mine.feedback && <p className="text-sm whitespace-pre-line">{mine.feedback}</p>}
+                        {mine.feedbackAudioUrl && (
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Voice reply from your teacher</p>
+                            <audio controls preload="none" src={mine.feedbackAudioUrl} className="w-full" />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

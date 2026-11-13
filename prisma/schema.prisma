@@ -665,6 +665,9 @@ model RecitationSubmission {
   // Review (null until a teacher has listened)
   rating      Int?
   feedback    String?        @db.Text
+  // Optional spoken feedback from the teacher (Cloudinary URL).
+  feedbackAudioUrl String?
+  feedbackAudioSec Int?
   reviewedAt  DateTime?
   reviewedById String?
 

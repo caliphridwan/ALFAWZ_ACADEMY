@@ -89,7 +89,9 @@ export async function deleteRecitationTask(taskId: string): Promise<{ ok: boolea
 export async function reviewRecitation(
   submissionId: string,
   rating: number,
-  feedback: string
+  feedback: string,
+  // undefined = leave any existing voice feedback as is; null = remove it.
+  audio?: { url: string; durationSec: number | null } | null
 ): Promise<{ ok: boolean; error?: string }> {
   await requireStaff();
 
@@ -97,6 +99,19 @@ export async function reviewRecitation(
     return { ok: false, error: "Choose a rating from 1 to 5." };
   }
   const text = feedback.trim().slice(0, 1000);
+
+  let audioData: { feedbackAudioUrl: string | null; feedbackAudioSec: number | null } | undefined;
+  if (audio === null) audioData = { feedbackAudioUrl: null, feedbackAudioSec: null };
+  else if (audio) {
+    try {
+      const u = new URL(audio.url);
+      if (u.protocol !== "https:" || u.hostname !== "res.cloudinary.com" || audio.url.length > 600) throw new Error();
+    } catch {
+      return { ok: false, error: "The voice note didn't upload correctly. Please try again." };
+    }
+    const d = audio.durationSec;
+    audioData = { feedbackAudioUrl: audio.url, feedbackAudioSec: d && d > 0 && d < 1800 ? Math.round(d) : null };
+  }
 
   const submission = await prisma.recitationSubmission.findUnique({
     where: { id: submissionId },
@@ -107,7 +122,7 @@ export async function reviewRecitation(
 
   await prisma.recitationSubmission.update({
     where: { id: submissionId },
-    data: { rating, feedback: text || null, reviewedAt: new Date(), reviewedById: session.user.id },
+    data: { rating, feedback: text || null, ...audioData, reviewedAt: new Date(), reviewedById: session.user.id },
   });
 
   await createNotification(
