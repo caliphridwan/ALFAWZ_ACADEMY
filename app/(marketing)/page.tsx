@@ -783,7 +783,7 @@ export default async function HomePage() {
 
             <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/register"
+                href="/courses"
                 className="inline-flex h-12 items-center justify-center rounded-lg bg-background px-8 text-sm font-bold text-foreground shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 Enroll Now
@@ -791,10 +791,10 @@ export default async function HomePage() {
               </Link>
 
               <Link
-                href="/courses"
+                href="/contact"
                 className="inline-flex h-12 items-center justify-center rounded-lg border border-white/20 bg-white/10 px-8 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
               >
-                Explore Courses
+                Talk to us
               </Link>
             </div>
 

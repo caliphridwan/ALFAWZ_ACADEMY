@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils/cn";
 const NAV_LINKS = [
   { href: "/about", label: "About" },
   { href: "/courses", label: "Courses" },
-  { href: "/programs", label: "Programs" },
+  { href: "/programs", label: "Programmes" },
   { href: "/sponsor", label: "Sponsorship" },
   { href: "/events", label: "Events" },
   { href: "/testimonials", label: "Testimonials" },
@@ -166,7 +166,7 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                         <Link href="/login" onClick={() => setMobileOpen(false)}>Login</Link>
                       </Button>
                       <Button asChild variant="gold">
-                        <Link href="/register" onClick={() => setMobileOpen(false)}>Enroll Now</Link>
+                        <Link href="/courses" onClick={() => setMobileOpen(false)}>Enroll Now</Link>
                       </Button>
                     </>
                   )}

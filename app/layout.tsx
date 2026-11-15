@@ -71,6 +71,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     .findUnique({ where: { id: "singleton" } })
     .catch(() => null);
 
+  // Footer "Programmes" list follows the courses that are actually open, so it
+  // never links to a course that doesn't exist.
+  const footerCourses = await prisma.course
+    .findMany({ where: { active: true }, orderBy: { createdAt: "asc" }, select: { title: true, slug: true }, take: 8 })
+    .catch(() => []);
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   return (
@@ -91,7 +97,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ServiceWorkerRegister />
         <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID?.trim() || "G-Y2MN751KZH"} />
         <Providers>
-          <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}>
+          <SiteChrome logoUrl={settings?.logoUrl} whatsappNumber={settings?.whatsappNumber}
+            footerCourses={footerCourses}
+            contactEmail={settings?.contactEmail}
+            phoneNumber={settings?.phoneNumber}
+          >
             {children}
           </SiteChrome>
         </Providers>

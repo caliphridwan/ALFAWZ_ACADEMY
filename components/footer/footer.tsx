@@ -10,7 +10,17 @@ const PROGRAMS = [
   { label: "Diaspora", href: "/courses/diaspora-program" },
 ];
 
-export function Footer() {
+export function Footer({
+  courses,
+  contactEmail,
+  phoneNumber,
+}: {
+  courses?: { title: string; slug: string }[];
+  contactEmail?: string | null;
+  phoneNumber?: string | null;
+}) {
+  const programmes = courses && courses.length ? courses.map((c) => ({ label: c.title, href: `/courses/${c.slug}` })) : PROGRAMS;
+  const email = contactEmail?.trim() || "info@alfawzacademy.com";
   const year = new Date().getFullYear();
 
   return (
@@ -52,9 +62,9 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="font-semibold mb-4">Programs</h4>
+          <h4 className="font-semibold mb-4">Programmes</h4>
           <ul className="space-y-2 text-sm text-brand-foreground/70">
-            {PROGRAMS.map((p) => (
+            {programmes.map((p) => (
               <li key={p.href}>
                 <Link href={p.href} className="hover:text-gold transition-colors">
                   {p.label}
@@ -82,6 +92,20 @@ export function Footer() {
                 FAQs
               </Link>
             </li>
+          </ul>
+          <ul className="space-y-2 text-sm text-brand-foreground/70 mb-6">
+            <li>
+              <a href={`mailto:${email}`} className="hover:text-gold transition-colors">
+                {email}
+              </a>
+            </li>
+            {phoneNumber && (
+              <li>
+                <a href={`tel:${phoneNumber.replace(/[^+\d]/g, "")}`} className="hover:text-gold transition-colors">
+                  {phoneNumber}
+                </a>
+              </li>
+            )}
           </ul>
           <div className="flex gap-4">
             <a href="https://www.youtube.com/@caliphridwan" target="_blank" rel="noopener noreferrer" aria-label="Follow Alfawz Academy on YouTube">   <Youtube size={18} className="opacity-70 hover:opacity-100 cursor-pointer" /></a>

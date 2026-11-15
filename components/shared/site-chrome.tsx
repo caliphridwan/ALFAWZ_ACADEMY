@@ -15,10 +15,16 @@ export function SiteChrome({
   children,
   logoUrl,
   whatsappNumber,
+  footerCourses,
+  contactEmail,
+  phoneNumber,
 }: {
   children: React.ReactNode;
   logoUrl?: string | null;
   whatsappNumber?: string | null;
+  footerCourses?: { title: string; slug: string }[];
+  contactEmail?: string | null;
+  phoneNumber?: string | null;
 }) {
   const pathname = usePathname();
   const hideChrome = CHROME_HIDDEN_PATHS.some(
@@ -45,7 +51,7 @@ export function SiteChrome({
     <>
       <Navbar logoUrl={logoUrl} />
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer courses={footerCourses} contactEmail={contactEmail} phoneNumber={phoneNumber} />
       <WhatsAppButton phoneNumber={whatsappNumber} />
     </>
   );
