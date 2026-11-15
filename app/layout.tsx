@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Amiri, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/providers";
@@ -12,9 +12,22 @@ import { prisma } from "@/lib/db/prisma";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
-// Using Amiri via next/font/google would also work; kept as a placeholder
-// local font slot in case the institution supplies a licensed Arabic font.
-const arabicFallback = Inter({ subsets: ["latin"], variable: "--font-arabic", display: "swap" });
+// Amiri: a classical Naskh face made for Qur'anic and Arabic text, so Arabic
+// looks the same on every device instead of falling back to whatever the phone has.
+const arabicFallback = Amiri({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-arabic",
+  display: "swap",
+});
+
+// Display serif for public-page headings; body text stays in Inter.
+const display = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 // Pages read the database (settings, courses, teachers...). Rendering them
 // per request instead of at build time means a slow or sleeping database can
@@ -80,7 +93,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   return (
-    <html lang="en" className={`${inter.variable} ${arabicFallback.variable}`}>
+    <html lang="en" className={`${inter.variable} ${arabicFallback.variable} ${display.variable}`}>
       <body className="min-h-screen flex flex-col font-sans">
         <JsonLd
           data={{

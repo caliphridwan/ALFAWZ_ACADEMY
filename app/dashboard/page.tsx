@@ -10,12 +10,17 @@ import { ExamResultModal } from "@/components/dashboard/exam-result-modal";
 import { EnrollmentGate } from "@/components/courses/enrollment-gate";
 import { BankTransferDetails } from "@/components/payments/bank-transfer-details";
 import { getBankTransferInfo } from "@/lib/bank-details";
+import { totalUnreadChat } from "@/lib/chat";
+import { formatAcademyDateTime } from "@/lib/utils/datetime";
+import { CalendarDays, ClipboardCheck, MessageCircle, Mic, Video } from "lucide-react";
 
 export default async function DashboardOverviewPage() {
   const session = await getServerSession(authOptions);
   const userId = session!.user.id;
 
-  const [enrollments, payments, bankInfo] = await Promise.all([
+  const liveCourses = { enrollments: { some: { studentId: userId, status: { in: ["ACTIVE", "COMPLETED"] as ("ACTIVE" | "COMPLETED")[] } } } };
+  const now = new Date();
+  const [enrollments, payments, bankInfo, nextClass, recitationsTodo, assessmentsTodo, unreadChat] = await Promise.all([
     prisma.enrollment.findMany({
       where: { studentId: userId },
       include: { course: { include: { instructor: true } } },
@@ -23,6 +28,24 @@ export default async function DashboardOverviewPage() {
     }),
     prisma.payment.findMany({ where: { userId } }),
     getBankTransferInfo(),
+    prisma.classSession.findFirst({
+      where: { course: liveCourses, cancelled: false, startsAt: { gte: new Date(now.getTime() - 30 * 60 * 1000) } },
+      orderBy: { startsAt: "asc" },
+      select: { startsAt: true, topic: true, zoomLink: true, course: { select: { title: true, zoomLink: true } } },
+    }),
+    prisma.recitationTask.count({ where: { course: liveCourses, submissions: { none: { studentId: userId } } } }),
+    prisma.assessment.count({
+      where: {
+        course: liveCourses,
+        status: "PUBLISHED",
+        AND: [
+          { OR: [{ opensAt: null }, { opensAt: { lte: now } }] },
+          { OR: [{ closesAt: null }, { closesAt: { gte: now } }] },
+        ],
+        attempts: { none: { studentId: userId } },
+      },
+    }),
+    totalUnreadChat(userId, "STUDENT").catch(() => 0),
   ]);
 
   const unseenResults = enrollments
@@ -51,7 +74,7 @@ export default async function DashboardOverviewPage() {
     <div>
       {unseenResults.length > 0 && <ExamResultModal results={unseenResults} />}
 
-      <h1 className="text-2xl font-bold mb-1">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-1">
         Assalamu Alaikum, {session!.user.name?.split(" ")[0]}
       </h1>
       <p className="text-muted-foreground mb-8">Here&apos;s where your learning stands today.</p>
@@ -66,6 +89,60 @@ export default async function DashboardOverviewPage() {
           </Card>
         ))}
       </div>
+
+      {(nextClass || active.length > 0) && (
+        <div className="mb-10 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+          <Card className="border-t-4 border-t-gold">
+            <CardContent className="flex h-full flex-col justify-between gap-4 p-5">
+              <div>
+                <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gold">
+                  <CalendarDays size={14} /> Next class
+                </p>
+                {nextClass ? (
+                  <>
+                    <p className="text-lg font-semibold">{nextClass.course.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatAcademyDateTime(nextClass.startsAt)} (WAT)
+                      {nextClass.topic ? ` · ${nextClass.topic}` : ""}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No class is scheduled yet. Check back soon.</p>
+                )}
+              </div>
+              {nextClass && (nextClass.zoomLink || nextClass.course.zoomLink) && (
+                <Button asChild size="sm" className="w-fit">
+                  <a href={(nextClass.zoomLink || nextClass.course.zoomLink)!} target="_blank" rel="noopener noreferrer">
+                    <Video size={16} /> Join class
+                  </a>
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+            {[
+              { href: "/dashboard/recitations", label: "Recitations to do", n: recitationsTodo, icon: Mic },
+              { href: "/dashboard/assessments", label: "Tests to take", n: assessmentsTodo, icon: ClipboardCheck },
+              { href: "/dashboard/chat", label: "Unread chat", n: unreadChat, icon: MessageCircle },
+            ].map(({ href, label, n, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 rounded-xl border border-border/70 bg-card p-3 transition-colors hover:border-brand/40 lg:p-4"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+                  <Icon size={18} />
+                </span>
+                <span className="min-w-0 flex-1 text-xs leading-tight text-muted-foreground lg:text-sm">{label}</span>
+                <span className={n > 0 ? "text-lg font-bold text-destructive" : "text-lg font-bold text-muted-foreground/60"}>
+                  {n}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <h2 className="text-lg font-semibold mb-4">My Courses</h2>
       {enrollments.length === 0 ? (

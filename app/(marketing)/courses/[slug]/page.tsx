@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { prisma } from "@/lib/db/prisma";
+import Link from "next/link";
+import { Check, ChevronDown, Clock, GraduationCap, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EnrollmentGate } from "@/components/courses/enrollment-gate";
 import { CurrencyConverter } from "@/components/courses/currency-converter";
@@ -54,7 +56,7 @@ export default async function CourseDetailPage({ params }: Props) {
   const bankInfo = registrationOpen ? await getBankTransferInfo() : null;
 
   return (
-    <article className="container py-16 grid lg:grid-cols-3 gap-12">
+    <article className="container py-12 sm:py-16 grid lg:grid-cols-3 gap-12">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -85,27 +87,48 @@ export default async function CourseDetailPage({ params }: Props) {
             <Image src={course.image} alt={course.title} fill className="object-cover" priority />
           </div>
         )}
-        <Badge className="mb-4">{course.level}</Badge>
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4">{course.title}</h1>
-        <p className="text-muted-foreground text-lg mb-8 whitespace-pre-line">{course.description}</p>
+        <Link href="/courses" className="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">
+          ← All courses
+        </Link>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <Badge>{course.level}</Badge>
+          <Badge variant={registrationOpen ? "gold" : "muted"}>
+            {registrationOpen ? "Enrolment open" : "Enrolment closed"}
+          </Badge>
+        </div>
+        <h1 className="text-3xl sm:text-5xl font-bold leading-tight mb-5">{course.title}</h1>
+        <div className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-2"><Clock size={16} className="text-brand" /> {course.duration}</span>
+          <span className="inline-flex items-center gap-2"><Users size={16} className="text-brand" /> {course.ageGroup}</span>
+          <span className="inline-flex items-center gap-2"><GraduationCap size={16} className="text-brand" /> Certificate on completion</span>
+        </div>
+        <p className="text-muted-foreground text-lg leading-8 mb-10 whitespace-pre-line">{course.description}</p>
 
         {curriculum.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4">Curriculum</h2>
-            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+            <h2 className="text-2xl font-bold mb-5">What you will learn</h2>
+            <ol className="grid gap-3 sm:grid-cols-2">
               {curriculum.map((item, i) => (
-                <li key={i}>{item}</li>
+                <li key={i} className="flex gap-3 rounded-xl border border-border/70 bg-card p-4 text-sm">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xs font-bold text-brand">
+                    {i + 1}
+                  </span>
+                  <span className="leading-6">{item}</span>
+                </li>
               ))}
-            </ul>
+            </ol>
           </section>
         )}
 
         {requirements.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4">Requirements</h2>
-            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+            <h2 className="text-2xl font-bold mb-5">Before you start</h2>
+            <ul className="space-y-3">
               {requirements.map((item, i) => (
-                <li key={i}>{item}</li>
+                <li key={i} className="flex gap-3 text-muted-foreground">
+                  <Check size={18} className="mt-1 shrink-0 text-gold" />
+                  <span>{item}</span>
+                </li>
               ))}
             </ul>
           </section>
@@ -113,31 +136,59 @@ export default async function CourseDetailPage({ params }: Props) {
 
         {course.instructor && (
           <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4">Instructor</h2>
-            <p className="font-medium">{course.instructor.name}</p>
-            {course.instructor.specialization && (
-              <p className="text-sm text-muted-foreground">{course.instructor.specialization}</p>
-            )}
+            <h2 className="text-2xl font-bold mb-5">Your teacher</h2>
+            <div className="flex gap-4 rounded-xl border border-border/70 bg-card p-5">
+              {course.instructor.photo ? (
+                <Image
+                  src={course.instructor.photo}
+                  alt={course.instructor.name}
+                  width={80}
+                  height={80}
+                  className="h-20 w-20 shrink-0 rounded-full border-2 border-gold/50 object-cover"
+                />
+              ) : (
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-brand text-2xl font-bold text-brand-foreground">
+                  {course.instructor.name.trim()[0]?.toUpperCase()}
+                </span>
+              )}
+              <div>
+                <p className="text-lg font-semibold">{course.instructor.name}</p>
+                {course.instructor.qualification && (
+                  <p className="text-sm text-brand">{course.instructor.qualification}</p>
+                )}
+                {course.instructor.specialization && (
+                  <p className="text-sm text-muted-foreground">{course.instructor.specialization}</p>
+                )}
+                {course.instructor.biography && (
+                  <p className="mt-2 line-clamp-4 text-sm leading-6 text-muted-foreground">
+                    {course.instructor.biography}
+                  </p>
+                )}
+              </div>
+            </div>
           </section>
         )}
 
         {faqs.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4">FAQs</h2>
-            <div className="space-y-4">
+            <h2 className="text-2xl font-bold mb-5">Questions parents ask</h2>
+            <div className="space-y-3">
               {faqs.map((f, i) => (
-                <div key={i}>
-                  <p className="font-medium">{f.q}</p>
-                  <p className="text-sm text-muted-foreground">{f.a}</p>
-                </div>
+                <details key={i} className="group rounded-xl border border-border/70 bg-card p-4 open:shadow-sm">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+                    {f.q}
+                    <ChevronDown size={18} className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{f.a}</p>
+                </details>
               ))}
             </div>
           </section>
         )}
       </div>
 
-      <aside className="lg:sticky lg:top-24 h-fit rounded-xl border border-border bg-card p-6 space-y-4">
-        <p className="text-3xl font-bold text-brand">
+      <aside className="lg:sticky lg:top-24 h-fit rounded-2xl border border-border/70 border-t-4 border-t-gold bg-card p-6 space-y-4 shadow-lg shadow-brand/5">
+        <p className="text-4xl font-bold text-brand">
           {formatCurrency(Number(course.price), course.currency)}
         </p>
         {isDiasporaCourse && (

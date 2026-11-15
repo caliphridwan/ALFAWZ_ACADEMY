@@ -21,7 +21,7 @@ export type CourseCardData = {
 
 export function CourseCard({ course }: { course: CourseCardData }) {
   return (
-    <Card className="overflow-hidden group hover:shadow-md transition-shadow">
+    <Card className="overflow-hidden group flex h-full flex-col transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/10">
       <div className="aspect-[16/10] bg-brand/5 relative overflow-hidden">
         {course.image ? (
           <Image
@@ -35,17 +35,26 @@ export function CourseCard({ course }: { course: CourseCardData }) {
         )}
         <Badge className="absolute top-3 left-3 bg-background/90">{course.level}</Badge>
       </div>
-      <CardContent className="p-5">
-        <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+      <CardContent className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-xl font-bold leading-snug mb-1.5">{course.title}</h3>
+        <p className="text-sm leading-6 text-muted-foreground line-clamp-3 mb-4">
           {course.shortDescription}
         </p>
-        <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
-          <span>{course.duration}</span>
-          <span>{course.ageGroup}</span>
+        <div className="mb-4 flex flex-wrap gap-2 text-xs">
+          <span className="rounded-full bg-muted px-2.5 py-1 text-muted-foreground">{course.duration}</span>
+          <span className="rounded-full bg-muted px-2.5 py-1 text-muted-foreground">{course.ageGroup}</span>
+          <span
+            className={
+              course.enrollmentOpen
+                ? "rounded-full bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700"
+                : "rounded-full bg-muted px-2.5 py-1 text-muted-foreground"
+            }
+          >
+            {course.enrollmentOpen ? "Enrolment open" : "Enrolment closed"}
+          </span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-brand">
+        <div className="mt-auto flex items-center justify-between border-t border-border/60 pt-4">
+          <span className="text-lg font-bold text-brand">
             {formatCurrency(course.price, course.currency)}
           </span>
           <Button asChild size="sm" variant={course.enrollmentOpen ? "default" : "outline"}>

@@ -47,8 +47,35 @@
   --border: 152 15% 18%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   @apply bg-background text-foreground antialiased;
+}
+
+::selection {
+  background: hsl(var(--gold) / 0.35);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Public pages get a classical serif for headline type; apps (dashboard, admin) keep Inter. */
+.site-public h1,
+.site-public h2 {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.01em;
 }
 
 /* Arabic text blocks — Section 4: careful RTL typography */
